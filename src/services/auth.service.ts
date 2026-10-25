@@ -1,11 +1,13 @@
 import { api } from './api';
 import { User } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
-
 export const authService = {
-  getGoogleLoginUrl(): string {
-    return `${API_BASE}/api/auth/google`;
+  async register(name: string, email: string, password: string): Promise<void> {
+    await api.post('/api/auth/register', { name, email, password });
+  },
+
+  async login(email: string, password: string): Promise<void> {
+    await api.post('/api/auth/login', { email, password });
   },
 
   async getCurrentUser(): Promise<User> {

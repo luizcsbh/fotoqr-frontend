@@ -7,7 +7,6 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  loginWithGoogle: () => void;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -34,11 +33,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refreshUser();
   }, [refreshUser]);
 
-  const loginWithGoogle = () => {
-    const url = authService.getGoogleLoginUrl();
-    window.location.href = url;
-  };
-
   const logout = async () => {
     try {
       await authService.logout();
@@ -56,7 +50,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         isLoading,
         isAuthenticated: !!user,
-        loginWithGoogle,
         logout,
         refreshUser,
       }}

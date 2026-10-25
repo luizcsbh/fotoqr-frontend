@@ -73,7 +73,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
       start_date: new Date(startDateTime).toISOString(),
       end_date: new Date(endDateTime).toISOString(),
       event_date: startDateTime.split('T')[0],
-      storage_mode: 'google_photos',
+      storage_mode: 'fallback',
     });
   };
 

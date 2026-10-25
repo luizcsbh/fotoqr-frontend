@@ -63,10 +63,7 @@ export const EventCard: React.FC<EventCardProps> = ({
 
   const storageLabels: Record<string, string> = {
     local: 'Servidor Local',
-    google_photos: 'Google Photos',
-    google_drive: 'Google Photos',
-    fallback: 'Armazenamento Nuvem',
-    s3: 'Amazon S3',
+    fallback: 'Armazenamento local',
   };
 
   const handleCopy = async () => {

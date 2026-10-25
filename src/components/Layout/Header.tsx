@@ -94,7 +94,7 @@ export const Header: React.FC = () => {
               </>
             ) : (
               <div className="flex items-center gap-3">
-                <Link to="/login">
+                <Link to="/login?mode=login">
                   <Button variant="ghost" size="md">
                     Entrar
                   </Button>
@@ -173,7 +173,7 @@ export const Header: React.FC = () => {
             <div className="pt-2 flex flex-col gap-2">
               <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="primary" className="w-full justify-center">
-                  Entrar com Google
+                  Entrar ou criar conta
                 </Button>
               </Link>
             </div>

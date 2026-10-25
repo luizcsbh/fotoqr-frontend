@@ -1,4 +1,4 @@
-export type StorageMode = 'google_photos' | 'local' | 'fallback' | 'google_drive' | 's3';
+export type StorageMode = 'local' | 'fallback';
 
 export interface User {
   id: string;
