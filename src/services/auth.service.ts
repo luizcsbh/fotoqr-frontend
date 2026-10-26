@@ -3,17 +3,29 @@ import { User } from '../types';
 
 export const authService = {
   async register(name: string, email: string, password: string): Promise<void> {
-    await api.post('/api/auth/register', { name, email, password });
+    const response = await api.post('/api/auth/register', { name, email, password });
+    if (response.data?.success !== true || !response.data?.user?.id) {
+      throw new Error('O servidor não confirmou a criação da conta.');
+    }
   },
 
   async login(email: string, password: string): Promise<void> {
-    await api.post('/api/auth/login', { email, password });
+    const response = await api.post('/api/auth/login', { email, password });
+    if (response.data?.success !== true || !response.data?.user?.id) {
+      throw new Error('O servidor não confirmou o login. Tente novamente.');
+    }
   },
 
   async getCurrentUser(): Promise<User | null> {
     const response = await api.get('/api/auth/me');
+    if (!response.data || typeof response.data !== 'object' || !('user' in response.data)) {
+      throw new Error('Resposta inválida do servidor de autenticação.');
+    }
     const raw = response.data?.user;
-    if (!raw?.id) return null;
+    if (raw === null) return null;
+    if (!raw?.id) {
+      throw new Error('Resposta inválida do servidor de autenticação.');
+    }
 
     return {
       id: String(raw.id),
