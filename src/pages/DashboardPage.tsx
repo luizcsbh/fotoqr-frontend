@@ -9,6 +9,7 @@ import { Button } from '../components/UI/Button';
 import { EmptyState } from '../components/UI/EmptyState';
 import { CreateEventData } from '../types';
 import toast from 'react-hot-toast';
+import { AdSenseAd, adSlots } from '../components/AdSenseAd';
 
 export const DashboardPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -94,6 +95,8 @@ export const DashboardPage: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      <AdSenseAd slot={adSlots.dashboard} placement="painel de eventos" className="mb-8" />
 
       {/* Filter and Search Bar */}
       {events.length > 0 && (

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { QrCode, Download, Smartphone, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { useAuth } from '../hooks/useAuth';
+import { AdSenseAd, adSlots } from '../components/AdSenseAd';
 
 export const LandingPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -72,6 +73,8 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      <AdSenseAd slot={adSlots.landing} placement="página inicial" className="mb-12" />
 
       {/* Visual Mockup Section */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 mb-20 w-full">

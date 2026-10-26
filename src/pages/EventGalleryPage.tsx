@@ -21,6 +21,7 @@ import { Button } from '../components/UI/Button';
 import { LoadingScreen } from '../components/Layout/LoadingScreen';
 import { ColdStartBanner } from '../components/ColdStartBanner';
 import toast from 'react-hot-toast';
+import { AdSenseAd, adSlots } from '../components/AdSenseAd';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -373,6 +374,12 @@ export const EventGalleryPage: React.FC = () => {
             )}
           </div>
         </div>
+
+        <AdSenseAd
+          slot={adSlots.gallery}
+          placement="galeria pública"
+          className="mb-8"
+        />
 
         {/* Gallery grid */}
         {photos.length === 0 ? (

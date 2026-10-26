@@ -10,12 +10,11 @@ export const authService = {
     await api.post('/api/auth/login', { email, password });
   },
 
-  async getCurrentUser(): Promise<User> {
+  async getCurrentUser(): Promise<User | null> {
     const response = await api.get('/api/auth/me');
-    const raw = response.data?.user || response.data;
-    if (!raw || !raw.id) {
-      throw new Error('Usuário não autenticado.');
-    }
+    const raw = response.data?.user;
+    if (!raw?.id) return null;
+
     return {
       id: String(raw.id),
       name: raw.name || raw.email || 'Usuário',
