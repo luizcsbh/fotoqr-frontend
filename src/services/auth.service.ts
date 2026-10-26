@@ -31,7 +31,10 @@ export const authService = {
       id: String(raw.id),
       name: raw.name || raw.email || 'Usuário',
       email: raw.email || '',
-      avatar_url: raw.avatarUrl || raw.avatar_url || '',
+      avatar_url: String(raw.avatarUrl || raw.avatar_url || '').replace(
+        /\/api\/+uploads(?=\/)/,
+        '/uploads'
+      ),
       created_at: raw.createdAt || raw.created_at || '',
     };
   },

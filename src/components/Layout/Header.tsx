@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { QrCode, Camera, LogOut, Menu, X, PlusCircle, LayoutDashboard, User as UserIcon } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
@@ -7,8 +7,14 @@ import { Button } from '../UI/Button';
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [avatarLoadError, setAvatarLoadError] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const avatarUrl = user?.avatar_url && !avatarLoadError ? user.avatar_url : '';
+
+  useEffect(() => {
+    setAvatarLoadError(false);
+  }, [user?.avatar_url]);
 
   const handleLogout = async () => {
     await logout();
@@ -76,11 +82,12 @@ export const Header: React.FC = () => {
                 {/* User menu */}
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2.5 py-1 px-2.5 rounded-full bg-slate-50 border border-slate-200/60">
-                    {user?.avatar_url ? (
+                    {avatarUrl ? (
                       <img
-                        src={user.avatar_url}
-                        alt={user.name}
+                        src={avatarUrl}
+                        alt={user?.name || 'Avatar'}
                         className="w-7 h-7 rounded-full object-cover border border-brand-500/30"
+                        onError={() => setAvatarLoadError(true)}
                       />
                     ) : (
                       <div className="w-7 h-7 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold">
@@ -139,11 +146,12 @@ export const Header: React.FC = () => {
           {isAuthenticated ? (
             <>
               <div className="flex items-center gap-3 px-3 py-2 bg-slate-50 rounded-xl mb-2">
-                {user?.avatar_url ? (
+                {avatarUrl ? (
                   <img
-                    src={user.avatar_url}
-                    alt={user.name}
+                    src={avatarUrl}
+                    alt={user?.name || 'Avatar'}
                     className="w-9 h-9 rounded-full object-cover"
+                    onError={() => setAvatarLoadError(true)}
                   />
                 ) : (
                   <div className="w-9 h-9 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
