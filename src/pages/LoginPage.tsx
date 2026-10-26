@@ -4,6 +4,8 @@ import {
   ArrowLeft,
   Camera,
   CheckCircle2,
+  Eye,
+  EyeOff,
   LockKeyhole,
   Mail,
   QrCode,
@@ -36,6 +38,8 @@ export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isPasswordConfirmationVisible, setIsPasswordConfirmationVisible] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -189,7 +193,7 @@ export const LoginPage: React.FC = () => {
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={isPasswordVisible ? 'text' : 'password'}
                   autoComplete={isRegistering ? 'new-password' : 'current-password'}
                   required
                   minLength={8}
@@ -197,8 +201,17 @@ export const LoginPage: React.FC = () => {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Pelo menos 8 caracteres"
-                  className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
+                <button
+                  type="button"
+                  onClick={() => setIsPasswordVisible((visible) => !visible)}
+                  aria-label={isPasswordVisible ? 'Ocultar senha' : 'Mostrar senha'}
+                  aria-pressed={isPasswordVisible}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                >
+                  {isPasswordVisible ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </div>
 
@@ -212,7 +225,7 @@ export const LoginPage: React.FC = () => {
                   <input
                     id="password-confirmation"
                     name="password-confirmation"
-                    type="password"
+                    type={isPasswordConfirmationVisible ? 'text' : 'password'}
                     autoComplete="new-password"
                     required
                     minLength={8}
@@ -220,8 +233,17 @@ export const LoginPage: React.FC = () => {
                     value={passwordConfirmation}
                     onChange={(event) => setPasswordConfirmation(event.target.value)}
                     placeholder="Digite a senha novamente"
-                    className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setIsPasswordConfirmationVisible((visible) => !visible)}
+                    aria-label={isPasswordConfirmationVisible ? 'Ocultar confirmação da senha' : 'Mostrar confirmação da senha'}
+                    aria-pressed={isPasswordConfirmationVisible}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  >
+                    {isPasswordConfirmationVisible ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
             )}
