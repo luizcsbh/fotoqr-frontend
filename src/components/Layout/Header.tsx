@@ -59,6 +59,18 @@ export const Header: React.FC = () => {
                   <span>Meus Eventos</span>
                 </Link>
 
+                <Link
+                  to="/profile"
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                    isActive('/profile')
+                      ? 'bg-brand-50 text-brand-700'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                >
+                  <UserIcon className="w-4 h-4" />
+                  <span>Meu perfil</span>
+                </Link>
+
                 <div className="h-6 w-px bg-slate-200 mx-2" />
 
                 {/* User menu */}
@@ -159,6 +171,19 @@ export const Header: React.FC = () => {
               >
                 <LayoutDashboard className="w-5 h-5" />
                 Meus Eventos
+              </Link>
+
+              <Link
+                to="/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium ${
+                  isActive('/profile')
+                    ? 'bg-brand-50 text-brand-700'
+                    : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <UserIcon className="w-5 h-5" />
+                Meu perfil
               </Link>
 
               <button

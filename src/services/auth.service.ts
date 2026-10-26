@@ -24,6 +24,22 @@ export const authService = {
     };
   },
 
+  async updateProfile(name: string): Promise<void> {
+    await api.patch('/api/auth/profile', { name });
+  },
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await api.put('/api/auth/profile/password', { currentPassword, newPassword });
+  },
+
+  async updateAvatar(file: File): Promise<void> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    await api.post('/api/auth/profile/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
   async logout(): Promise<void> {
     await api.post('/api/auth/logout');
   },

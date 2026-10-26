@@ -14,6 +14,7 @@ import { PublicUploadPage } from './pages/PublicUploadPage';
 import { SuccessPage } from './pages/SuccessPage';
 import { EventGalleryPage } from './pages/EventGalleryPage';
 import { PresentationPage } from './pages/PresentationPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 // Standard App Layout with Header and Footer
@@ -44,6 +45,14 @@ export const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

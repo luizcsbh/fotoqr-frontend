@@ -19,7 +19,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshUser = useCallback(async () => {
     try {
-      setIsLoading(true);
       const currentUser = await authService.getCurrentUser();
       setUser(currentUser);
     } catch {
