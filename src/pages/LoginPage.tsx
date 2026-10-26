@@ -252,16 +252,6 @@ export const LoginPage: React.FC = () => {
             <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>
               {isRegistering ? 'Criar minha conta' : 'Entrar'}
             </Button>
-            {!isRegistering && (
-              <div className="text-right">
-                <Link
-                  to="/forgot-password"
-                  className="text-sm font-semibold text-brand-700 hover:text-brand-800"
-                >
-                  Esqueci minha senha
-                </Link>
-              </div>
-            )}
           </form>
 
           <div className="mt-6 rounded-2xl border border-emerald-200/70 bg-emerald-50/80 p-4 text-xs text-emerald-900">

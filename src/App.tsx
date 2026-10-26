@@ -15,7 +15,6 @@ import { SuccessPage } from './pages/SuccessPage';
 import { EventGalleryPage } from './pages/EventGalleryPage';
 import { PresentationPage } from './pages/PresentationPage';
 import { ProfilePage } from './pages/ProfilePage';
-import { PasswordRecoveryPage } from './pages/PasswordRecoveryPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 // Standard App Layout with Header and Footer
@@ -39,8 +38,6 @@ export const App: React.FC = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<PasswordRecoveryPage />} />
-        <Route path="/reset-password" element={<PasswordRecoveryPage />} />
 
         {/* Protected Dashboard Routes */}
         <Route
