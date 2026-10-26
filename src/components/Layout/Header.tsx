@@ -111,7 +111,7 @@ export const Header: React.FC = () => {
                     Entrar
                   </Button>
                 </Link>
-                <Link to="/login">
+                <Link to="/login?mode=register">
                   <Button variant="primary" size="md" leftIcon={<PlusCircle className="w-4 h-4" />}>
                     Criar Álbum
                   </Button>
@@ -196,9 +196,14 @@ export const Header: React.FC = () => {
             </>
           ) : (
             <div className="pt-2 flex flex-col gap-2">
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/login?mode=login" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="primary" className="w-full justify-center">
-                  Entrar ou criar conta
+                  Entrar
+                </Button>
+              </Link>
+              <Link to="/login?mode=register" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" className="w-full justify-center">
+                  Criar conta
                 </Button>
               </Link>
             </div>

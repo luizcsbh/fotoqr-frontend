@@ -32,7 +32,7 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mode, setMode] = useState<AuthMode>(() =>
-    new URLSearchParams(location.search).get('mode') === 'login' ? 'login' : 'register'
+    new URLSearchParams(location.search).get('mode') === 'register' ? 'register' : 'login'
   );
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
