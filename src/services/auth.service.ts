@@ -10,6 +10,15 @@ export const authService = {
     await api.post('/api/auth/login', { email, password });
   },
 
+  async requestPasswordReset(email: string): Promise<string> {
+    const response = await api.post('/api/auth/forgot-password', { email });
+    return response.data.message;
+  },
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    await api.post('/api/auth/reset-password', { token, newPassword });
+  },
+
   async getCurrentUser(): Promise<User | null> {
     const response = await api.get('/api/auth/me');
     const raw = response.data?.user;
