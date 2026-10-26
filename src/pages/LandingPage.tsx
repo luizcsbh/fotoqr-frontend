@@ -38,7 +38,7 @@ export const LandingPage: React.FC = () => {
 
           {/* Call to Actions */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
-            <Link to={isAuthenticated ? '/dashboard' : '/login'} className="w-full sm:w-auto">
+            <Link to={isAuthenticated ? '/dashboard' : '/login?mode=register'} className="w-full sm:w-auto">
               <Button
                 variant="primary"
                 size="lg"
@@ -183,7 +183,7 @@ export const LandingPage: React.FC = () => {
           <p className="text-brand-100 text-base sm:text-lg mb-8 max-w-xl mx-auto">
             Crie seu primeiro álbum em menos de 1 minuto. Gratuito, moderno e intuitivo para você e seus convidados.
           </p>
-          <Link to={isAuthenticated ? '/dashboard' : '/login'}>
+          <Link to={isAuthenticated ? '/dashboard' : '/login?mode=register'}>
             <button className="px-8 py-4 rounded-xl bg-white text-brand-700 font-bold text-base hover:bg-slate-100 shadow-xl transition-transform hover:scale-105 active:scale-95">
               Criar meu Álbum Agora
             </button>

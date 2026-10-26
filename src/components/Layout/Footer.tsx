@@ -20,7 +20,7 @@ export const Footer: React.FC = () => {
             <Link to="/" className="hover:text-brand-600 transition-colors">
               Início
             </Link>
-            <Link to="/login" className="hover:text-brand-600 transition-colors">
+            <Link to="/login?mode=login" className="hover:text-brand-600 transition-colors">
               Entrar
             </Link>
             <span className="text-slate-300">|</span>

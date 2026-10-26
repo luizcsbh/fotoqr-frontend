@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
   Camera,
@@ -17,8 +17,6 @@ import { authService } from '../services/auth.service';
 import { Card } from '../components/UI/Card';
 import { Button } from '../components/UI/Button';
 
-type AuthMode = 'login' | 'register';
-
 function getErrorMessage(error: unknown): string {
   if (typeof error === 'object' && error !== null && 'message' in error) {
     const { message } = error;
@@ -31,9 +29,8 @@ export const LoginPage: React.FC = () => {
   const { isAuthenticated, refreshUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [mode, setMode] = useState<AuthMode>(() =>
-    new URLSearchParams(location.search).get('mode') === 'register' ? 'register' : 'login'
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isRegistering = searchParams.get('mode') === 'register';
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -54,14 +51,14 @@ export const LoginPage: React.FC = () => {
     event.preventDefault();
     setError('');
 
-    if (mode === 'register' && password !== passwordConfirmation) {
+    if (isRegistering && password !== passwordConfirmation) {
       setError('As senhas não coincidem.');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      if (mode === 'register') {
+      if (isRegistering) {
         await authService.register(name, email, password);
       } else {
         await authService.login(email, password);
@@ -75,8 +72,6 @@ export const LoginPage: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-
-  const isRegistering = mode === 'register';
 
   return (
     <div className="min-h-[calc(100vh-8rem)] bg-gradient-to-b from-brand-50/60 via-slate-50 to-slate-50 flex items-center justify-center p-4 sm:p-6">
@@ -113,7 +108,7 @@ export const LoginPage: React.FC = () => {
               role="tab"
               aria-selected={isRegistering}
               onClick={() => {
-                setMode('register');
+                setSearchParams({ mode: 'register' });
                 setError('');
               }}
               className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
@@ -127,7 +122,7 @@ export const LoginPage: React.FC = () => {
               role="tab"
               aria-selected={!isRegistering}
               onClick={() => {
-                setMode('login');
+                setSearchParams({ mode: 'login' });
                 setError('');
               }}
               className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
