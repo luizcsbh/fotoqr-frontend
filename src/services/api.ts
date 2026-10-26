@@ -5,8 +5,8 @@ const envApiUrl = import.meta.env.VITE_API_URL || '';
 const isDev = import.meta.env.DEV;
 const isLocalhostTarget = envApiUrl.includes('localhost') || envApiUrl.includes('127.0.0.1');
 
-// When accessing from mobile on local Wi-Fi, use relative path '' so Vite proxies to backend
-const baseURL = isDev && isLocalhostTarget ? '' : envApiUrl;
+// Use the Netlify same-origin proxy in production so mobile browsers accept the auth cookie.
+const baseURL = isDev && !isLocalhostTarget ? envApiUrl : '';
 
 export const api = axios.create({
   baseURL,
