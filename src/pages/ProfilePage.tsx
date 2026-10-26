@@ -18,6 +18,7 @@ export const ProfilePage: React.FC = () => {
   const [name, setName] = useState(user?.name || '');
   const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState('');
+  const [avatarLoadError, setAvatarLoadError] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -32,6 +33,10 @@ export const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (user) setName(user.name);
   }, [user]);
+
+  useEffect(() => {
+    setAvatarLoadError(false);
+  }, [user?.avatar_url]);
 
   useEffect(() => {
     if (!selectedAvatar) {
@@ -63,6 +68,7 @@ export const ProfilePage: React.FC = () => {
     setProfileError('');
     setProfileMessage('');
     const file = event.target.files?.[0];
+    event.target.value = '';
     if (!file) {
       setSelectedAvatar(null);
       return;
@@ -122,7 +128,8 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  const displayedAvatar = avatarPreview || user?.avatar_url;
+  const displayedAvatar = avatarPreview || (!avatarLoadError ? user?.avatar_url : '');
+  const hasUnavailableAvatar = Boolean(user?.avatar_url && avatarLoadError && !avatarPreview);
 
   return (
     <div className="min-h-[calc(100vh-8rem)] bg-slate-50 px-4 py-8 sm:px-6">
@@ -145,6 +152,9 @@ export const ProfilePage: React.FC = () => {
                   src={displayedAvatar}
                   alt={`Foto de perfil de ${user?.name || 'usuário'}`}
                   className="h-20 w-20 rounded-full border-2 border-slate-200 object-cover"
+                  onError={() => {
+                    if (!avatarPreview) setAvatarLoadError(true);
+                  }}
                 />
               ) : (
                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-100 text-brand-700">
@@ -154,7 +164,7 @@ export const ProfilePage: React.FC = () => {
               <div>
                 <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
                   <Upload className="h-4 w-4" />
-                  Escolher foto
+                  {hasUnavailableAvatar ? 'Recuperar foto' : 'Escolher foto'}
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -163,7 +173,11 @@ export const ProfilePage: React.FC = () => {
                     aria-label="Escolher foto do perfil"
                   />
                 </label>
-                <p className="mt-2 text-xs text-slate-500">JPG, PNG ou WEBP; máximo de 5MB.</p>
+                <p className="mt-2 text-xs text-slate-500">
+                  {hasUnavailableAvatar
+                    ? 'A foto atual não está disponível. Selecione novamente uma imagem do seu dispositivo.'
+                    : 'JPG, PNG ou WEBP; máximo de 5MB.'}
+                </p>
                 {selectedAvatar && (
                   <Button
                     type="button"
