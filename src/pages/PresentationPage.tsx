@@ -92,12 +92,13 @@ export const PresentationPage: React.FC = () => {
   // Detect newly added photos and notify
   useEffect(() => {
     if (photos.length > 0) {
-      if (lastPhotosCountRef.current > 0 && photos.length > lastPhotosCountRef.current) {
+      const previousCount = lastPhotosCountRef.current;
+      lastPhotosCountRef.current = photos.length;
+      if (previousCount > 0 && photos.length > previousCount) {
         setNewPhotoAlert(true);
         const t = setTimeout(() => setNewPhotoAlert(false), 4000);
         return () => clearTimeout(t);
       }
-      lastPhotosCountRef.current = photos.length;
     }
   }, [photos.length]);
 

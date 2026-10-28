@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { UploadProgressItem } from '../types';
 import { photoService } from '../services/photo.service';
 import toast from 'react-hot-toast';
@@ -11,23 +11,26 @@ const ALLOWED_MIME_TYPES = [
   'image/heic',
   'image/heif',
 ];
-const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB, same as the backend MAX_FILE_SIZE_MB
 const MAX_FILES_PER_BATCH = 50;
 
 export const useUpload = (eventUuid: string, onAllComplete?: () => void) => {
   const [items, setItems] = useState<UploadProgressItem[]>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
-  // Clean up object URLs on unmount
+  // Clean up object URLs on unmount only. Depending on `items` here would revoke every
+  // preview on each state change (new files, upload progress), breaking the thumbnails.
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
   useEffect(() => {
     return () => {
-      items.forEach((item) => {
+      itemsRef.current.forEach((item) => {
         if (item.previewUrl) {
           URL.revokeObjectURL(item.previewUrl);
         }
       });
     };
-  }, [items]);
+  }, []);
 
   const validateFile = (file: File): string | null => {
     const ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
@@ -39,7 +42,7 @@ export const useUpload = (eventUuid: string, onAllComplete?: () => void) => {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return `O arquivo "${file.name}" excede o tamanho máximo de 25MB.`;
+      return `O arquivo "${file.name}" excede o tamanho máximo de 10MB.`;
     }
 
     return null;

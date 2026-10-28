@@ -26,6 +26,7 @@ export const photoService = {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 5 * 60_000, // up to 10MB per photo on slow mobile connections
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -53,6 +54,7 @@ export const photoService = {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 5 * 60_000, // up to 10MB per photo on slow mobile connections
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -108,6 +110,7 @@ export const photoService = {
     const response = await api.get(`/api/events/${eventId}/download`, {
       params,
       responseType: 'blob',
+      timeout: 0, // large ZIPs take longer than the default 45s timeout
     });
 
     const blob = new Blob([response.data], { type: 'application/zip' });
@@ -120,7 +123,8 @@ export const photoService = {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    window.URL.revokeObjectURL(url);
+    // Revoking synchronously cancels the download in Safari/Firefox
+    setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
   },
 
   async deletePhoto(id: string): Promise<void> {

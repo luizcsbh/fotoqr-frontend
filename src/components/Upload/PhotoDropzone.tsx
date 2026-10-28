@@ -69,7 +69,9 @@ export const PhotoDropzone: React.FC<PhotoDropzoneProps> = ({
         name="photo_files"
         type="file"
         multiple
-        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif"
+        // Generic image/* makes iOS convert HEIC photos to JPEG before upload;
+        // listing image/heic explicitly makes it send HEIC, which the server cannot decode.
+        accept="image/*"
         className="hidden"
         onChange={handleFileInputChange}
         disabled={disabled}
@@ -106,7 +108,7 @@ export const PhotoDropzone: React.FC<PhotoDropzoneProps> = ({
 
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
           <ImageIcon className="w-3.5 h-3.5 text-brand-600" />
-          <span>JPEG, PNG, WEBP ou HEIC (até 25MB cada)</span>
+          <span>JPEG, PNG, WEBP ou HEIC (até 10MB cada)</span>
         </div>
 
         {remaining <= 10 && remaining > 0 && (
