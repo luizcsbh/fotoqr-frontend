@@ -17,8 +17,13 @@ export const api = axios.create({
   timeout: 45000, // 45s for file uploads and cold starts
 });
 
-export const resolveApiUrl = (url: string): string =>
-  new URL(url, api.defaults.baseURL || window.location.origin).toString();
+export const resolveApiUrl = (url: string): string => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url;
+  }
+  return new URL(url, api.defaults.baseURL || window.location.origin).toString();
+};
 
 // Event listeners for Cold Start detection
 type ColdStartListener = (isColdStarting: boolean) => void;

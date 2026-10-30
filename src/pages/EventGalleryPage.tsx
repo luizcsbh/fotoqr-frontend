@@ -492,6 +492,12 @@ export const EventGalleryPage: React.FC = () => {
                     alt={photo.original_name || photo.filename}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (photo.thumbnail_url && target.src === photo.thumbnail_url && photo.url && photo.url !== photo.thumbnail_url) {
+                        target.src = photo.url;
+                      }
+                    }}
                   />
                   {/* Overlay on hover */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">

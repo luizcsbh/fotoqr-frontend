@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trash2, ZoomIn, Check } from 'lucide-react';
+import { Trash2, ZoomIn, Check, ImageOff } from 'lucide-react';
 import { Photo } from '../../types';
 import { formatFileSize } from '../Upload/PhotoPreview';
 
@@ -25,6 +25,8 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({
   selectable = true,
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(photo.thumbnail_url || photo.url);
 
   const formattedDate = photo.uploaded_at
     ? new Date(photo.uploaded_at).toLocaleString('pt-BR', {
@@ -35,6 +37,16 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({
       })
     : '';
 
+  const handleImageError = () => {
+    // If thumbnail failed, try full image before giving up
+    if (photo.thumbnail_url && currentSrc === photo.thumbnail_url && photo.url && photo.url !== photo.thumbnail_url) {
+      setCurrentSrc(photo.url);
+      return;
+    }
+    setImageLoaded(true);
+    setLoadError(true);
+  };
+
   return (
     <div
       onClick={onClick}
@@ -43,7 +55,7 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({
       }`}
     >
       {/* Selection Checkbox */}
-      {selectable && (
+      {selectable && !loadError && (
         <button
           type="button"
           onClick={(e) => {
@@ -64,23 +76,35 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({
           )}
         </button>
       )}
+
       {/* Skeleton loader until image loads */}
-      {!imageLoaded && (
+      {!imageLoaded && !loadError && (
         <div className="absolute inset-0 bg-slate-200 animate-pulse flex items-center justify-center">
           <span className="text-slate-400 text-xs">Carregando...</span>
         </div>
       )}
 
+      {/* Error state if image fails to load */}
+      {loadError && (
+        <div className="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center text-slate-400 p-3 text-center">
+          <ImageOff className="w-8 h-8 mb-1.5 text-slate-300 stroke-[1.5]" />
+          <span className="text-[11px] font-medium text-slate-500">Foto indisponível</span>
+        </div>
+      )}
+
       {/* Actual image */}
-      <img
-        src={photo.thumbnail_url || photo.url}
-        alt={photo.filename || 'Foto do evento'}
-        onLoad={() => setImageLoaded(true)}
-        loading="lazy"
-        className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${
-          imageLoaded ? 'opacity-100' : 'opacity-0'
-        }`}
-      />
+      {!loadError && (
+        <img
+          src={currentSrc}
+          alt={photo.filename || 'Foto do evento'}
+          onLoad={() => setImageLoaded(true)}
+          onError={handleImageError}
+          loading="lazy"
+          className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${
+            imageLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      )}
 
       {/* Dark hover overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-between p-3">

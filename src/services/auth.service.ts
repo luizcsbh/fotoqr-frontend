@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api, resolveApiUrl } from './api';
 import { User } from '../types';
 
 export const authService = {
@@ -27,14 +27,21 @@ export const authService = {
       throw new Error('Resposta inválida do servidor de autenticação.');
     }
 
+    const rawAvatar = String(raw.avatarUrl || raw.avatar_url || '');
+    let avatarUrl = '';
+    if (rawAvatar) {
+      if (rawAvatar.startsWith('http://') || rawAvatar.startsWith('https://') || rawAvatar.startsWith('data:')) {
+        avatarUrl = rawAvatar;
+      } else {
+        avatarUrl = resolveApiUrl(rawAvatar);
+      }
+    }
+
     return {
       id: String(raw.id),
       name: raw.name || raw.email || 'Usuário',
       email: raw.email || '',
-      avatar_url: String(raw.avatarUrl || raw.avatar_url || '').replace(
-        /\/api\/+uploads(?=\/)/,
-        '/uploads'
-      ),
+      avatar_url: avatarUrl,
       created_at: raw.createdAt || raw.created_at || '',
     };
   },
