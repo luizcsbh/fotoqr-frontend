@@ -20,6 +20,7 @@ export interface Event {
   storage_mode: StorageMode;
   is_active: boolean;
   enable_dj_playlist: boolean;
+  require_photo_approval: boolean;
   qr_code_url?: string;
   photo_count?: number;
   created_at: string;
@@ -37,10 +38,12 @@ export interface Photo {
   mime_type?: string;
   storage_provider?: string;
   uploaded_at: string;
+  review_status?: 'approved' | 'pending';
 }
 
 export interface EventStats {
   total_photos: number;
+  pending_photos?: number;
   total_size_bytes?: number;
   last_upload_at?: string | null;
   active_events_count?: number;

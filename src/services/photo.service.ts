@@ -77,12 +77,14 @@ export const photoService = {
   async getEventPhotos(
     identifier: string,
     page = 1,
-    limit = 24
+    limit = 24,
+    review: 'approved' | 'pending' = 'approved'
   ): Promise<PaginatedResponse<Photo>> {
     const response = await api.get<PaginatedResponse<Photo> | { photos: Photo[]; total: number; total_pages?: number }>(
       `/api/events/${identifier}/photos`,
       {
-        params: { page, limit },
+        // Pending photos are only listed for the event owner
+        params: review === 'pending' ? { page, limit, review } : { page, limit },
       }
     );
 
@@ -129,5 +131,15 @@ export const photoService = {
 
   async deletePhoto(id: string): Promise<void> {
     await api.delete(`/api/photos/${id}`);
+  },
+
+  async approvePhoto(id: string): Promise<void> {
+    await api.post(`/api/photos/${id}/approve`);
+  },
+
+  /** Approves every pending photo of the event, returning how many were published */
+  async approveAllPhotos(eventId: string): Promise<number> {
+    const response = await api.post(`/api/events/${eventId}/photos/approve`);
+    return Number(response.data?.approved ?? 0);
   },
 };

@@ -14,6 +14,7 @@ import {
   ToggleLeft,
   ToggleRight,
   Music2,
+  ShieldCheck,
   ExternalLink,
   RefreshCw,
   Tv,
@@ -30,6 +31,7 @@ import { LoadingScreen } from '../components/Layout/LoadingScreen';
 import { formatFileSize } from '../components/Upload/PhotoPreview';
 import { getGalleryUrl, getPresentationUrl } from '../utils/url';
 import { DJPlaylistPanel } from '../components/Music/DJPlaylistPanel';
+import { PendingPhotosPanel } from '../components/Gallery/PendingPhotosPanel';
 import toast from 'react-hot-toast';
 
 export const EventDetailPage: React.FC = () => {
@@ -103,6 +105,24 @@ export const EventDetailPage: React.FC = () => {
     },
     onError: () => {
       toast.error('Erro ao atualizar a playlist do DJ.');
+    },
+  });
+
+  // Turn host review of guest photos on/off
+  const photoApprovalMutation = useMutation({
+    mutationFn: (enabled: boolean) => eventService.setPhotoApproval(id!, enabled),
+    onSuccess: (updated) => {
+      queryClient.setQueryData(['event', id], updated);
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingPhotos'] });
+      toast.success(
+        updated.require_photo_approval
+          ? 'Moderação ativada! Novas fotos só aparecem na galeria depois da sua aprovação.'
+          : 'Moderação desativada. Novas fotos aparecem na galeria na hora.'
+      );
+    },
+    onError: () => {
+      toast.error('Erro ao atualizar a moderação de fotos.');
     },
   });
 
@@ -279,6 +299,24 @@ export const EventDetailPage: React.FC = () => {
             {event.enable_dj_playlist ? 'Playlist do DJ Ativa' : 'Ativar Playlist do DJ'}
           </Button>
 
+          {/* Toggle photo approval (moderation) button */}
+          <Button
+            variant={event.require_photo_approval ? 'outline' : 'secondary'}
+            size="sm"
+            onClick={() => photoApprovalMutation.mutate(!event.require_photo_approval)}
+            isLoading={photoApprovalMutation.isPending}
+            title={
+              event.require_photo_approval
+                ? 'Clique para publicar as novas fotos na hora, sem aprovação'
+                : 'Clique para revisar as fotos dos convidados antes de aparecerem na galeria'
+            }
+            leftIcon={
+              <ShieldCheck className={`w-4 h-4 ${event.require_photo_approval ? 'text-amber-600' : 'text-slate-400'}`} />
+            }
+          >
+            {event.require_photo_approval ? 'Moderação Ativa' : 'Moderar Fotos'}
+          </Button>
+
           {/* Delete event button */}
           <Button
             variant="ghost"
@@ -400,6 +438,9 @@ export const EventDetailPage: React.FC = () => {
           </a>
         </div>
       </div>
+
+      {/* Photo review queue (moderation) */}
+      <PendingPhotosPanel eventId={event.id} approvalRequired={event.require_photo_approval} />
 
       {/* Grid: QR Code & Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

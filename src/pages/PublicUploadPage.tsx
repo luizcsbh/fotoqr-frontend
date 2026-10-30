@@ -203,6 +203,13 @@ export const PublicUploadPage: React.FC = () => {
           </div>
         ) : (
           <>
+            {event.require_photo_approval && (
+              <div className="flex items-start gap-2 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-800">
+                <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <span>As fotos passam pela aprovação do anfitrião antes de aparecer na galeria do evento.</span>
+              </div>
+            )}
+
             {/* Dropzone component */}
             <PhotoDropzone
               onFilesSelected={addFiles}

@@ -15,6 +15,7 @@ export const normalizeEvent = (ev: any): Event => {
     end_date: ev.end_date || ev.endDate,
     is_active: ev.is_active !== undefined ? Boolean(ev.is_active) : (ev.isActive !== undefined ? Boolean(ev.isActive) : true),
     enable_dj_playlist: Boolean(ev.enable_dj_playlist ?? ev.enableDjPlaylist ?? false),
+    require_photo_approval: Boolean(ev.require_photo_approval ?? ev.requirePhotoApproval ?? false),
     photo_count: ev.photo_count !== undefined ? Number(ev.photo_count) : (ev.photoCount !== undefined ? Number(ev.photoCount) : 0),
     storage_mode: ev.storage_mode || ev.storageMode || 'fallback',
     qr_code_url: ev.qr_code_url || ev.qrCodeUrl,
@@ -71,6 +72,12 @@ export const eventService = {
     return normalizeEvent(raw);
   },
 
+  async setPhotoApproval(id: string, enabled: boolean): Promise<Event> {
+    const response = await api.patch(`/api/events/${id}/photo-approval`, { enabled });
+    const raw = response.data?.data || response.data?.event || response.data;
+    return normalizeEvent(raw);
+  },
+
   async deleteEvent(id: string): Promise<void> {
     await api.delete(`/api/events/${id}`);
   },
@@ -80,6 +87,7 @@ export const eventService = {
     const raw = response.data?.data || response.data?.stats || response.data;
     return {
       total_photos: raw.totalPhotos ?? raw.total_photos ?? 0,
+      pending_photos: raw.pendingPhotos ?? raw.pending_photos ?? 0,
       total_size_bytes: raw.totalStorageBytes ?? raw.total_size_bytes ?? 0,
       last_upload_at: raw.latestUpload ?? raw.last_upload_at ?? null,
       active_events_count: raw.active_events_count ?? 1,
