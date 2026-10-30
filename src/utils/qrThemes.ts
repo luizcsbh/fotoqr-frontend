@@ -418,6 +418,15 @@ export interface StoredQRCustomization {
   presetId?: string;
 }
 
+/** Whether this browser has a customization saved locally (from before server sync existed). */
+export function hasLocalQRCustomization(uuid: string): boolean {
+  try {
+    return localStorage.getItem(`fotoqr_qr_custom_${uuid}`) !== null;
+  } catch {
+    return false;
+  }
+}
+
 export function loadQRCustomization(uuid: string, defaultTitle: string): StoredQRCustomization {
   try {
     const raw = localStorage.getItem(`fotoqr_qr_custom_${uuid}`);

@@ -38,11 +38,13 @@ import {
   QRColorPreset,
   isContrastSafe,
   loadQRCustomization,
+  hasLocalQRCustomization,
   saveQRCustomization,
   StoredQRCustomization,
   getEventIconSvg,
 } from '../utils/qrThemes';
 import toast from 'react-hot-toast';
+import { ApiError } from '../types';
 
 export const QRCodeCustomizerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -57,6 +59,15 @@ export const QRCodeCustomizerPage: React.FC = () => {
     queryKey: ['event', id],
     queryFn: () => eventService.getEventById(id!),
     enabled: !!id,
+  });
+
+  // Saved design from the server, so it is the same on every device
+  const serverCustomization = useQuery({
+    queryKey: ['qrCustomization', id],
+    queryFn: () => eventService.getQRCustomization(id!),
+    enabled: !!id,
+    retry: 1,
+    staleTime: Infinity,
   });
 
   const previewCardRef = useRef<HTMLDivElement>(null);
@@ -82,11 +93,20 @@ export const QRCodeCustomizerPage: React.FC = () => {
   const [copiedLink, setCopiedLink] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [baselinePending, setBaselinePending] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  // true when the design only exists in this browser and still has to be sent to the server
+  const [needsSync, setNeedsSync] = useState(false);
+  const initializedForRef = useRef<string | null>(null);
 
-  // Initialize from storage or event data
+  // Initialize once per event: server design first, then this browser's copy, then theme defaults
   useEffect(() => {
-    if (event) {
-      const saved = loadQRCustomization(event.uuid, event.title);
+    if (event && !serverCustomization.isLoading && initializedForRef.current !== event.uuid) {
+      initializedForRef.current = event.uuid;
+      const fromServer = serverCustomization.data ?? null;
+      const saved = fromServer
+        ? { ...fromServer, title: fromServer.title || event.title }
+        : loadQRCustomization(event.uuid, event.title);
+      setNeedsSync(!fromServer && serverCustomization.isSuccess && hasLocalQRCustomization(event.uuid));
       setEventType(saved.eventType);
       setFgColor(saved.fgColor);
       setBgColor(saved.bgColor);
@@ -112,7 +132,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
       // The values above only land on the next render; take the "saved" baseline then
       setBaselinePending(true);
     }
-  }, [event]);
+  }, [event, serverCustomization.isLoading, serverCustomization.isSuccess, serverCustomization.data]);
 
   const publicUrl = useMemo(() => {
     return event ? getShareableEventUrl(event.uuid) : '';
@@ -186,17 +206,24 @@ export const QRCodeCustomizerPage: React.FC = () => {
     }
   }, [baselinePending, currentConfigJson]);
 
-  const hasUnsavedChanges = savedConfigJson !== null && currentConfigJson !== savedConfigJson;
+  const hasUnsavedChanges = needsSync || (savedConfigJson !== null && currentConfigJson !== savedConfigJson);
 
   // Save changes
-  const handleSave = () => {
-    if (!event || !currentConfig) return;
-    if (!saveQRCustomization(event.uuid, currentConfig)) {
-      toast.error('Não foi possível salvar neste navegador. Verifique se o armazenamento do site está liberado.');
-      return;
+  const handleSave = async () => {
+    if (!event || !currentConfig || isSaving) return;
+    setIsSaving(true);
+    try {
+      await eventService.saveQRCustomization(event.id, currentConfig);
+      // Local copy keeps working offline and as a fallback if the server is unreachable
+      saveQRCustomization(event.uuid, currentConfig);
+      setSavedConfigJson(currentConfigJson);
+      setNeedsSync(false);
+      toast.success('Alterações do QR Code salvas! Já valem em todos os seus dispositivos.');
+    } catch (err) {
+      toast.error((err as ApiError)?.message || 'Não foi possível salvar as alterações do QR Code.');
+    } finally {
+      setIsSaving(false);
     }
-    setSavedConfigJson(currentConfigJson);
-    toast.success('Alterações do QR Code salvas!');
   };
 
   // Ctrl+S / Cmd+S saves, and leaving the page with unsaved changes asks for confirmation
@@ -660,7 +687,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
     printWindow.document.close();
   };
 
-  if (isLoading) {
+  if (isLoading || serverCustomization.isLoading) {
     return <LoadingScreen message="Carregando estúdio de QR Code..." />;
   }
 
@@ -742,6 +769,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
               size="sm"
               onClick={handleSave}
               disabled={!hasUnsavedChanges}
+              isLoading={isSaving}
               className="relative bg-emerald-600 hover:bg-emerald-700 text-white border-transparent disabled:bg-emerald-600/50"
               leftIcon={hasUnsavedChanges ? <Save className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
               title={hasUnsavedChanges ? 'Salvar alterações (Ctrl+S)' : 'Nenhuma alteração pendente'}
@@ -1254,6 +1282,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                 size="lg"
                 onClick={handleSave}
                 disabled={!hasUnsavedChanges}
+                isLoading={isSaving}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white border-transparent shadow-md disabled:bg-emerald-50 disabled:text-emerald-700 disabled:shadow-none"
                 leftIcon={hasUnsavedChanges ? <Save className="w-4 h-4" /> : <Check className="w-4 h-4" />}
               >
@@ -1261,7 +1290,9 @@ export const QRCodeCustomizerPage: React.FC = () => {
               </Button>
               {hasUnsavedChanges && (
                 <p className="text-[11px] text-amber-700 text-center -mt-1">
-                  Você tem alterações não salvas. Atalho: Ctrl+S
+                  {needsSync
+                    ? 'Este estilo está salvo só neste navegador. Salve para usá-lo em todos os seus dispositivos.'
+                    : 'Você tem alterações não salvas. Atalho: Ctrl+S'}
                 </p>
               )}
 

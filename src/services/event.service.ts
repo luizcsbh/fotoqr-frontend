@@ -1,5 +1,6 @@
 import { api } from './api';
 import { Event, CreateEventData, EventStats } from '../types';
+import type { StoredQRCustomization } from '../utils/qrThemes';
 
 // Helper to normalize event properties to support both camelCase and snake_case
 export const normalizeEvent = (ev: any): Event => {
@@ -76,6 +77,17 @@ export const eventService = {
     const response = await api.patch(`/api/events/${id}/photo-approval`, { enabled });
     const raw = response.data?.data || response.data?.event || response.data;
     return normalizeEvent(raw);
+  },
+
+  /** The owner's saved QR code design, shared across devices (null when never saved) */
+  async getQRCustomization(id: string): Promise<StoredQRCustomization | null> {
+    const response = await api.get(`/api/events/${id}/qr-customization`);
+    return response.data?.data ?? null;
+  },
+
+  async saveQRCustomization(id: string, config: StoredQRCustomization): Promise<StoredQRCustomization> {
+    const response = await api.put(`/api/events/${id}/qr-customization`, config);
+    return response.data?.data;
   },
 
   async deleteEvent(id: string): Promise<void> {
