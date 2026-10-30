@@ -450,10 +450,13 @@ export function loadQRCustomization(uuid: string, defaultTitle: string): StoredQ
   };
 }
 
-export function saveQRCustomization(uuid: string, config: StoredQRCustomization): void {
+/** Returns false when the browser refused to store it (private mode, full or blocked storage). */
+export function saveQRCustomization(uuid: string, config: StoredQRCustomization): boolean {
   try {
     localStorage.setItem(`fotoqr_qr_custom_${uuid}`, JSON.stringify(config));
+    return true;
   } catch (e) {
     console.error('Failed to save QR customization in localStorage', e);
+    return false;
   }
 }

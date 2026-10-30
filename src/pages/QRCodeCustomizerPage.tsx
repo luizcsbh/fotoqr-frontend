@@ -81,6 +81,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
   const [selectedPresetId, setSelectedPresetId] = useState<string>('rose-gold');
   const [copiedLink, setCopiedLink] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [baselinePending, setBaselinePending] = useState(false);
 
   // Initialize from storage or event data
   useEffect(() => {
@@ -108,6 +109,8 @@ export const QRCodeCustomizerPage: React.FC = () => {
           setBorderColor(match.borderColor);
         }
       }
+      // The values above only land on the next render; take the "saved" baseline then
+      setBaselinePending(true);
     }
   }, [event]);
 
@@ -154,10 +157,10 @@ export const QRCodeCustomizerPage: React.FC = () => {
     setBorderColor(preset.borderColor);
   };
 
-  // Save changes
-  const handleSave = () => {
-    if (!event) return;
-    const config: StoredQRCustomization = {
+  // Current customization, in the exact shape that gets saved
+  const currentConfig = useMemo<StoredQRCustomization | null>(() => {
+    if (!event) return null;
+    return {
       eventType,
       fgColor,
       bgColor,
@@ -170,8 +173,59 @@ export const QRCodeCustomizerPage: React.FC = () => {
       iconChoice,
       presetId: selectedPresetId,
     };
-    saveQRCustomization(event.uuid, config);
-    toast.success('Estilo do QR Code salvo com sucesso!');
+  }, [event, eventType, fgColor, bgColor, title, subtitle, instructions, wifiName, wifiPassword, frameStyle, iconChoice, selectedPresetId]);
+
+  const currentConfigJson = currentConfig ? JSON.stringify(currentConfig) : '';
+  const [savedConfigJson, setSavedConfigJson] = useState<string | null>(null);
+
+  // Take the loaded customization as the "saved" baseline once the init effect has applied it
+  useEffect(() => {
+    if (baselinePending && currentConfigJson) {
+      setSavedConfigJson(currentConfigJson);
+      setBaselinePending(false);
+    }
+  }, [baselinePending, currentConfigJson]);
+
+  const hasUnsavedChanges = savedConfigJson !== null && currentConfigJson !== savedConfigJson;
+
+  // Save changes
+  const handleSave = () => {
+    if (!event || !currentConfig) return;
+    if (!saveQRCustomization(event.uuid, currentConfig)) {
+      toast.error('Não foi possível salvar neste navegador. Verifique se o armazenamento do site está liberado.');
+      return;
+    }
+    setSavedConfigJson(currentConfigJson);
+    toast.success('Alterações do QR Code salvas!');
+  };
+
+  // Ctrl+S / Cmd+S saves, and leaving the page with unsaved changes asks for confirmation
+  const handleSaveRef = useRef(handleSave);
+  handleSaveRef.current = handleSave;
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        handleSaveRef.current();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  const handleBack = () => {
+    if (hasUnsavedChanges && !window.confirm('Você tem alterações não salvas no QR Code. Sair mesmo assim?')) return;
+    navigate(`/dashboard/evento/${id}`);
   };
 
   // Restore Defaults for current theme
@@ -634,7 +688,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate(`/dashboard/evento/${id}`)}
+              onClick={handleBack}
               className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-600 hover:text-slate-900"
               title="Voltar ao evento"
             >
@@ -687,10 +741,15 @@ export const QRCodeCustomizerPage: React.FC = () => {
               variant="secondary"
               size="sm"
               onClick={handleSave}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white border-transparent"
-              leftIcon={<Save className="w-3.5 h-3.5" />}
+              disabled={!hasUnsavedChanges}
+              className="relative bg-emerald-600 hover:bg-emerald-700 text-white border-transparent disabled:bg-emerald-600/50"
+              leftIcon={hasUnsavedChanges ? <Save className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
+              title={hasUnsavedChanges ? 'Salvar alterações (Ctrl+S)' : 'Nenhuma alteração pendente'}
             >
-              Salvar
+              {hasUnsavedChanges ? 'Salvar' : 'Salvo'}
+              {hasUnsavedChanges && (
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-white" />
+              )}
             </Button>
           </div>
         </div>
@@ -1190,6 +1249,22 @@ export const QRCodeCustomizerPage: React.FC = () => {
 
             {/* Quick Actions Panel */}
             <div className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-3">
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={handleSave}
+                disabled={!hasUnsavedChanges}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white border-transparent shadow-md disabled:bg-emerald-50 disabled:text-emerald-700 disabled:shadow-none"
+                leftIcon={hasUnsavedChanges ? <Save className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+              >
+                {hasUnsavedChanges ? 'Salvar alterações do QR Code' : 'Alterações salvas'}
+              </Button>
+              {hasUnsavedChanges && (
+                <p className="text-[11px] text-amber-700 text-center -mt-1">
+                  Você tem alterações não salvas. Atalho: Ctrl+S
+                </p>
+              )}
+
               <Button
                 variant="primary"
                 size="lg"
