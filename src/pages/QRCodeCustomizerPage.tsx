@@ -764,15 +764,15 @@ export const QRCodeCustomizerPage: React.FC = () => {
             >
               Baixar PNG HD
             </Button>
+            {/* Always solid and clickable: when clean, clicking just saves (syncs) again */}
             <Button
-              variant="secondary"
+              variant="success"
               size="sm"
               onClick={handleSave}
-              disabled={!hasUnsavedChanges}
               isLoading={isSaving}
-              className="relative bg-emerald-600 hover:bg-emerald-700 text-white border-transparent disabled:bg-emerald-600/50"
+              className="relative font-bold"
               leftIcon={hasUnsavedChanges ? <Save className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
-              title={hasUnsavedChanges ? 'Salvar alterações (Ctrl+S)' : 'Nenhuma alteração pendente'}
+              title={hasUnsavedChanges ? 'Salvar alterações (Ctrl+S)' : 'Tudo salvo (Ctrl+S salva de novo)'}
             >
               {hasUnsavedChanges ? 'Salvar' : 'Salvo'}
               {hasUnsavedChanges && (
@@ -1278,15 +1278,14 @@ export const QRCodeCustomizerPage: React.FC = () => {
             {/* Quick Actions Panel */}
             <div className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-3">
               <Button
-                variant="secondary"
+                variant="success"
                 size="lg"
                 onClick={handleSave}
-                disabled={!hasUnsavedChanges}
                 isLoading={isSaving}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white border-transparent shadow-md disabled:bg-emerald-50 disabled:text-emerald-700 disabled:shadow-none"
-                leftIcon={hasUnsavedChanges ? <Save className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+                className={`w-full font-bold ${hasUnsavedChanges ? 'ring-2 ring-amber-300 ring-offset-2' : ''}`}
+                leftIcon={hasUnsavedChanges ? <Save className="w-5 h-5" /> : <Check className="w-5 h-5" />}
               >
-                {hasUnsavedChanges ? 'Salvar alterações do QR Code' : 'Alterações salvas'}
+                {hasUnsavedChanges ? 'Salvar alterações do QR Code' : 'Alterações salvas ✓'}
               </Button>
               {hasUnsavedChanges && (
                 <p className="text-[11px] text-amber-700 text-center -mt-1">
