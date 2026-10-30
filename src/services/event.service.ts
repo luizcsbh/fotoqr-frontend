@@ -14,6 +14,7 @@ export const normalizeEvent = (ev: any): Event => {
     start_date: ev.start_date || ev.startDate || ev.event_date || ev.eventDate,
     end_date: ev.end_date || ev.endDate,
     is_active: ev.is_active !== undefined ? Boolean(ev.is_active) : (ev.isActive !== undefined ? Boolean(ev.isActive) : true),
+    enable_dj_playlist: Boolean(ev.enable_dj_playlist ?? ev.enableDjPlaylist ?? false),
     photo_count: ev.photo_count !== undefined ? Number(ev.photo_count) : (ev.photoCount !== undefined ? Number(ev.photoCount) : 0),
     storage_mode: ev.storage_mode || ev.storageMode || 'fallback',
     qr_code_url: ev.qr_code_url || ev.qrCodeUrl,
@@ -60,6 +61,12 @@ export const eventService = {
 
   async toggleEvent(id: string, _isActive?: boolean): Promise<Event> {
     const response = await api.patch(`/api/events/${id}/toggle`);
+    const raw = response.data?.data || response.data?.event || response.data;
+    return normalizeEvent(raw);
+  },
+
+  async setDjPlaylist(id: string, enabled: boolean): Promise<Event> {
+    const response = await api.patch(`/api/events/${id}/dj-playlist`, { enabled });
     const raw = response.data?.data || response.data?.event || response.data;
     return normalizeEvent(raw);
   },

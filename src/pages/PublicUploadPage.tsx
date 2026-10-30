@@ -10,6 +10,7 @@ import { UploadProgress } from '../components/Upload/UploadProgress';
 import { ColdStartBanner } from '../components/ColdStartBanner';
 import { Button } from '../components/UI/Button';
 import { LoadingScreen } from '../components/Layout/LoadingScreen';
+import { DJMusicRequestWidget } from '../components/Music/DJMusicRequestWidget';
 
 export const PublicUploadPage: React.FC = () => {
   const { uuid } = useParams<{ uuid: string }>();
@@ -253,6 +254,11 @@ export const PublicUploadPage: React.FC = () => {
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
           <span>Suas fotos são enviadas diretamente para os anfitriões do evento.</span>
         </div>
+
+        {/* DJ Music Request Widget */}
+        {!isInactive && event.enable_dj_playlist && uuid && (
+          <DJMusicRequestWidget eventUuid={uuid} />
+        )}
       </main>
 
       {/* Public Footer */}

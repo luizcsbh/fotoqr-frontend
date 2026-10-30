@@ -19,6 +19,7 @@ export interface Event {
   end_date?: string;
   storage_mode: StorageMode;
   is_active: boolean;
+  enable_dj_playlist: boolean;
   qr_code_url?: string;
   photo_count?: number;
   created_at: string;
@@ -86,4 +87,42 @@ export interface UploadProgressItem {
   progress: number;
   status: UploadStatus;
   error?: string;
+}
+
+// ── DJ Music Request ───────────────────────────────────────────────────────
+
+export type MusicRequestStatus = 'pending' | 'approved' | 'rejected' | 'played';
+
+export interface MusicRequest {
+  id: string;
+  eventId: string;
+  spotifyTrackId: string | null;
+  title: string;
+  artist: string;
+  albumName: string | null;
+  albumArtUrl: string | null;
+  spotifyPreviewUrl: string | null;
+  guestName: string | null;
+  status: MusicRequestStatus;
+  position: number;
+  requestedAt: string;
+}
+
+export interface SpotifyTrack {
+  id: string;
+  title: string;
+  artist: string;
+  albumName: string;
+  albumArtUrl: string | null;
+  previewUrl: string | null;
+  durationMs: number;
+  spotifyUrl: string;
+}
+
+export interface MusicListResponse {
+  data: MusicRequest[];
+  total: number;
+  max: number;
+  enabled: boolean;
+  spotifyEnabled: boolean;
 }

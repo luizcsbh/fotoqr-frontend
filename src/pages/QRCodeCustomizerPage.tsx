@@ -40,6 +40,7 @@ import {
   loadQRCustomization,
   saveQRCustomization,
   StoredQRCustomization,
+  getEventIconSvg,
 } from '../utils/qrThemes';
 import toast from 'react-hot-toast';
 
@@ -200,19 +201,19 @@ export const QRCodeCustomizerPage: React.FC = () => {
   };
 
   // Get QR Image Settings based on choice
+  // The icon SVG is generated dynamically so its color always matches fgColor
   const qrImageSettings = useMemo(() => {
     if (iconChoice === 'none') return undefined;
     if (iconChoice === 'fotoqr') return getFotoQrImageSettings(280);
 
-    // Theme icon
-    const theme = EVENT_THEMES[eventType];
+    // Theme icon — color matches the QR foreground color
     return {
-      src: theme.iconSvg,
+      src: getEventIconSvg(eventType, fgColor),
       height: 52,
       width: 52,
       excavate: true,
     };
-  }, [iconChoice, eventType]);
+  }, [iconChoice, eventType, fgColor]);
 
   // High-Resolution PNG Export (2000px+ HQ)
   const handleDownloadHighRes = async () => {

@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   ToggleLeft,
   ToggleRight,
+  Music2,
   ExternalLink,
   RefreshCw,
   Tv,
@@ -28,6 +29,7 @@ import { Modal } from '../components/UI/Modal';
 import { LoadingScreen } from '../components/Layout/LoadingScreen';
 import { formatFileSize } from '../components/Upload/PhotoPreview';
 import { getGalleryUrl, getPresentationUrl } from '../utils/url';
+import { DJPlaylistPanel } from '../components/Music/DJPlaylistPanel';
 import toast from 'react-hot-toast';
 
 export const EventDetailPage: React.FC = () => {
@@ -83,6 +85,24 @@ export const EventDetailPage: React.FC = () => {
     },
     onError: () => {
       toast.error('Erro ao atualizar status do evento.');
+    },
+  });
+
+  // Turn the guests' DJ song request playlist on/off
+  const djPlaylistMutation = useMutation({
+    mutationFn: (enabled: boolean) => eventService.setDjPlaylist(id!, enabled),
+    onSuccess: (updated) => {
+      queryClient.setQueryData(['event', id], updated);
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      queryClient.invalidateQueries({ queryKey: ['music', updated.uuid] });
+      toast.success(
+        updated.enable_dj_playlist
+          ? 'Playlist do DJ ativada! Os convidados já podem pedir músicas.'
+          : 'Playlist do DJ desativada. Novos pedidos de música estão bloqueados.'
+      );
+    },
+    onError: () => {
+      toast.error('Erro ao atualizar a playlist do DJ.');
     },
   });
 
@@ -223,7 +243,7 @@ export const EventDetailPage: React.FC = () => {
           <span>Voltar para Meus Eventos</span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Toggle status button */}
           <Button
             variant={event.is_active ? 'outline' : 'secondary'}
@@ -239,6 +259,24 @@ export const EventDetailPage: React.FC = () => {
             }
           >
             {event.is_active ? 'Evento Ativo' : 'Pausado'}
+          </Button>
+
+          {/* Toggle DJ playlist button */}
+          <Button
+            variant={event.enable_dj_playlist ? 'outline' : 'secondary'}
+            size="sm"
+            onClick={() => djPlaylistMutation.mutate(!event.enable_dj_playlist)}
+            isLoading={djPlaylistMutation.isPending}
+            title={
+              event.enable_dj_playlist
+                ? 'Clique para desativar os pedidos de música dos convidados'
+                : 'Clique para permitir que os convidados peçam músicas ao DJ'
+            }
+            leftIcon={
+              <Music2 className={`w-4 h-4 ${event.enable_dj_playlist ? 'text-violet-600' : 'text-slate-400'}`} />
+            }
+          >
+            {event.enable_dj_playlist ? 'Playlist do DJ Ativa' : 'Ativar Playlist do DJ'}
           </Button>
 
           {/* Delete event button */}
@@ -453,6 +491,11 @@ export const EventDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* DJ Playlist Panel (only while the owner has the playlist turned on) */}
+      {event.uuid && event.enable_dj_playlist && (
+        <DJPlaylistPanel eventUuid={event.uuid} />
+      )}
 
       {/* Delete Confirmation Modal */}
       <Modal
