@@ -16,6 +16,7 @@ import {
   ExternalLink,
   RefreshCw,
   Tv,
+  Sparkles,
 } from 'lucide-react';
 import { eventService } from '../services/event.service';
 import { photoService } from '../services/photo.service';
@@ -301,6 +302,19 @@ export const EventDetailPage: React.FC = () => {
           >
             Baixar Todas em ZIP
           </Button>
+          <Link
+            to={`/dashboard/evento/${event.uuid}/qrcode`}
+            className="inline-flex w-full"
+          >
+            <Button
+              variant="secondary"
+              size="md"
+              className="w-full bg-linear-to-r from-brand-50 to-emerald-50 border-brand-200 text-brand-900 hover:border-brand-300 font-bold shadow-xs"
+              leftIcon={<Sparkles className="w-4 h-4 text-brand-600" />}
+            >
+              Personalizar QR Code & Placas de Mesa
+            </Button>
+          </Link>
           <a
             href={`/evento/${event.uuid}`}
             target="_blank"

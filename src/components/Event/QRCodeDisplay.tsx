@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
-import { Download, Share2, ExternalLink, Check, Copy, Wifi, Images, Tv } from 'lucide-react';
+import { Download, Share2, ExternalLink, Check, Copy, Wifi, Images, Tv, Sparkles, Palette } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '../UI/Button';
 import { getShareableEventUrl, getGalleryUrl, getPresentationUrl } from '../../utils/url';
 import { getFotoQrImageSettings } from '../../utils/qrLogo';
+import { loadQRCustomization, EVENT_THEMES } from '../../utils/qrThemes';
 import toast from 'react-hot-toast';
 
 interface QRCodeDisplayProps {
@@ -14,6 +16,24 @@ interface QRCodeDisplayProps {
 export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }) => {
   const qrRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
+
+  // Load custom style if saved
+  const customConfig = React.useMemo(() => {
+    return loadQRCustomization(uuid, eventTitle);
+  }, [uuid, eventTitle]);
+
+  const activeTheme = EVENT_THEMES[customConfig.eventType] || EVENT_THEMES.casamento;
+
+  const qrImageSettings = React.useMemo(() => {
+    if (customConfig.iconChoice === 'none') return undefined;
+    if (customConfig.iconChoice === 'fotoqr') return getFotoQrImageSettings(280);
+    return {
+      src: activeTheme.iconSvg,
+      height: 52,
+      width: 52,
+      excavate: true,
+    };
+  }, [customConfig.iconChoice, activeTheme]);
 
   // Mobile-friendly URL that uses local Wi-Fi IP when running locally
   const publicUrl = getShareableEventUrl(uuid);
@@ -46,19 +66,19 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
     exportCanvas.height = qrSize + padding * 2 + headerHeight;
 
     // Background
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = customConfig.bgColor || '#ffffff';
     ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
 
     // Title
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = customConfig.fgColor || '#0f172a';
     ctx.font = 'bold 24px system-ui, -apple-system, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(eventTitle, exportCanvas.width / 2, 45);
+    ctx.fillText(customConfig.title || eventTitle, exportCanvas.width / 2, 45);
 
     // Subtitle
-    ctx.fillStyle = '#059669';
+    ctx.fillStyle = '#64748b';
     ctx.font = '600 15px system-ui, -apple-system, sans-serif';
-    ctx.fillText('Aponte a câmera e envie suas fotos', exportCanvas.width / 2, 72);
+    ctx.fillText(customConfig.subtitle || 'Aponte a câmera e envie suas fotos', exportCanvas.width / 2, 72);
 
     // Draw QR
     ctx.drawImage(canvas, padding, padding + headerHeight);
@@ -66,7 +86,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
     // Download link
     const image = exportCanvas.toDataURL('image/png');
     const link = document.createElement('a');
-    const filename = `${eventTitle.toLowerCase().replace(/[^a-z0-9]/gi, '_')}-qrcode.png`;
+    const filename = `${(customConfig.title || eventTitle).toLowerCase().replace(/[^a-z0-9]/gi, '_')}-qrcode.png`;
     link.download = filename;
     link.href = image;
     link.click();
@@ -92,29 +112,47 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
   };
 
   return (
-    <div className="flex flex-col items-center bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm text-center">
+    <div className="flex flex-col items-center bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm text-center">
       <div className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full flex items-center gap-1.5">
         <Wifi className="w-3.5 h-3.5" />
         QR Code do Evento
       </div>
-      <h3 className="text-2xl font-black text-slate-900 mb-1 tracking-tight">
+      <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-1 tracking-tight">
         Exiba aos seus convidados
       </h3>
-      <p className="text-xs sm:text-sm text-slate-500 max-w-sm mb-6">
+      <p className="text-xs sm:text-sm text-slate-500 max-w-sm mb-4">
         Qualquer pessoa que apontar a câmera do celular poderá enviar fotos sem precisar instalar aplicativo ou fazer login.
       </p>
 
-      {/* Large QR Code Box with high contrast */}
+      {/* Button to open QR Customizer Studio */}
+      <Link to={`/dashboard/evento/${uuid}/qrcode`} className="w-full mb-5">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="w-full bg-linear-to-r from-brand-50 to-emerald-50 border-brand-200 text-brand-900 hover:border-brand-300 font-bold shadow-xs py-2.5"
+          leftIcon={<Sparkles className="w-4 h-4 text-brand-600" />}
+        >
+          Personalizar Cores & Placas de Mesa
+        </Button>
+      </Link>
+
+      {/* Large QR Code Box with custom colors */}
       <div
         ref={qrRef}
-        className="p-6 bg-white rounded-3xl border-4 border-slate-100 shadow-xl flex items-center justify-center relative group"
+        className="p-6 rounded-3xl border-4 shadow-xl flex items-center justify-center relative group"
+        style={{
+          backgroundColor: customConfig.bgColor || '#ffffff',
+          borderColor: customConfig.fgColor ? `${customConfig.fgColor}25` : '#f1f5f9',
+        }}
       >
         <QRCodeCanvas
           value={publicUrl}
-          size={280}
+          size={260}
+          fgColor={customConfig.fgColor || '#000000'}
+          bgColor={customConfig.bgColor || '#ffffff'}
           level="H"
           includeMargin={false}
-          imageSettings={getFotoQrImageSettings(280)}
+          imageSettings={qrImageSettings}
         />
       </div>
 

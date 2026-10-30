@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Image as ImageIcon, ArrowRight, ToggleLeft, ToggleRight, QrCode, Maximize2, Download, Copy, Check, ExternalLink, Tv } from 'lucide-react';
+import { Calendar, Image as ImageIcon, ArrowRight, ToggleLeft, ToggleRight, QrCode, Maximize2, Download, Copy, Check, ExternalLink, Tv, Sparkles } from 'lucide-react';
 import { Event } from '../../types';
 import { Card } from '../UI/Card';
 import { Badge } from '../UI/Badge';
@@ -9,6 +9,7 @@ import { Modal } from '../UI/Modal';
 import { QRCodeCanvas } from 'qrcode.react';
 import { getShareableEventUrl, getPresentationUrl } from '../../utils/url';
 import { getFotoQrImageSettings } from '../../utils/qrLogo';
+import { loadQRCustomization, EVENT_THEMES } from '../../utils/qrThemes';
 import toast from 'react-hot-toast';
 
 interface EventCardProps {
@@ -28,6 +29,24 @@ export const EventCard: React.FC<EventCardProps> = ({
   // Generates mobile-friendly URL using LAN IP when on localhost
   const publicUrl = getShareableEventUrl(event.uuid);
   const manageUrl = `/dashboard/event/${event.id || event.uuid}`;
+
+  // Custom QR style if configured
+  const customConfig = React.useMemo(() => {
+    return loadQRCustomization(event.uuid, event.title);
+  }, [event.uuid, event.title]);
+
+  const activeTheme = EVENT_THEMES[customConfig.eventType] || EVENT_THEMES.casamento;
+
+  const qrImageSettings = React.useMemo(() => {
+    if (customConfig.iconChoice === 'none') return undefined;
+    if (customConfig.iconChoice === 'fotoqr') return getFotoQrImageSettings(280);
+    return {
+      src: activeTheme.iconSvg,
+      height: 52,
+      width: 52,
+      excavate: true,
+    };
+  }, [customConfig.iconChoice, activeTheme]);
 
   const formattedDate = (() => {
     const rawStart = event.start_date || event.event_date;
@@ -233,14 +252,22 @@ export const EventCard: React.FC<EventCardProps> = ({
       >
         <div className="flex flex-col items-center text-center py-2">
           {/* Prominent High-Contrast QR Code */}
-          <div className="p-6 bg-white rounded-3xl border-4 border-slate-100 shadow-xl inline-block mb-4">
+          <div
+            className="p-6 rounded-3xl border-4 shadow-xl inline-block mb-4"
+            style={{
+              backgroundColor: customConfig.bgColor || '#ffffff',
+              borderColor: customConfig.fgColor ? `${customConfig.fgColor}25` : '#f1f5f9',
+            }}
+          >
             <QRCodeCanvas
               id={`qr-canvas-${event.uuid}`}
               value={publicUrl}
               size={280}
+              fgColor={customConfig.fgColor || '#000000'}
+              bgColor={customConfig.bgColor || '#ffffff'}
               level="H"
               includeMargin={false}
-              imageSettings={getFotoQrImageSettings(280)}
+              imageSettings={qrImageSettings}
             />
           </div>
 
@@ -279,6 +306,16 @@ export const EventCard: React.FC<EventCardProps> = ({
 
           {/* Actions */}
           <div className="flex flex-wrap gap-2 w-full justify-center">
+            <Link to={`/dashboard/evento/${event.uuid}/qrcode`} className="inline-flex">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="bg-linear-to-r from-brand-50 to-emerald-50 border-brand-200 text-brand-900 font-bold"
+                leftIcon={<Sparkles className="w-4 h-4 text-brand-600" />}
+              >
+                Personalizar Cores & Temas
+              </Button>
+            </Link>
             <Button
               variant="primary"
               size="sm"

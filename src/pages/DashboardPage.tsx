@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, FolderHeart, RefreshCw, AlertCircle } from 'lucide-react';
 import { eventService } from '../services/event.service';
@@ -12,6 +13,7 @@ import toast from 'react-hot-toast';
 import { AdSenseAd, adSlots } from '../components/AdSenseAd';
 
 export const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'paused'>('all');
@@ -85,14 +87,15 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button
-            variant="primary"
-            onClick={() => setIsModalOpen(true)}
-            leftIcon={<Plus className="w-5 h-5" />}
-            size="md"
-          >
-            Criar Novo Evento
-          </Button>
+          <Link to="/dashboard/criar-evento">
+            <Button
+              variant="primary"
+              leftIcon={<Plus className="w-5 h-5" />}
+              size="md"
+            >
+              Criar Novo Evento
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -119,31 +122,28 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0 self-start sm:self-auto">
             <button
               onClick={() => setFilterActive('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                filterActive === 'all'
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filterActive === 'all'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
-              }`}
+                }`}
             >
               Todos ({events.length})
             </button>
             <button
               onClick={() => setFilterActive('active')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                filterActive === 'active'
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filterActive === 'active'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
-              }`}
+                }`}
             >
               Ativos ({events.filter((e) => e.is_active).length})
             </button>
             <button
               onClick={() => setFilterActive('paused')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                filterActive === 'paused'
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filterActive === 'paused'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
-              }`}
+                }`}
             >
               Pausados ({events.filter((e) => !e.is_active).length})
             </button>
@@ -187,7 +187,7 @@ export const DashboardPage: React.FC = () => {
           title="Nenhum álbum criado ainda"
           description="Crie seu primeiro álbum de fotos para gerar o QR Code e começar a receber momentos inesquecíveis dos seus convidados."
           actionText="Criar Meu Primeiro Evento"
-          onAction={() => setIsModalOpen(true)}
+          onAction={() => navigate('/dashboard/criar-evento')}
         />
       )}
 

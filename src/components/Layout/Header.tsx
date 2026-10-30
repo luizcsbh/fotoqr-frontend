@@ -66,6 +66,18 @@ export const Header: React.FC = () => {
                 </Link>
 
                 <Link
+                  to="/dashboard/criar-evento"
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    isActive('/dashboard/criar-evento')
+                      ? 'bg-brand-600 text-white shadow-xs'
+                      : 'bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-200/60'
+                  }`}
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>Novo Evento</span>
+                </Link>
+
+                <Link
                   to="/profile"
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors ${
                     isActive('/profile')
@@ -179,6 +191,19 @@ export const Header: React.FC = () => {
               >
                 <LayoutDashboard className="w-5 h-5" />
                 Meus Eventos
+              </Link>
+
+              <Link
+                to="/dashboard/criar-evento"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium ${
+                  isActive('/dashboard/criar-evento')
+                    ? 'bg-brand-50 text-brand-700 font-bold'
+                    : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <PlusCircle className="w-5 h-5 text-brand-600" />
+                Criar Novo Evento
               </Link>
 
               <Link

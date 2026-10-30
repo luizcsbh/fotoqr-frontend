@@ -15,6 +15,8 @@ import { SuccessPage } from './pages/SuccessPage';
 import { EventGalleryPage } from './pages/EventGalleryPage';
 import { PresentationPage } from './pages/PresentationPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { QRCodeCustomizerPage } from './pages/QRCodeCustomizerPage';
+import { CreateEventPage } from './pages/CreateEventPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 // Standard App Layout with Header and Footer
@@ -49,6 +51,30 @@ export const App: React.FC = () => {
           }
         />
         <Route
+          path="/dashboard/criar-evento"
+          element={
+            <ProtectedRoute>
+              <CreateEventPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/novo-evento"
+          element={
+            <ProtectedRoute>
+              <CreateEventPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/events/create"
+          element={
+            <ProtectedRoute>
+              <CreateEventPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/profile"
           element={
             <ProtectedRoute>
@@ -69,6 +95,22 @@ export const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <EventDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/event/:id/qrcode"
+          element={
+            <ProtectedRoute>
+              <QRCodeCustomizerPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/evento/:id/qrcode"
+          element={
+            <ProtectedRoute>
+              <QRCodeCustomizerPage />
             </ProtectedRoute>
           }
         />
