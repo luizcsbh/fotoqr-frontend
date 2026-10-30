@@ -39,6 +39,8 @@ export interface Photo {
   storage_provider?: string;
   uploaded_at: string;
   review_status?: 'approved' | 'pending';
+  /** Why automatic moderation sent it to review (owner's pending list only) */
+  review_reason?: string | null;
 }
 
 export interface EventStats {

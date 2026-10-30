@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ShieldCheck, Check, Trash2, Loader2, CheckCheck } from 'lucide-react';
+import { ShieldCheck, Check, Trash2, Loader2, CheckCheck, AlertTriangle, Eye } from 'lucide-react';
 import { photoService } from '../../services/photo.service';
 import { ApiError } from '../../types';
 import { Button } from '../UI/Button';
@@ -22,6 +22,9 @@ const PAGE_SIZE = 48;
 export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({ eventId, approvalRequired }) => {
   const queryClient = useQueryClient();
   const [busyId, setBusyId] = useState<string | null>(null);
+  // Photos flagged (or not checked) by automatic moderation start blurred until the owner reveals them
+  const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
+  const reveal = (photoId: string) => setRevealedIds((prev) => new Set(prev).add(photoId));
 
   const { data, isLoading } = useQuery({
     queryKey: ['pendingPhotos', eventId],
@@ -88,7 +91,7 @@ export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({ eventId,
               Fotos aguardando aprovação {total > 0 && <span className="text-amber-600">({total})</span>}
             </h3>
             <p className="text-xs text-slate-500">
-              Só aparecem na galeria, no telão e nos downloads depois que você aprovar.
+              Só aparecem na galeria, no telão e nos downloads depois que você aprovar. Fotos marcadas pela moderação automática chegam desfocadas.
             </p>
           </div>
         </div>
@@ -120,17 +123,43 @@ export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({ eventId,
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {pending.map((photo) => {
               const isBusy = busyId === photo.id || approveAllMutation.isPending;
+              const isHidden = !!photo.review_reason && !revealedIds.has(photo.id);
               return (
                 <div
                   key={photo.id}
-                  className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 group"
+                  className={`relative rounded-2xl overflow-hidden border bg-slate-100 group ${
+                    photo.review_reason ? 'border-red-300' : 'border-slate-200'
+                  }`}
                 >
                   <img
                     src={photo.thumbnail_url || photo.url}
                     alt={photo.original_name || photo.filename}
                     loading="lazy"
-                    className={`w-full aspect-square object-cover ${isBusy ? 'opacity-50' : ''}`}
+                    className={`w-full aspect-square object-cover transition ${isBusy ? 'opacity-50' : ''} ${
+                      isHidden ? 'blur-xl scale-110' : ''
+                    }`}
                   />
+                  {photo.review_reason && (
+                    <div className="absolute inset-x-0 top-0 p-2 bg-gradient-to-b from-black/70 to-transparent">
+                      <span
+                        className="inline-flex items-start gap-1 text-[10px] leading-tight font-semibold text-white"
+                        title={photo.review_reason}
+                      >
+                        <AlertTriangle className="w-3 h-3 text-red-300 shrink-0" />
+                        <span className="line-clamp-2">{photo.review_reason}</span>
+                      </span>
+                    </div>
+                  )}
+                  {isHidden && (
+                    <button
+                      type="button"
+                      onClick={() => reveal(photo.id)}
+                      className="absolute inset-0 m-auto h-8 w-24 inline-flex items-center justify-center gap-1 rounded-xl bg-white/90 hover:bg-white text-slate-800 text-xs font-bold shadow"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      Mostrar
+                    </button>
+                  )}
                   <div className="absolute inset-x-0 bottom-0 p-2 flex gap-2 bg-gradient-to-t from-black/70 to-transparent">
                     <button
                       type="button"
