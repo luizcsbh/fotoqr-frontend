@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../components/UI/Button';
-import { Card } from '../components/UI/Card';
 import {
   Camera,
   CheckCircle2,
@@ -11,9 +10,9 @@ import {
   Search,
   ArrowLeft,
   Smartphone,
-  Volume2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import jsQR from 'jsqr';
 import { invitationService } from '../services/invitation.service';
 import { CheckinValidationResult } from '../types';
 
@@ -29,7 +28,10 @@ export const QRScannerPage: React.FC = () => {
   const [sessionCount, setSessionCount] = useState(0);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const animFrameRef = useRef<number>(0);
+  const scanningRef = useRef<boolean>(true);
 
   // Audio Beep Generator using Web Audio API
   const playSound = (type: 'success' | 'error') => {
@@ -57,6 +59,44 @@ export const QRScannerPage: React.FC = () => {
     }
   };
 
+  const startDecoding = useCallback(() => {
+    const decode = () => {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      if (!video || !canvas || !scanningRef.current) return;
+
+      if (video.readyState < video.HAVE_ENOUGH_DATA) {
+        animFrameRef.current = requestAnimationFrame(decode);
+        return;
+      }
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: 'dontInvert',
+      });
+
+      if (code && code.data) {
+        scanningRef.current = false;
+        handleValidateRef.current(code.data);
+        return; // stop loop
+      }
+
+      animFrameRef.current = requestAnimationFrame(decode);
+    };
+
+    animFrameRef.current = requestAnimationFrame(decode);
+  }, []);
+
+  // Keep a stable ref to handleValidate so startDecoding callback doesn't go stale
+  const handleValidateRef = useRef<(raw: string) => void>(() => {});
+
   const startCamera = async () => {
     try {
       if (streamRef.current) {
@@ -75,6 +115,8 @@ export const QRScannerPage: React.FC = () => {
       }
       setHasCameraPermission(true);
       setScanning(true);
+      scanningRef.current = true;
+      startDecoding();
     } catch (err) {
       setHasCameraPermission(false);
       toast.error('Não foi possível acessar a câmera do dispositivo.');
@@ -87,6 +129,7 @@ export const QRScannerPage: React.FC = () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((t) => t.stop());
       }
+      cancelAnimationFrame(animFrameRef.current);
     };
   }, [eventId]);
 
