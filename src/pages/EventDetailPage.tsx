@@ -632,7 +632,7 @@ export const EventDetailPage: React.FC = () => {
 
       {/* Tab 3: Invitation Management & Deliveries */}
       {activeTab === 'invitations' && (
-        <InvitationManager eventId={event.id} />
+        <InvitationManager eventId={event.id} eventTitle={event.title} />
       )}
 
       {/* Tab 4: QR Code Readers & Security */}

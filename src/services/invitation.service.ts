@@ -124,6 +124,23 @@ export const invitationService = {
 
   // ── Deliveries ─────────────────────────────────────────────────────────
 
+  async getDeliveryConfig(eventId: string | number) {
+    const response = await api.get(`/api/events/${eventId}/deliveries/config`);
+    return response.data.data as {
+      smtpConfigured: boolean;
+      smtpHost: string | null;
+      smtpPort: number;
+      smtpFrom: string;
+      whatsappApiConfigured: boolean;
+      whatsappPhoneId: string | null;
+    };
+  },
+
+  async markInvitationSent(invitationId: number, channel: 'whatsapp' | 'email', destination?: string) {
+    const response = await api.post(`/api/invitations/${invitationId}/mark-sent`, { channel, destination });
+    return response.data;
+  },
+
   async sendEmailBatch(eventId: string | number, invitationIds?: number[], attachPdf = false) {
     const response = await api.post(`/api/events/${eventId}/deliveries/email`, { invitationIds, attachPdf });
     return response.data.data;
