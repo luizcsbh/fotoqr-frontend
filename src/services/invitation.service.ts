@@ -18,7 +18,28 @@ export const invitationService = {
     return response.data.data;
   },
 
-  async updateEventCover(eventId: string | number, coverData: { coverImage?: string; backgroundImage?: string }) {
+  async updateEventCover(
+    eventId: string | number,
+    coverData: {
+      coverImage?: string;
+      backgroundImage?: string;
+      coverFile?: File;
+      bgFile?: File;
+    }
+  ) {
+    if (coverData.coverFile || coverData.bgFile) {
+      const formData = new FormData();
+      if (coverData.coverFile) formData.append('coverFile', coverData.coverFile);
+      if (coverData.bgFile) formData.append('bgFile', coverData.bgFile);
+      if (coverData.coverImage) formData.append('coverImage', coverData.coverImage);
+      if (coverData.backgroundImage) formData.append('backgroundImage', coverData.backgroundImage);
+
+      const response = await api.post(`/api/events/${eventId}/cover`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data.data;
+    }
+
     const response = await api.post(`/api/events/${eventId}/cover`, coverData);
     return response.data.data;
   },

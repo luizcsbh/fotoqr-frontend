@@ -122,6 +122,17 @@ export const PublicInvitationPage: React.FC = () => {
             )}
           </div>
 
+          {/* Optional Event Cover / Artwork */}
+          {event.coverImage && (
+            <div className="w-full max-h-56 overflow-hidden bg-slate-100 flex items-center justify-center border-b border-slate-100">
+              <img
+                src={event.coverImage}
+                alt={event.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
           {/* Ticket Body */}
           <div className="p-6 space-y-6 text-center">
             {/* Guest Info */}

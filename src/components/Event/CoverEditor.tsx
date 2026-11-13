@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
-import { Palette, Sparkles, Image as ImageIcon, Save, Check } from 'lucide-react';
+import {
+  Palette,
+  Sparkles,
+  Image as ImageIcon,
+  Save,
+  Upload,
+  X,
+  FileImage,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../../services/invitation.service';
 
@@ -37,19 +45,71 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
   const [selectedTemplate, setSelectedTemplate] = useState('custom');
   const [coverImageUrl, setCoverImageUrl] = useState(initialCoverImage || '');
   const [bgImageUrl, setBgImageUrl] = useState(initialBgImage || '');
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [bgFile, setBgFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
+  const bgFileInputRef = useRef<HTMLInputElement>(null);
+
   const activeTemplate = TEMPLATES.find((t) => t.id === selectedTemplate) || TEMPLATES[6];
+
+  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('A imagem de capa deve ter no máximo 10MB.');
+        return;
+      }
+      setCoverFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setCoverImageUrl(previewUrl);
+    }
+  };
+
+  const handleBgFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('A imagem de fundo deve ter no máximo 10MB.');
+        return;
+      }
+      setBgFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setBgImageUrl(previewUrl);
+    }
+  };
+
+  const clearCoverFile = () => {
+    setCoverFile(null);
+    setCoverImageUrl('');
+    if (coverFileInputRef.current) coverFileInputRef.current.value = '';
+  };
+
+  const clearBgFile = () => {
+    setBgFile(null);
+    setBgImageUrl('');
+    if (bgFileInputRef.current) bgFileInputRef.current.value = '';
+  };
 
   const handleSave = async () => {
     try {
       setSaving(true);
-      await invitationService.updateEventCover(eventId, {
-        coverImage: coverImageUrl || activeTemplate.bg,
-        backgroundImage: bgImageUrl || activeTemplate.bg,
+
+      const result = await invitationService.updateEventCover(eventId, {
+        coverImage: coverFile ? undefined : (coverImageUrl || activeTemplate.bg),
+        backgroundImage: bgFile ? undefined : (bgImageUrl || activeTemplate.bg),
+        coverFile: coverFile || undefined,
+        bgFile: bgFile || undefined,
       });
+
       toast.success('Identidade visual da capa salva com sucesso!');
-      if (onSave) onSave(coverImageUrl || activeTemplate.bg, bgImageUrl || activeTemplate.bg);
+      if (onSave) {
+        onSave(
+          result?.coverImage || coverImageUrl || activeTemplate.bg,
+          result?.backgroundImage || bgImageUrl || activeTemplate.bg
+        );
+      }
     } catch (err: any) {
       toast.error(err?.response?.data?.error || 'Erro ao salvar capa do evento.');
     } finally {
@@ -62,68 +122,152 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Controls */}
         <div className="space-y-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <Palette className="w-5 h-5 text-indigo-600" />
-              Modelos de Capa e Convite
-            </h3>
-            <p className="text-sm text-slate-600 mb-4">
-              Escolha um tema pré-definido ou configure uma imagem de capa personalizada.
-            </p>
+          <Card className="p-6 space-y-6">
+            <div>
+              <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+                <Palette className="w-5 h-5 text-indigo-600" />
+                Modelos de Capa e Convite
+              </h3>
+              <p className="text-sm text-slate-600">
+                Escolha um tema pré-definido ou importe imagens personalizadas para a capa e fundo do convite.
+              </p>
+            </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+            {/* Template Presets */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {TEMPLATES.map((tmpl) => (
                 <button
                   key={tmpl.id}
                   type="button"
                   onClick={() => setSelectedTemplate(tmpl.id)}
-                  className={`p-3 rounded-lg border text-left transition-all ${
+                  className={`p-3 rounded-xl border text-left transition-all ${
                     selectedTemplate === tmpl.id
-                      ? 'border-indigo-600 ring-2 ring-indigo-500/20 shadow-sm'
-                      : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-indigo-600 ring-2 ring-indigo-500/20 shadow-sm bg-indigo-50/20'
+                      : 'border-slate-200 hover:border-slate-300 bg-white'
                   }`}
                 >
-                  <div className="h-10 rounded mb-2 shadow-inner" style={{ background: tmpl.bg }} />
+                  <div className="h-10 rounded-lg mb-2 shadow-inner" style={{ background: tmpl.bg }} />
                   <span className="text-xs font-semibold text-slate-700 block">{tmpl.name}</span>
                 </button>
               ))}
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-slate-100">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                  URL da Imagem de Capa (Opcional)
-                </label>
-                <div className="relative">
-                  <input
-                    type="url"
-                    placeholder="https://exemplo.com/minha-capa.jpg"
-                    value={coverImageUrl}
-                    onChange={(e) => setCoverImageUrl(e.target.value)}
-                    className="w-full text-sm rounded-lg border border-slate-300 py-2 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                  <ImageIcon className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                </div>
+            {/* Upload Option 1: Imagem de Capa do Convite */}
+            <div className="space-y-3 pt-4 border-t border-slate-100">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Imagem da Capa / Arte do Convite
+              </label>
+
+              {/* File Upload Button / Area */}
+              <input
+                ref={coverFileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                onChange={handleCoverFileChange}
+                className="hidden"
+                id="coverFileInput"
+              />
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => coverFileInputRef.current?.click()}
+                  className="flex items-center justify-center gap-2 border-dashed border-2 border-indigo-200 hover:border-indigo-400 bg-indigo-50/40 text-indigo-700"
+                >
+                  <Upload className="w-4 h-4 text-indigo-600" />
+                  Importar Imagem do Computador
+                </Button>
+
+                {coverFile && (
+                  <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg text-xs text-slate-700 truncate max-w-xs">
+                    <FileImage className="w-4 h-4 text-indigo-600 shrink-0" />
+                    <span className="truncate">{coverFile.name}</span>
+                    <button
+                      type="button"
+                      onClick={clearCoverFile}
+                      className="text-slate-400 hover:text-rose-600 ml-auto"
+                      title="Remover"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                  URL da Imagem de Fundo (Opcional)
-                </label>
-                <div className="relative">
-                  <input
-                    type="url"
-                    placeholder="https://exemplo.com/fundo.jpg"
-                    value={bgImageUrl}
-                    onChange={(e) => setBgImageUrl(e.target.value)}
-                    className="w-full text-sm rounded-lg border border-slate-300 py-2 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                  <Sparkles className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                </div>
+              {/* URL fallback */}
+              <div className="relative">
+                <input
+                  type="url"
+                  placeholder="Ou cole a URL da imagem (https://...)"
+                  value={coverFile ? '' : coverImageUrl}
+                  disabled={Boolean(coverFile)}
+                  onChange={(e) => setCoverImageUrl(e.target.value)}
+                  className="w-full text-xs rounded-xl border border-slate-200 py-2.5 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-400"
+                />
+                <ImageIcon className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end">
+            {/* Upload Option 2: Imagem de Fundo (Background) */}
+            <div className="space-y-3 pt-4 border-t border-slate-100">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Imagem de Fundo do Convite Digital (Opcional)
+              </label>
+
+              <input
+                ref={bgFileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                onChange={handleBgFileChange}
+                className="hidden"
+                id="bgFileInput"
+              />
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => bgFileInputRef.current?.click()}
+                  className="flex items-center justify-center gap-2 border-dashed border-2 border-slate-200 hover:border-slate-400 text-slate-700"
+                >
+                  <Upload className="w-4 h-4 text-slate-600" />
+                  Importar Imagem de Fundo
+                </Button>
+
+                {bgFile && (
+                  <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg text-xs text-slate-700 truncate max-w-xs">
+                    <FileImage className="w-4 h-4 text-slate-600 shrink-0" />
+                    <span className="truncate">{bgFile.name}</span>
+                    <button
+                      type="button"
+                      onClick={clearBgFile}
+                      className="text-slate-400 hover:text-rose-600 ml-auto"
+                      title="Remover"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* URL fallback */}
+              <div className="relative">
+                <input
+                  type="url"
+                  placeholder="Ou cole a URL do fundo (https://...)"
+                  value={bgFile ? '' : bgImageUrl}
+                  disabled={Boolean(bgFile)}
+                  onChange={(e) => setBgImageUrl(e.target.value)}
+                  className="w-full text-xs rounded-xl border border-slate-200 py-2.5 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-400"
+                />
+                <Sparkles className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end">
               <Button onClick={handleSave} disabled={saving} className="flex items-center gap-2">
                 {saving ? 'Salvando...' : <><Save className="w-4 h-4" /> Salvar Identidade Visual</>}
               </Button>
@@ -138,18 +282,18 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
               Visualização Prévia do Convite
             </h4>
             <div
-              className="rounded-2xl p-8 shadow-xl text-center relative overflow-hidden transition-all duration-300 border border-slate-200"
+              className="rounded-3xl p-8 shadow-2xl text-center relative overflow-hidden transition-all duration-300 border border-slate-200"
               style={{
                 background: bgImageUrl ? `url(${bgImageUrl}) center/cover no-repeat` : activeTemplate.bg,
                 color: activeTemplate.text,
-                minHeight: '380px',
+                minHeight: '420px',
               }}
             >
               <div className="relative z-10 flex flex-col justify-between h-full space-y-6">
                 <div>
                   <span
                     className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4"
-                    style={{ backgroundColor: 'rgba(0,0,0,0.2)', color: '#fff' }}
+                    style={{ backgroundColor: 'rgba(0,0,0,0.25)', color: '#fff' }}
                   >
                     {activeTemplate.name}
                   </span>
@@ -160,12 +304,12 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                 </div>
 
                 {coverImageUrl && (
-                  <div className="max-w-[200px] mx-auto rounded-lg overflow-hidden shadow-md">
-                    <img src={coverImageUrl} alt="Capa" className="w-full h-auto object-cover max-h-36" />
+                  <div className="max-w-[260px] mx-auto rounded-2xl overflow-hidden shadow-lg border-2 border-white/80 bg-white">
+                    <img src={coverImageUrl} alt="Capa / Arte do Convite" className="w-full h-auto object-cover max-h-48" />
                   </div>
                 )}
 
-                <div className="bg-white/90 backdrop-blur-sm text-slate-800 rounded-xl p-4 max-w-sm mx-auto shadow-md space-y-1">
+                <div className="bg-white/95 backdrop-blur-md text-slate-800 rounded-2xl p-4 max-w-sm mx-auto shadow-md space-y-1">
                   <p className="font-bold text-sm text-indigo-700">Nome do Convidado</p>
                   <p className="text-xs text-slate-500">
                     {eventDate ? new Date(eventDate).toLocaleDateString('pt-BR') : 'Data do Evento'} • {eventLocation || 'Local a ser confirmado'}
@@ -173,7 +317,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                 </div>
 
                 <div className="pt-2">
-                  <p className="text-xs opacity-75">Validação por QR Code Exclusivo na Portaria</p>
+                  <p className="text-xs opacity-80 font-medium">Validação por QR Code Exclusivo na Portaria</p>
                 </div>
               </div>
             </div>
@@ -183,4 +327,3 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
     </div>
   );
 };
-
