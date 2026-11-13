@@ -23,6 +23,8 @@ export const invitationService = {
     coverData: {
       coverImage?: string;
       backgroundImage?: string;
+      location?: string;
+      startAt?: string;
       coverFile?: File;
       bgFile?: File;
     }
@@ -33,6 +35,8 @@ export const invitationService = {
       if (coverData.bgFile) formData.append('bgFile', coverData.bgFile);
       if (coverData.coverImage) formData.append('coverImage', coverData.coverImage);
       if (coverData.backgroundImage) formData.append('backgroundImage', coverData.backgroundImage);
+      if (coverData.location !== undefined) formData.append('location', coverData.location);
+      if (coverData.startAt !== undefined) formData.append('startAt', coverData.startAt);
 
       const response = await api.post(`/api/events/${eventId}/cover`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },

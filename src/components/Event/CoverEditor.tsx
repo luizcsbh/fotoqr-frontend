@@ -9,6 +9,9 @@ import {
   Upload,
   X,
   FileImage,
+  MapPin,
+  Calendar,
+  Clock,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../../services/invitation.service';
@@ -33,11 +36,24 @@ const TEMPLATES = [
   { id: 'custom', name: 'Personalizado', bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', text: '#ffffff', accent: '#a18cd1' },
 ];
 
+const formatToDateTimeLocal = (dateStr?: string): string => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const y = d.getFullYear();
+  const m = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mm = pad(d.getMinutes());
+  return `${y}-${m}-${day}T${hh}:${mm}`;
+};
+
 export const CoverEditor: React.FC<CoverEditorProps> = ({
   eventId,
   eventTitle,
-  eventLocation,
-  eventDate,
+  eventLocation: initialLocation = '',
+  eventDate: initialDate = '',
   initialCoverImage,
   initialBgImage,
   onSave,
@@ -47,6 +63,8 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
   const [bgImageUrl, setBgImageUrl] = useState(initialBgImage || '');
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [bgFile, setBgFile] = useState<File | null>(null);
+  const [location, setLocation] = useState(initialLocation);
+  const [startAt, setStartAt] = useState(() => formatToDateTimeLocal(initialDate));
   const [saving, setSaving] = useState(false);
 
   const coverFileInputRef = useRef<HTMLInputElement>(null);
@@ -101,9 +119,11 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
         backgroundImage: bgFile ? undefined : (bgImageUrl || activeTemplate.bg),
         coverFile: coverFile || undefined,
         bgFile: bgFile || undefined,
+        location: location.trim(),
+        startAt: startAt ? new Date(startAt).toISOString() : undefined,
       });
 
-      toast.success('Identidade visual da capa salva com sucesso!');
+      toast.success('Identidade visual e dados do convite salvos com sucesso!');
       if (onSave) {
         onSave(
           result?.coverImage || coverImageUrl || activeTemplate.bg,
@@ -129,7 +149,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                 Modelos de Capa e Convite
               </h3>
               <p className="text-sm text-slate-600">
-                Escolha um tema pré-definido ou importe imagens personalizadas para a capa e fundo do convite.
+                Escolha um tema pré-definido, configure o endereço, data e importe imagens para o convite.
               </p>
             </div>
 
@@ -150,6 +170,41 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                   <span className="text-xs font-semibold text-slate-700 block">{tmpl.name}</span>
                 </button>
               ))}
+            </div>
+
+            {/* Event Date & Location Fields for the Invitation */}
+            <div className="space-y-4 pt-4 border-t border-slate-100">
+              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-indigo-600" />
+                Informações do Convite (Endereço, Data e Hora)
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-slate-500" /> Data e Hora do Evento
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={startAt}
+                    onChange={(e) => setStartAt(e.target.value)}
+                    className="w-full text-xs rounded-xl border border-slate-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-slate-500" /> Endereço / Local
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Espaço Villa Real, Salão Imperial"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full text-xs rounded-xl border border-slate-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Upload Option 1: Imagem de Capa do Convite */}
@@ -286,7 +341,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
               style={{
                 background: bgImageUrl ? `url(${bgImageUrl}) center/cover no-repeat` : activeTemplate.bg,
                 color: activeTemplate.text,
-                minHeight: '420px',
+                minHeight: '440px',
               }}
             >
               <div className="relative z-10 flex flex-col justify-between h-full space-y-6">
@@ -309,11 +364,21 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                   </div>
                 )}
 
-                <div className="bg-white/95 backdrop-blur-md text-slate-800 rounded-2xl p-4 max-w-sm mx-auto shadow-md space-y-1">
-                  <p className="font-bold text-sm text-indigo-700">Nome do Convidado</p>
-                  <p className="text-xs text-slate-500">
-                    {eventDate ? new Date(eventDate).toLocaleDateString('pt-BR') : 'Data do Evento'} • {eventLocation || 'Local a ser confirmado'}
-                  </p>
+                <div className="bg-white/95 backdrop-blur-md text-slate-800 rounded-2xl p-4 max-w-sm mx-auto shadow-md space-y-2 text-left">
+                  <div className="text-center pb-1 border-b border-slate-100">
+                    <span className="text-[10px] uppercase font-bold text-slate-400">Convidado(a)</span>
+                    <p className="font-bold text-base text-indigo-700">Maria Oliveira</p>
+                  </div>
+                  <div className="text-xs text-slate-600 space-y-1 pt-1">
+                    <p className="flex items-center gap-1.5 font-medium">
+                      <Calendar className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                      <span>{startAt ? new Date(startAt).toLocaleString('pt-BR') : 'Data e Hora a definir'}</span>
+                    </p>
+                    <p className="flex items-center gap-1.5 font-medium">
+                      <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                      <span>{location || 'Local a ser confirmado'}</span>
+                    </p>
+                  </div>
                 </div>
 
                 <div className="pt-2">

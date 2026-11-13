@@ -12,6 +12,8 @@ import {
   AlertCircle,
   Clock,
   Sparkles,
+  Download,
+  QrCode,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../services/invitation.service';
@@ -53,6 +55,21 @@ export const PublicInvitationPage: React.FC = () => {
       toast.error('Erro ao baixar o convite em PDF.');
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleDownloadQrCode = () => {
+    if (!data?.invitation.qrCodeUrl) return;
+    try {
+      const link = document.createElement('a');
+      link.href = data.invitation.qrCodeUrl;
+      link.download = `qrcode-${data.guest.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success('Download do QR Code concluído!');
+    } catch {
+      toast.error('Erro ao baixar a imagem do QR Code.');
     }
   };
 
@@ -205,25 +222,36 @@ export const PublicInvitationPage: React.FC = () => {
             </div>
 
             {/* Actions */}
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleShare}
-                className="flex items-center justify-center gap-1.5"
-              >
-                <Share2 className="w-4 h-4 text-indigo-600" /> Compartilhar
-              </Button>
-
+            <div className="space-y-2 pt-2">
               <Button
                 variant="primary"
-                size="sm"
-                disabled={downloading}
-                onClick={handleDownloadPdf}
-                className="flex items-center justify-center gap-1.5"
+                size="md"
+                onClick={handleDownloadQrCode}
+                className="w-full flex items-center justify-center gap-2 shadow-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white"
               >
-                <FileDown className="w-4 h-4" /> Baixar PDF
+                <Download className="w-4 h-4" /> Baixar Imagem do QR Code
               </Button>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleShare}
+                  className="flex items-center justify-center gap-1.5"
+                >
+                  <Share2 className="w-4 h-4 text-indigo-600" /> Compartilhar
+                </Button>
+
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={downloading}
+                  onClick={handleDownloadPdf}
+                  className="flex items-center justify-center gap-1.5"
+                >
+                  <FileDown className="w-4 h-4 text-slate-700" /> Baixar PDF
+                </Button>
+              </div>
             </div>
           </div>
         </div>
