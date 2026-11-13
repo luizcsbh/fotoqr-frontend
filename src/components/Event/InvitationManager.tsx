@@ -138,6 +138,11 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
   };
 
   const handleReissue = async (id: number) => {
+    const inv = invitations.find((i) => i.id === id);
+    if (inv?.status === 'cancelled') {
+      toast.error('Este convite está cancelado.');
+      return;
+    }
     try {
       await invitationService.resendInvitation(id);
       toast.success('Convite reemitido com novo QR Code seguro!');
@@ -148,6 +153,11 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
   };
 
   const handleDownloadPdf = async (id: number, guestName: string) => {
+    const inv = invitations.find((i) => i.id === id);
+    if (inv?.status === 'cancelled') {
+      toast.error('Este convite está cancelado.');
+      return;
+    }
     try {
       await invitationService.downloadPdf(id, `convite-${guestName.toLowerCase().replace(/\s+/g, '-')}.pdf`);
       toast.success('Download do PDF iniciado!');
@@ -158,6 +168,10 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
 
   // Envio Direto Real via WhatsApp para Convidado Individual
   const handleDirectWhatsApp = async (inv: Invitation) => {
+    if (inv.status === 'cancelled') {
+      toast.error('Este convite está cancelado. Ações de envio bloqueadas.');
+      return;
+    }
     if (!inv.guestPhone) {
       toast.error('Este convidado não possui telefone cadastrado.');
       return;
@@ -188,6 +202,10 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
 
   // Envio Direto Real por E-mail para Convidado Individual
   const handleDirectEmail = async (inv: Invitation) => {
+    if (inv.status === 'cancelled') {
+      toast.error('Este convite está cancelado. Ações de envio bloqueadas.');
+      return;
+    }
     if (!inv.guestEmail) {
       toast.error('Este convidado não possui e-mail cadastrado.');
       return;
@@ -234,11 +252,13 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
   // Disparo para todos ou selecionados via E-mail
   const handleDispatchEmail = async (ids?: number[]) => {
     const isAll = !ids || ids.length === 0;
-    const targetInvs = isAll ? invitations : invitations.filter((i) => ids.includes(i.id));
+    const targetInvs = (isAll ? invitations : invitations.filter((i) => ids.includes(i.id))).filter(
+      (i) => i.status !== 'cancelled'
+    );
     const count = targetInvs.length;
 
     if (count === 0) {
-      toast.error('Nenhum convite disponível para envio.');
+      toast.error('Nenhum convite ativo disponível para envio.');
       return;
     }
 
@@ -257,7 +277,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
 
     const confirmed = await showConfirm({
       title: 'Disparo de Convites por E-mail',
-      message: `Deseja enviar o convite por e-mail para ${isAll ? 'TODOS os convidados' : `${count} convidado(s) selecionado(s)`}?`,
+      message: `Deseja enviar o convite por e-mail para ${isAll ? 'TODOS os convidados ativos' : `${count} convidado(s) selecionado(s)`}?`,
       variant: 'info',
       confirmText: 'Iniciar Disparo',
       cancelText: 'Cancelar',
@@ -267,7 +287,8 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
     try {
       setDispatching(true);
       setDispatchChannel('email');
-      const res = await invitationService.sendEmailBatch(eventId, ids, false);
+      const validIds = targetInvs.map((i) => i.id);
+      const res = await invitationService.sendEmailBatch(eventId, validIds, false);
       toast.success(`Disparo de e-mails concluído: ${res.sent} enviado(s) com sucesso${res.failed > 0 ? `, ${res.failed} falha(s)` : ''}!`);
       fetchInvitations();
     } catch (err: any) {
@@ -281,11 +302,13 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
   // Disparo para todos ou selecionados via WhatsApp
   const handleDispatchWhatsApp = async (ids?: number[]) => {
     const isAll = !ids || ids.length === 0;
-    const targetInvs = isAll ? invitations : invitations.filter((i) => ids.includes(i.id));
+    const targetInvs = (isAll ? invitations : invitations.filter((i) => ids.includes(i.id))).filter(
+      (i) => i.status !== 'cancelled'
+    );
     const invsWithPhone = targetInvs.filter((i) => Boolean(i.guestPhone));
 
     if (invsWithPhone.length === 0) {
-      toast.error('Nenhum dos convidados selecionados possui telefone cadastrado.');
+      toast.error('Nenhum dos convidados ativos possui telefone cadastrado.');
       return;
     }
 
@@ -302,7 +325,8 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
         try {
           setDispatching(true);
           setDispatchChannel('whatsapp');
-          const res = await invitationService.sendWhatsAppBatch(eventId, ids);
+          const validIds = invsWithPhone.map((i) => i.id);
+          const res = await invitationService.sendWhatsAppBatch(eventId, validIds);
           toast.success(`Disparo de WhatsApp concluído: ${res.sent} enviado(s)${res.failed > 0 ? `, ${res.failed} falha(s)` : ''}!`);
           fetchInvitations();
         } catch (err: any) {
@@ -321,15 +345,20 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
     setIsWhatsAppModalOpen(true);
   };
 
+  const activeInvitations = invitations.filter((i) => i.status !== 'cancelled');
+
   const toggleSelectAll = () => {
-    if (selectedIds.length === invitations.length) {
+    if (activeInvitations.length > 0 && selectedIds.length === activeInvitations.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(invitations.map((i) => i.id));
+      setSelectedIds(activeInvitations.map((i) => i.id));
     }
   };
 
   const toggleSelect = (id: number) => {
+    const inv = invitations.find((i) => i.id === id);
+    if (inv?.status === 'cancelled') return;
+
     if (selectedIds.includes(id)) {
       setSelectedIds(selectedIds.filter((item) => item !== id));
     } else {
@@ -344,10 +373,10 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
     return <Badge variant="warning">Pendente ({used}/{max})</Badge>;
   };
 
-  // Lista de convites selecionados ou todos que possuem telefone para o assistente WhatsApp
+  // Lista de convites selecionados ou todos que possuem telefone para o assistente WhatsApp (exclui cancelados)
   const waQueueList = (selectedIds.length > 0
-    ? invitations.filter((i) => selectedIds.includes(i.id))
-    : invitations
+    ? activeInvitations.filter((i) => selectedIds.includes(i.id))
+    : activeInvitations
   ).filter((i) => Boolean(i.guestPhone));
 
   const currentWaGuest = waQueueList[waQueueIndex];
@@ -447,10 +476,11 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                   <th className="py-3 px-4 w-10">
                     <input
                       type="checkbox"
-                      checked={selectedIds.length > 0 && selectedIds.length === invitations.length}
+                      checked={activeInvitations.length > 0 && selectedIds.length === activeInvitations.length}
+                      disabled={activeInvitations.length === 0}
                       onChange={toggleSelectAll}
-                      className="rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                      title="Selecionar todos os convites"
+                      className="rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                      title={activeInvitations.length === 0 ? 'Nenhum convite ativo para selecionar' : 'Selecionar todos os convites ativos'}
                     />
                   </th>
                   <th className="py-3 px-4">Convidado</th>
@@ -460,118 +490,166 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {invitations.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-4">
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.includes(inv.id)}
-                        onChange={() => toggleSelect(inv.id)}
-                        className="rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                      />
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <p className="font-semibold text-slate-800">{inv.guestName}</p>
-                      <span className="text-xs text-slate-400">Cat: {inv.guestCategory}</span>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      {getStatusBadge(inv.status, inv.usedEntries, inv.maxEntries)}
-                    </td>
-                    <td className="py-3.5 px-4 text-xs text-slate-600">
-                      {inv.guestEmail && <p>{inv.guestEmail}</p>}
-                      {inv.guestPhone && <p className="text-slate-400">{inv.guestPhone}</p>}
-                      {!inv.guestEmail && !inv.guestPhone && (
-                        <span className="text-slate-400 italic">Sem contato cadastrado</span>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {/* 1. Enviar Real via WhatsApp */}
-                        <button
-                          type="button"
-                          title={
-                            inv.guestPhone
-                              ? `Enviar Convite Real via WhatsApp (${inv.guestPhone})`
-                              : 'Convidado sem telefone cadastrado'
-                          }
-                          disabled={!inv.guestPhone}
-                          onClick={() => handleDirectWhatsApp(inv)}
-                          className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
-                            inv.guestPhone
-                              ? 'text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50'
-                              : 'text-slate-300 cursor-not-allowed'
+                {invitations.map((inv) => {
+                  const isCancelled = inv.status === 'cancelled';
+                  return (
+                    <tr
+                      key={inv.id}
+                      className={
+                        isCancelled
+                          ? 'bg-slate-50/70 opacity-60'
+                          : 'hover:bg-slate-50/80 transition-colors'
+                      }
+                    >
+                      <td className="py-3.5 px-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(inv.id)}
+                          disabled={isCancelled}
+                          onChange={() => !isCancelled && toggleSelect(inv.id)}
+                          className={`rounded text-indigo-600 focus:ring-indigo-500 ${
+                            isCancelled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer'
                           }`}
-                        >
-                          <MessageSquare className="w-4 h-4 shrink-0" />
-                        </button>
-
-                        {/* 2. Enviar Real por E-mail */}
-                        <button
-                          type="button"
-                          title={
-                            inv.guestEmail
-                              ? `Enviar Convite Real por E-mail (${inv.guestEmail})`
-                              : 'Convidado sem e-mail cadastrado'
-                          }
-                          disabled={!inv.guestEmail}
-                          onClick={() => handleDirectEmail(inv)}
-                          className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
-                            inv.guestEmail
-                              ? 'text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50'
-                              : 'text-slate-300 cursor-not-allowed'
-                          }`}
-                        >
-                          <Mail className="w-4 h-4 shrink-0" />
-                        </button>
-
-                        {/* 3. Ver Página Pública do Convite */}
-                        <a
-                          href={`/convite/${inv.tokenHash}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          title="Ver Página Pública do Convite"
-                          className="inline-flex items-center justify-center w-8 h-8 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                        >
-                          <ExternalLink className="w-4 h-4 shrink-0" />
-                        </a>
-
-                        {/* 4. Baixar Convite em PDF */}
-                        <button
-                          type="button"
-                          title="Baixar Convite em PDF"
-                          onClick={() => handleDownloadPdf(inv.id, inv.guestName)}
-                          className="inline-flex items-center justify-center w-8 h-8 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
-                        >
-                          <FileDown className="w-4 h-4 shrink-0" />
-                        </button>
-
-                        {/* 5. Reemitir Convite */}
-                        <button
-                          type="button"
-                          title="Reemitir Convite (Novo QR Code)"
-                          onClick={() => handleReissue(inv.id)}
-                          className="inline-flex items-center justify-center w-8 h-8 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-lg transition-colors"
-                        >
-                          <RotateCcw className="w-4 h-4 shrink-0" />
-                        </button>
-
-                        {/* 6. Cancelar Convite */}
-                        {inv.status !== 'cancelled' ? (
+                          title={isCancelled ? 'Convite cancelado' : undefined}
+                        />
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <p className={`font-semibold ${isCancelled ? 'text-slate-500 line-through' : 'text-slate-800'}`}>
+                          {inv.guestName}
+                        </p>
+                        <span className="text-xs text-slate-400">Cat: {inv.guestCategory}</span>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        {getStatusBadge(inv.status, inv.usedEntries, inv.maxEntries)}
+                      </td>
+                      <td className="py-3.5 px-4 text-xs text-slate-600">
+                        {inv.guestEmail && <p className={isCancelled ? 'text-slate-400' : ''}>{inv.guestEmail}</p>}
+                        {inv.guestPhone && <p className="text-slate-400">{inv.guestPhone}</p>}
+                        {!inv.guestEmail && !inv.guestPhone && (
+                          <span className="text-slate-400 italic">Sem contato cadastrado</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* 1. Enviar Real via WhatsApp */}
                           <button
                             type="button"
-                            title="Cancelar Convite"
-                            onClick={() => handleRevoke(inv.id)}
-                            className="inline-flex items-center justify-center w-8 h-8 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors"
+                            title={
+                              isCancelled
+                                ? 'Convite cancelado (ações bloqueadas)'
+                                : inv.guestPhone
+                                ? `Enviar Convite Real via WhatsApp (${inv.guestPhone})`
+                                : 'Convidado sem telefone cadastrado'
+                            }
+                            disabled={isCancelled || !inv.guestPhone}
+                            onClick={() => !isCancelled && handleDirectWhatsApp(inv)}
+                            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                              isCancelled
+                                ? 'text-slate-300 cursor-not-allowed'
+                                : inv.guestPhone
+                                ? 'text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50'
+                                : 'text-slate-300 cursor-not-allowed'
+                            }`}
                           >
-                            <Ban className="w-4 h-4 shrink-0" />
+                            <MessageSquare className="w-4 h-4 shrink-0" />
                           </button>
-                        ) : (
-                          <div className="w-8 h-8" />
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+
+                          {/* 2. Enviar Real por E-mail */}
+                          <button
+                            type="button"
+                            title={
+                              isCancelled
+                                ? 'Convite cancelado (ações bloqueadas)'
+                                : inv.guestEmail
+                                ? `Enviar Convite Real por E-mail (${inv.guestEmail})`
+                                : 'Convidado sem e-mail cadastrado'
+                            }
+                            disabled={isCancelled || !inv.guestEmail}
+                            onClick={() => !isCancelled && handleDirectEmail(inv)}
+                            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                              isCancelled
+                                ? 'text-slate-300 cursor-not-allowed'
+                                : inv.guestEmail
+                                ? 'text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50'
+                                : 'text-slate-300 cursor-not-allowed'
+                            }`}
+                          >
+                            <Mail className="w-4 h-4 shrink-0" />
+                          </button>
+
+                          {/* 3. Ver Página Pública do Convite */}
+                          {isCancelled ? (
+                            <span
+                              title="Convite cancelado (ações bloqueadas)"
+                              className="inline-flex items-center justify-center w-8 h-8 text-slate-300 cursor-not-allowed rounded-lg"
+                            >
+                              <ExternalLink className="w-4 h-4 shrink-0" />
+                            </span>
+                          ) : (
+                            <a
+                              href={`/convite/${inv.tokenHash}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              title="Ver Página Pública do Convite"
+                              className="inline-flex items-center justify-center w-8 h-8 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            >
+                              <ExternalLink className="w-4 h-4 shrink-0" />
+                            </a>
+                          )}
+
+                          {/* 4. Baixar Convite em PDF */}
+                          <button
+                            type="button"
+                            title={isCancelled ? 'Convite cancelado (ações bloqueadas)' : 'Baixar Convite em PDF'}
+                            disabled={isCancelled}
+                            onClick={() => !isCancelled && handleDownloadPdf(inv.id, inv.guestName)}
+                            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                              isCancelled
+                                ? 'text-slate-300 cursor-not-allowed'
+                                : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
+                            }`}
+                          >
+                            <FileDown className="w-4 h-4 shrink-0" />
+                          </button>
+
+                          {/* 5. Reemitir Convite */}
+                          <button
+                            type="button"
+                            title={isCancelled ? 'Convite cancelado (ações bloqueadas)' : 'Reemitir Convite (Novo QR Code)'}
+                            disabled={isCancelled}
+                            onClick={() => !isCancelled && handleReissue(inv.id)}
+                            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                              isCancelled
+                                ? 'text-slate-300 cursor-not-allowed'
+                                : 'text-amber-600 hover:text-amber-800 hover:bg-amber-50'
+                            }`}
+                          >
+                            <RotateCcw className="w-4 h-4 shrink-0" />
+                          </button>
+
+                          {/* 6. Cancelar Convite */}
+                          {isCancelled ? (
+                            <span
+                              title="Convite já cancelado"
+                              className="inline-flex items-center justify-center w-8 h-8 text-slate-300 cursor-not-allowed rounded-lg"
+                            >
+                              <Ban className="w-4 h-4 shrink-0" />
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              title="Cancelar Convite"
+                              onClick={() => handleRevoke(inv.id)}
+                              className="inline-flex items-center justify-center w-8 h-8 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors"
+                            >
+                              <Ban className="w-4 h-4 shrink-0" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
