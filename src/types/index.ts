@@ -4,6 +4,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  role?: string;
   avatar_url?: string;
   created_at?: string;
 }
@@ -14,6 +15,15 @@ export interface Event {
   user_id?: string;
   title: string;
   description?: string;
+  category?: string;
+  start_at?: string;
+  end_at?: string;
+  location?: string;
+  capacity?: number;
+  cover_image?: string;
+  background_image?: string;
+  status?: string;
+  max_entries_per_invitation?: number;
   event_date?: string;
   start_date?: string;
   end_date?: string;
@@ -54,10 +64,16 @@ export interface EventStats {
 export interface CreateEventData {
   title: string;
   description?: string;
+  category?: string;
+  start_at?: string;
+  end_at?: string;
+  location?: string;
+  capacity?: number;
+  max_entries_per_invitation?: number;
   event_date?: string;
   start_date?: string;
   end_date?: string;
-  storage_mode: StorageMode;
+  storage_mode?: StorageMode;
 }
 
 export interface UploadResult {
@@ -130,4 +146,140 @@ export interface MusicListResponse {
   max: number;
   enabled: boolean;
   spotifyEnabled: boolean;
+}
+
+// ── Guests & Invitations Module ──────────────────────────────────────────
+
+export type GuestCategory = 'VIP' | 'Convidado' | 'Equipe' | 'Imprensa' | 'Organizador' | 'Personalizado';
+
+export interface Guest {
+  id: number;
+  eventId: number;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  category: GuestCategory | string;
+  notes: string | null;
+  externalId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateGuestPayload {
+  name: string;
+  email?: string;
+  phone?: string;
+  category?: string;
+  notes?: string;
+  externalId?: string;
+}
+
+export interface ImportResult {
+  total: number;
+  imported: number;
+  duplicates: number;
+  errors: Array<{ row: number; reason: string }>;
+}
+
+export interface Invitation {
+  id: number;
+  eventId: number;
+  guestId: number;
+  guestName: string;
+  guestEmail: string | null;
+  guestPhone: string | null;
+  guestCategory: string;
+  tokenHash: string;
+  status: 'pending' | 'sent' | 'used' | 'cancelled' | 'expired';
+  maxEntries: number;
+  usedEntries: number;
+  validFrom: string | null;
+  validUntil: string | null;
+  issuedAt: string | null;
+  revokedAt: string | null;
+}
+
+export interface PublicInvitation {
+  invitation: {
+    id: number;
+    status: string;
+    maxEntries: number;
+    usedEntries: number;
+    validFrom: string | null;
+    validUntil: string | null;
+    issuedAt: string | null;
+    qrCodeUrl: string;
+  };
+  guest: {
+    id: number;
+    name: string;
+    category: string;
+  };
+  event: {
+    id: number;
+    uuid: string;
+    title: string;
+    description: string | null;
+    category: string | null;
+    startAt: string | null;
+    endAt: string | null;
+    location: string | null;
+    coverImage: string | null;
+    backgroundImage: string | null;
+  };
+}
+
+export interface ReaderUser {
+  id: number;
+  userId: number;
+  name: string;
+  email: string;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface CheckinValidationResult {
+  status: 'VALIDO' | 'JA_UTILIZADO' | 'CANCELADO' | 'EXPIRADO' | 'INVALIDO' | 'EVENTO_INCORRETO';
+  allowed: boolean;
+  color: 'verde' | 'vermelho' | 'laranja';
+  message: string;
+  guest?: {
+    id: number;
+    name: string;
+    category: string;
+  };
+  event?: {
+    id: number;
+    title: string;
+  };
+  checkin?: {
+    id: number;
+    checkedInAt: string;
+    deviceIdentifier?: string | null;
+  };
+  entriesCount?: {
+    used: number;
+    max: number;
+  };
+}
+
+export interface DashboardMetrics {
+  totalGuests: number;
+  totalInvitations: number;
+  sentEmail: number;
+  sentWhatsApp: number;
+  pendingDeliveries: number;
+  failedDeliveries: number;
+  totalCheckins: number;
+  absentGuests: number;
+  attendanceRate: number;
+  recentCheckins: Array<{
+    id: number;
+    guestName: string;
+    category: string;
+    checkedInAt: string;
+    readerName: string | null;
+    result: string;
+  }>;
+  categoryBreakdown: Array<{ category: string; total: number; present: number }>;
 }

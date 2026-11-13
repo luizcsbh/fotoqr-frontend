@@ -19,6 +19,12 @@ import {
   RefreshCw,
   Tv,
   Sparkles,
+  Users,
+  QrCode,
+  ScanLine,
+  Palette,
+  BarChart3,
+  Camera,
 } from 'lucide-react';
 import { eventService } from '../services/event.service';
 import { photoService } from '../services/photo.service';
@@ -32,6 +38,11 @@ import { formatFileSize } from '../components/Upload/PhotoPreview';
 import { getGalleryUrl, getPresentationUrl } from '../utils/url';
 import { DJPlaylistPanel } from '../components/Music/DJPlaylistPanel';
 import { PendingPhotosPanel } from '../components/Gallery/PendingPhotosPanel';
+import { GuestManager } from '../components/Event/GuestManager';
+import { InvitationManager } from '../components/Event/InvitationManager';
+import { ReaderManager } from '../components/Event/ReaderManager';
+import { CoverEditor } from '../components/Event/CoverEditor';
+import { EventDashboardHub } from '../components/Event/EventDashboardHub';
 import toast from 'react-hot-toast';
 
 export const EventDetailPage: React.FC = () => {
@@ -43,6 +54,7 @@ export const EventDetailPage: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDownloadingZip, setIsDownloadingZip] = useState(false);
   const [deletingPhotoId, setDeletingPhotoId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'photos' | 'guests' | 'invitations' | 'readers' | 'cover' | 'metrics'>('photos');
 
   // Fetch Event details
   const {
@@ -439,103 +451,210 @@ export const EventDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Photo review queue (moderation) */}
-      <PendingPhotosPanel eventId={event.id} approvalRequired={event.require_photo_approval} />
-
-      {/* Grid: QR Code & Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left/Col 1 & 2: Stats cards & photo gallery */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Stats Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
-              <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
-                <ImageIcon className="w-4 h-4 text-brand-600" />
-                <span>Total de Fotos</span>
-              </div>
-              <div className="text-2xl font-black text-slate-900">
-                {stats?.total_photos ?? photoData?.total ?? 0}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
-              <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
-                <HardDrive className="w-4 h-4 text-brand-600" />
-                <span>Espaço Ocupado</span>
-              </div>
-              <div className="text-2xl font-black text-slate-900">
-                {stats?.total_size_bytes ? formatFileSize(stats.total_size_bytes) : '0 B'}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs col-span-2 sm:col-span-1">
-              <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
-                <Clock className="w-4 h-4 text-brand-600" />
-                <span>Status de Upload</span>
-              </div>
-              <div className="text-sm font-bold text-slate-800 mt-1">
-                {event.is_active ? 'Disponível para envio' : 'Temporariamente pausado'}
-              </div>
-            </div>
-          </div>
-
-          {/* Gallery Section */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">
-                  Galeria de Fotos do Evento
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Clique em qualquer foto para ampliar ou baixar individualmente.
-                </p>
-              </div>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => refetchPhotos()}
-                leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
-              >
-                Atualizar
-              </Button>
-            </div>
-
-            {isLoadingPhotos ? (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-12">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="aspect-square bg-slate-100 rounded-2xl animate-pulse" />
-                ))}
-              </div>
-            ) : (
-              <PhotoGrid
-                photos={photoData?.data || []}
-                totalPhotos={photoData?.total || 0}
-                currentPage={photoData?.page || 1}
-                totalPages={photoData?.total_pages || 1}
-                onPageChange={(p) => setPage(p)}
-                onDeletePhoto={(pId) => deletePhotoMutation.mutate(pId)}
-                isDeletingId={deletingPhotoId}
-                canDelete={true}
-                onDownloadSelected={handleDownloadSelected}
-                onDownloadAll={handleDownloadAllZip}
-                isDownloading={isDownloadingZip}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Right / Col 3: QR Code Card */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-24">
-            <QRCodeDisplay uuid={event.uuid} eventTitle={event.title} />
-          </div>
-        </div>
+      {/* Module Tabs Navigation */}
+      <div className="flex border-b border-slate-200 overflow-x-auto gap-1 sm:gap-2 no-scrollbar bg-white p-2 rounded-2xl shadow-xs">
+        <button
+          onClick={() => setActiveTab('photos')}
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
+            activeTab === 'photos'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <Camera className="w-4 h-4" />
+          Galeria & Fotos
+        </button>
+        <button
+          onClick={() => setActiveTab('guests')}
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
+            activeTab === 'guests'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          Convidados
+        </button>
+        <button
+          onClick={() => setActiveTab('invitations')}
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
+            activeTab === 'invitations'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <QrCode className="w-4 h-4" />
+          Convites & Envios
+        </button>
+        <button
+          onClick={() => setActiveTab('readers')}
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
+            activeTab === 'readers'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <ScanLine className="w-4 h-4" />
+          Portaria & Leitores
+        </button>
+        <button
+          onClick={() => setActiveTab('cover')}
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
+            activeTab === 'cover'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <Palette className="w-4 h-4" />
+          Capa & Convite
+        </button>
+        <button
+          onClick={() => setActiveTab('metrics')}
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
+            activeTab === 'metrics'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <BarChart3 className="w-4 h-4" />
+          Métricas & Relatórios
+        </button>
       </div>
 
-      {/* DJ Playlist Panel (only while the owner has the playlist turned on) */}
-      {event.uuid && event.enable_dj_playlist && (
-        <DJPlaylistPanel eventUuid={event.uuid} />
+      {/* Tab 1: Photos & Live Gallery */}
+      {activeTab === 'photos' && (
+        <div className="space-y-6">
+          {/* Photo review queue (moderation) */}
+          <PendingPhotosPanel eventId={event.id} approvalRequired={event.require_photo_approval} />
+
+          {/* Grid: QR Code & Stats */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left/Col 1 & 2: Stats cards & photo gallery */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Stats Bar */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                  <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
+                    <ImageIcon className="w-4 h-4 text-brand-600" />
+                    <span>Total de Fotos</span>
+                  </div>
+                  <div className="text-2xl font-black text-slate-900">
+                    {stats?.total_photos ?? photoData?.total ?? 0}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                  <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
+                    <HardDrive className="w-4 h-4 text-brand-600" />
+                    <span>Espaço Ocupado</span>
+                  </div>
+                  <div className="text-2xl font-black text-slate-900">
+                    {stats?.total_size_bytes ? formatFileSize(stats.total_size_bytes) : '0 B'}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs col-span-2 sm:col-span-1">
+                  <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
+                    <Clock className="w-4 h-4 text-brand-600" />
+                    <span>Status de Upload</span>
+                  </div>
+                  <div className="text-sm font-bold text-slate-800 mt-1">
+                    {event.is_active ? 'Disponível para envio' : 'Temporariamente pausado'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Gallery Section */}
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900">
+                      Galeria de Fotos do Evento
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Clique em qualquer foto para ampliar ou baixar individualmente.
+                    </p>
+                  </div>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => refetchPhotos()}
+                    leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
+                  >
+                    Atualizar
+                  </Button>
+                </div>
+
+                {isLoadingPhotos ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-12">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="aspect-square bg-slate-100 rounded-2xl animate-pulse" />
+                    ))}
+                  </div>
+                ) : (
+                  <PhotoGrid
+                    photos={photoData?.data || []}
+                    totalPhotos={photoData?.total || 0}
+                    currentPage={photoData?.page || 1}
+                    totalPages={photoData?.total_pages || 1}
+                    onPageChange={(p) => setPage(p)}
+                    onDeletePhoto={(pId) => deletePhotoMutation.mutate(pId)}
+                    isDeletingId={deletingPhotoId}
+                    canDelete={true}
+                    onDownloadSelected={handleDownloadSelected}
+                    onDownloadAll={handleDownloadAllZip}
+                    isDownloading={isDownloadingZip}
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Right / Col 3: QR Code Card */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24">
+                <QRCodeDisplay uuid={event.uuid} eventTitle={event.title} />
+              </div>
+            </div>
+          </div>
+
+          {/* DJ Playlist Panel */}
+          {event.uuid && event.enable_dj_playlist && (
+            <DJPlaylistPanel eventUuid={event.uuid} />
+          )}
+        </div>
+      )}
+
+      {/* Tab 2: Guest Management */}
+      {activeTab === 'guests' && (
+        <GuestManager eventId={event.id} />
+      )}
+
+      {/* Tab 3: Invitation Management & Deliveries */}
+      {activeTab === 'invitations' && (
+        <InvitationManager eventId={event.id} />
+      )}
+
+      {/* Tab 4: QR Code Readers & Security */}
+      {activeTab === 'readers' && (
+        <ReaderManager eventId={event.id} />
+      )}
+
+      {/* Tab 5: Cover & Invitation Design */}
+      {activeTab === 'cover' && (
+        <CoverEditor
+          eventId={event.id}
+          eventTitle={event.title}
+          eventLocation={event.location}
+          eventDate={event.start_date || event.event_date}
+          initialCoverImage={event.cover_image}
+          initialBgImage={event.background_image}
+        />
+      )}
+
+      {/* Tab 6: Dashboard Metrics & Reports */}
+      {activeTab === 'metrics' && (
+        <EventDashboardHub eventId={event.id} />
       )}
 
       {/* Delete Confirmation Modal */}

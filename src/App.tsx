@@ -18,6 +18,8 @@ import { ProfilePage } from './pages/ProfilePage';
 import { QRCodeCustomizerPage } from './pages/QRCodeCustomizerPage';
 import { CreateEventPage } from './pages/CreateEventPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { PublicInvitationPage } from './pages/PublicInvitationPage';
+import { QRScannerPage } from './pages/QRScannerPage';
 
 // Standard App Layout with Header and Footer
 const MainLayout: React.FC = () => {
@@ -130,6 +132,10 @@ export const App: React.FC = () => {
       <Route path="/e/:uuid/galeria" element={<EventGalleryPage />} />
       <Route path="/e/:uuid/apresentacao" element={<PresentationPage />} />
       <Route path="/e/:uuid/telao" element={<PresentationPage />} />
+
+      {/* Invitation & QR Scanner standalone routes */}
+      <Route path="/convite/:token" element={<PublicInvitationPage />} />
+      <Route path="/leitor/:eventId" element={<QRScannerPage />} />
     </Routes>
   );
 };

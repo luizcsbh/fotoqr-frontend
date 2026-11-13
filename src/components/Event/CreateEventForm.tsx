@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import { CreateEventData } from '../../types';
 import { Button } from '../UI/Button';
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Tag } from 'lucide-react';
 
 interface CreateEventFormProps {
   onSubmit: (data: CreateEventData) => Promise<void>;
   onCancel?: () => void;
   isLoading?: boolean;
 }
+
+const CATEGORIES = [
+  'Casamento',
+  'Aniversário',
+  'Corporativo',
+  'Formatura',
+  'Balada / Festa',
+  'Escolar / Acadêmico',
+  'Personalizado',
+];
 
 const formatToDateTimeLocal = (date: Date): string => {
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -26,6 +36,11 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('Personalizado');
+  const [location, setLocation] = useState('');
+  const [capacity, setCapacity] = useState<number | ''>('');
+  const [maxEntries, setMaxEntries] = useState(1);
+
   const [startDateTime, setStartDateTime] = useState(() => {
     const now = new Date();
     now.setMinutes(0, 0, 0);
@@ -70,8 +85,14 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
     await onSubmit({
       title: title.trim(),
       description: description.trim() || undefined,
+      category,
+      location: location.trim() || undefined,
+      capacity: capacity ? Number(capacity) : undefined,
+      max_entries_per_invitation: maxEntries,
       start_date: new Date(startDateTime).toISOString(),
       end_date: new Date(endDateTime).toISOString(),
+      start_at: new Date(startDateTime).toISOString(),
+      end_at: new Date(endDateTime).toISOString(),
       event_date: startDateTime.split('T')[0],
       storage_mode: 'fallback',
     });
@@ -103,6 +124,75 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
         {errors.title && <p className="mt-1 text-xs text-red-600">{errors.title}</p>}
       </div>
 
+      {/* Category & Location */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="category" className="block text-sm font-semibold text-slate-800 mb-1.5 flex items-center gap-1.5">
+            <Tag className="w-4 h-4 text-brand-600" />
+            <span>Categoria / Tipo</span>
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          >
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="location" className="block text-sm font-semibold text-slate-800 mb-1.5 flex items-center gap-1.5">
+            <MapPin className="w-4 h-4 text-brand-600" />
+            <span>Local ou Endereço</span>
+          </label>
+          <input
+            id="location"
+            type="text"
+            placeholder="Ex: Espaço Villa Real, Salão de Festas..."
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          />
+        </div>
+      </div>
+
+      {/* Capacity & Max Entries per Invitation */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="capacity" className="block text-sm font-semibold text-slate-800 mb-1.5 flex items-center gap-1.5">
+            <Users className="w-4 h-4 text-brand-600" />
+            <span>Capacidade Máxima (Opcional)</span>
+          </label>
+          <input
+            id="capacity"
+            type="number"
+            min="1"
+            placeholder="Ex: 250"
+            value={capacity}
+            onChange={(e) => setCapacity(e.target.value ? Number(e.target.value) : '')}
+            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="max_entries" className="block text-sm font-semibold text-slate-800 mb-1.5">
+            Entradas por Convite (Padrão: 1)
+          </label>
+          <input
+            id="max_entries"
+            type="number"
+            min="1"
+            max="10"
+            value={maxEntries}
+            onChange={(e) => setMaxEntries(Math.max(1, Number(e.target.value)))}
+            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          />
+        </div>
+      </div>
+
       {/* Description */}
       <div>
         <label htmlFor="description" className="block text-sm font-semibold text-slate-800 mb-1.5">
@@ -111,17 +201,16 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
         <textarea
           id="description"
           name="description"
-          rows={3}
+          rows={2}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Ex: Tirem muitas fotos e compartilhem aqui nossos momentos inesquecíveis!"
+          placeholder="Ex: Sejam bem-vindos! Apresentem o QR Code individual na entrada."
           className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors resize-none"
         />
       </div>
 
       {/* Start and End Date & Time */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Start Date & Time */}
         <div>
           <label htmlFor="start_date" className="block text-sm font-semibold text-slate-800 mb-1.5 flex items-center gap-1.5">
             <Clock className="w-4 h-4 text-brand-600" />
@@ -135,7 +224,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             onChange={(e) => {
               setStartDateTime(e.target.value);
               if (errors.startDateTime) setErrors((prev) => ({ ...prev, startDateTime: undefined }));
-              // Auto-adjust end time if it became before start time
               if (endDateTime && new Date(e.target.value) >= new Date(endDateTime)) {
                 const newEnd = new Date(e.target.value);
                 newEnd.setHours(newEnd.getHours() + 4);
@@ -149,7 +237,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
           {errors.startDateTime && <p className="mt-1 text-xs text-red-600">{errors.startDateTime}</p>}
         </div>
 
-        {/* End Date & Time */}
         <div>
           <label htmlFor="end_date" className="block text-sm font-semibold text-slate-800 mb-1.5 flex items-center gap-1.5">
             <Calendar className="w-4 h-4 text-brand-600" />
@@ -181,7 +268,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
           </Button>
         )}
         <Button type="submit" variant="primary" isLoading={isLoading}>
-          Criar Álbum e Gerar QR Code
+          Criar Evento e Painel de Convites
         </Button>
       </div>
     </form>
