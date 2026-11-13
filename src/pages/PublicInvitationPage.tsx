@@ -13,7 +13,6 @@ import {
   Clock,
   Sparkles,
   Download,
-  QrCode,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../services/invitation.service';
@@ -92,16 +91,16 @@ export const PublicInvitationPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-        <div className="text-white text-sm">Carregando seu convite digital...</div>
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+        <div className="text-slate-600 text-sm font-medium">Carregando seu convite digital...</div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-        <Card className="max-w-md p-8 text-center bg-white space-y-4">
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+        <Card className="max-w-md p-8 text-center bg-white space-y-4 shadow-xl">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
           <h2 className="text-xl font-bold text-slate-800">Convite Não Encontrado</h2>
           <p className="text-sm text-slate-600">
@@ -116,142 +115,162 @@ export const PublicInvitationPage: React.FC = () => {
   const isUsed = invitation.usedEntries >= invitation.maxEntries;
   const isCancelled = invitation.status === 'cancelled';
 
+  // Format date similar to example: "28 de nov de 2026 às 21:00"
+  const formattedEventDate = event.startAt
+    ? new Date(event.startAt).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '';
+
+  // Parse location into multiple lines if present
+  const locationLines = event.location
+    ? event.location.split('\n').filter(Boolean)
+    : [];
+
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 py-12 relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center p-4 sm:p-6 py-12 relative"
       style={{
         background: event.backgroundImage
-          ? `linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url(${event.backgroundImage}) center/cover no-repeat fixed`
-          : 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
+          ? `linear-gradient(rgba(241, 245, 249, 0.92), rgba(241, 245, 249, 0.96)), url(${event.backgroundImage}) center/cover no-repeat fixed`
+          : '#eef2f6',
       }}
     >
-      <div className="w-full max-w-md space-y-6 relative z-10">
-        {/* Main Digital Ticket Card */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 transition-all duration-300">
-          {/* Header Banner */}
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 text-center relative">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-sm uppercase tracking-wider mb-2">
-              Convite Oficial
-            </span>
-            <h1 className="text-2xl font-black tracking-tight">{event.title}</h1>
-            {event.category && (
-              <p className="text-xs text-indigo-200 mt-1 font-medium">{event.category}</p>
-            )}
-          </div>
-
-          {/* Optional Event Cover / Artwork */}
-          {event.coverImage && (
-            <div className="w-full max-h-56 overflow-hidden bg-slate-100 flex items-center justify-center border-b border-slate-100">
+      <div className="w-full max-w-lg space-y-6 relative z-10">
+        {/* Main Card with Official Layout (Inspired by AssessoriaVIP/Chromos example) */}
+        <div className="bg-white rounded-[32px] shadow-2xl p-8 sm:p-12 text-center border border-slate-100 space-y-6">
+          {/* Top Logo / Circular Emblem if provided */}
+          {event.coverImage ? (
+            <div className="max-w-[130px] mx-auto rounded-full overflow-hidden shadow-xs mb-2">
               <img
                 src={event.coverImage}
                 alt={event.title}
-                className="w-full h-full object-cover"
+                className="w-full h-auto object-contain mx-auto max-h-28"
               />
+            </div>
+          ) : (
+            <div className="w-20 h-20 mx-auto rounded-full bg-amber-50/80 border border-amber-200/90 flex flex-col items-center justify-center text-[10px] text-amber-800 font-serif shadow-2xs p-1 mb-2">
+              <span className="italic text-[11px] font-medium">Vamos celebrar!</span>
+              <span className="font-bold uppercase tracking-wider text-[8px] mt-0.5 opacity-80">CONVITE OFICIAL</span>
             </div>
           )}
 
-          {/* Ticket Body */}
-          <div className="p-6 space-y-6 text-center">
-            {/* Guest Info */}
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                Convidado de Honra
-              </span>
-              <h2 className="text-2xl font-extrabold text-slate-800">{guest.name}</h2>
-              <div className="pt-1">
+          {/* Event Title in distinctive Cyan / Blue */}
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-cyan-500 tracking-tight leading-tight">
+              {event.title}
+            </h1>
+            {event.category && (
+              <p className="text-xs uppercase tracking-wider text-slate-400 font-bold mt-1">
+                {event.category}
+              </p>
+            )}
+          </div>
+
+          {/* Date, Ceremony, Reception & Address */}
+          <div className="space-y-2 text-sm sm:text-base text-slate-700 font-medium inline-block text-left pt-1">
+            {formattedEventDate && (
+              <p className="flex items-center gap-2.5">
+                <Calendar className="w-5 h-5 text-slate-700 shrink-0" />
+                <span>{formattedEventDate}</span>
+              </p>
+            )}
+
+            {locationLines.length > 0 ? (
+              locationLines.map((line, idx) => (
+                <p key={idx} className="flex items-center gap-2.5">
+                  <MapPin className="w-5 h-5 text-slate-700 shrink-0" />
+                  <span>{line}</span>
+                </p>
+              ))
+            ) : event.location ? (
+              <p className="flex items-center gap-2.5">
+                <MapPin className="w-5 h-5 text-slate-700 shrink-0" />
+                <span>{event.location}</span>
+              </p>
+            ) : null}
+          </div>
+
+          {/* Personalized Invitation Message with Guest Name highlighted */}
+          <div className="border-t border-slate-100 pt-5">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              Aqui está o QR Code do convite{' '}
+              <strong className="text-rose-500 font-bold">{guest.name}</strong>,
+              <br className="hidden sm:inline" /> que deve ser apresentado na recepção do evento.
+            </p>
+            {guest.category && guest.category !== 'Geral' && (
+              <div className="mt-2">
                 <Badge variant={guest.category === 'VIP' ? 'warning' : 'info'}>
-                  Categoria: {guest.category}
+                  {guest.category}
                 </Badge>
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* Event Time & Location Details */}
-            <div className="bg-slate-50 rounded-2xl p-4 text-left space-y-3 text-sm text-slate-700 border border-slate-100">
-              {event.startAt && (
-                <div className="flex items-start gap-3">
-                  <Calendar className="w-4 h-4 text-indigo-600 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-xs text-slate-400 block font-semibold uppercase">Data e Horário</span>
-                    <span className="font-semibold">{new Date(event.startAt).toLocaleString('pt-BR')}</span>
-                  </div>
+          {/* QR Code Presentation */}
+          <div className="pt-2">
+            {isCancelled ? (
+              <div className="p-6 bg-rose-50 rounded-2xl border border-rose-200 text-rose-700 space-y-2">
+                <AlertCircle className="w-8 h-8 mx-auto" />
+                <p className="font-bold text-sm">Convite Cancelado</p>
+                <p className="text-xs">Este convite foi revogado pela organização.</p>
+              </div>
+            ) : isUsed ? (
+              <div className="p-6 bg-slate-100 rounded-2xl border border-slate-200 text-slate-700 space-y-2">
+                <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
+                <p className="font-bold text-sm">Convite Já Utilizado</p>
+                <p className="text-xs">Entrada registrada na portaria do evento.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="inline-block p-4 bg-white rounded-2xl border-2 border-slate-900 shadow-md">
+                  <img
+                    src={invitation.qrCodeUrl}
+                    alt="QR Code do Convite"
+                    className="w-56 h-56 sm:w-64 sm:h-64 mx-auto object-contain"
+                  />
                 </div>
-              )}
+                <p className="text-xs text-slate-500 font-medium">
+                  Entradas permitidas: <strong>{invitation.maxEntries}</strong>
+                </p>
+              </div>
+            )}
+          </div>
 
-              {event.location && (
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-4 h-4 text-indigo-600 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-xs text-slate-400 block font-semibold uppercase">Local</span>
-                    <span className="font-medium">{event.location}</span>
-                  </div>
-                </div>
-              )}
-            </div>
+          {/* Action Buttons */}
+          <div className="space-y-3 pt-3">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={handleDownloadQrCode}
+              className="w-full flex items-center justify-center gap-2 shadow-md font-bold bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl py-3"
+            >
+              <Download className="w-5 h-5" /> Baixar Imagem do QR Code
+            </Button>
 
-            {/* QR Code Validation Box */}
-            <div className="pt-2">
-              {isCancelled ? (
-                <div className="p-6 bg-rose-50 rounded-2xl border border-rose-200 text-rose-700 space-y-2">
-                  <AlertCircle className="w-8 h-8 mx-auto" />
-                  <p className="font-bold text-sm">Convite Cancelado</p>
-                  <p className="text-xs">Este convite foi revogado pela organização.</p>
-                </div>
-              ) : isUsed ? (
-                <div className="p-6 bg-slate-100 rounded-2xl border border-slate-200 text-slate-700 space-y-2">
-                  <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
-                  <p className="font-bold text-sm">Convite Já Utilizado</p>
-                  <p className="text-xs">Entrada registrada na portaria do evento.</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="inline-block p-4 bg-white rounded-2xl shadow-inner border border-slate-200">
-                    <img
-                      src={invitation.qrCodeUrl}
-                      alt="QR Code do Convite"
-                      className="w-48 h-48 mx-auto object-contain"
-                    />
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium">
-                    Apresente este QR Code na portaria para autorização de entrada.
-                  </p>
-                  <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold">
-                    Entradas permitidas: {invitation.maxEntries}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Actions */}
-            <div className="space-y-2 pt-2">
+            <div className="grid grid-cols-2 gap-3">
               <Button
-                variant="primary"
+                variant="outline"
                 size="md"
-                onClick={handleDownloadQrCode}
-                className="w-full flex items-center justify-center gap-2 shadow-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white"
+                onClick={handleShare}
+                className="flex items-center justify-center gap-1.5 rounded-xl border-slate-200"
               >
-                <Download className="w-4 h-4" /> Baixar Imagem do QR Code
+                <Share2 className="w-4 h-4 text-cyan-600" /> Compartilhar
               </Button>
 
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleShare}
-                  className="flex items-center justify-center gap-1.5"
-                >
-                  <Share2 className="w-4 h-4 text-indigo-600" /> Compartilhar
-                </Button>
-
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  disabled={downloading}
-                  onClick={handleDownloadPdf}
-                  className="flex items-center justify-center gap-1.5"
-                >
-                  <FileDown className="w-4 h-4 text-slate-700" /> Baixar PDF
-                </Button>
-              </div>
+              <Button
+                variant="secondary"
+                size="md"
+                disabled={downloading}
+                onClick={handleDownloadPdf}
+                className="flex items-center justify-center gap-1.5 rounded-xl"
+              >
+                <FileDown className="w-4 h-4 text-slate-700" /> Baixar PDF
+              </Button>
             </div>
           </div>
         </div>
@@ -259,4 +278,3 @@ export const PublicInvitationPage: React.FC = () => {
     </div>
   );
 };
-

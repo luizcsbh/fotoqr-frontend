@@ -12,6 +12,7 @@ import {
   MapPin,
   Calendar,
   Clock,
+  Building,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../../services/invitation.service';
@@ -27,13 +28,13 @@ interface CoverEditorProps {
 }
 
 const TEMPLATES = [
-  { id: 'wedding', name: 'Casamento', bg: 'linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)', text: '#2d3748', accent: '#d4af37' },
-  { id: 'birthday', name: 'Aniversário', bg: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)', text: '#ffffff', accent: '#ff4b2b' },
-  { id: 'corporate', name: 'Corporativo', bg: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', text: '#ffffff', accent: '#00d2ff' },
-  { id: 'graduation', name: 'Formatura', bg: 'linear-gradient(135deg, #09203f 0%, #537895 100%)', text: '#ffffff', accent: '#f6d365' },
-  { id: 'party', name: 'Balada', bg: 'linear-gradient(135deg, #434343 0%, #000000 100%)', text: '#00ffcc', accent: '#ff007f' },
-  { id: 'school', name: 'Escolar', bg: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', text: '#ffffff', accent: '#f093fb' },
-  { id: 'custom', name: 'Personalizado', bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', text: '#ffffff', accent: '#a18cd1' },
+  { id: 'clean', name: 'Minimalista Assessoria (Clean)', bg: '#f8fafc', cardBg: '#ffffff', text: '#0284c7', accent: '#0284c7' },
+  { id: 'wedding', name: 'Casamento', bg: 'linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)', cardBg: '#ffffff', text: '#2d3748', accent: '#d4af37' },
+  { id: 'birthday', name: 'Aniversário', bg: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)', cardBg: '#ffffff', text: '#ffffff', accent: '#ff4b2b' },
+  { id: 'corporate', name: 'Corporativo', bg: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', cardBg: '#ffffff', text: '#ffffff', accent: '#00d2ff' },
+  { id: 'graduation', name: 'Formatura', bg: 'linear-gradient(135deg, #09203f 0%, #537895 100%)', cardBg: '#ffffff', text: '#ffffff', accent: '#f6d365' },
+  { id: 'party', name: 'Balada', bg: 'linear-gradient(135deg, #434343 0%, #000000 100%)', cardBg: '#1e293b', text: '#00ffcc', accent: '#ff007f' },
+  { id: 'custom', name: 'Personalizado', bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', cardBg: '#ffffff', text: '#ffffff', accent: '#a18cd1' },
 ];
 
 const formatToDateTimeLocal = (dateStr?: string): string => {
@@ -58,7 +59,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
   initialBgImage,
   onSave,
 }) => {
-  const [selectedTemplate, setSelectedTemplate] = useState('custom');
+  const [selectedTemplate, setSelectedTemplate] = useState('clean');
   const [coverImageUrl, setCoverImageUrl] = useState(initialCoverImage || '');
   const [bgImageUrl, setBgImageUrl] = useState(initialBgImage || '');
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -70,7 +71,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
   const coverFileInputRef = useRef<HTMLInputElement>(null);
   const bgFileInputRef = useRef<HTMLInputElement>(null);
 
-  const activeTemplate = TEMPLATES.find((t) => t.id === selectedTemplate) || TEMPLATES[6];
+  const activeTemplate = TEMPLATES.find((t) => t.id === selectedTemplate) || TEMPLATES[0];
 
   const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -137,6 +138,16 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
     }
   };
 
+  const formattedDate = startAt
+    ? new Date(startAt).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '28 de nov de 2026 às 21:00';
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -146,10 +157,10 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
             <div>
               <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
                 <Palette className="w-5 h-5 text-indigo-600" />
-                Modelos de Capa e Convite
+                Estilo & Informações do Convite
               </h3>
               <p className="text-sm text-slate-600">
-                Escolha um tema pré-definido, configure o endereço, data e importe imagens para o convite.
+                Personalize os dados do evento, importe imagens ou escolha o layout visual no modelo oficial com QR Code.
               </p>
             </div>
 
@@ -166,20 +177,20 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                       : 'border-slate-200 hover:border-slate-300 bg-white'
                   }`}
                 >
-                  <div className="h-10 rounded-lg mb-2 shadow-inner" style={{ background: tmpl.bg }} />
+                  <div className="h-10 rounded-lg mb-2 shadow-inner border border-slate-100" style={{ background: tmpl.bg }} />
                   <span className="text-xs font-semibold text-slate-700 block">{tmpl.name}</span>
                 </button>
               ))}
             </div>
 
-            {/* Event Date & Location Fields for the Invitation */}
+            {/* Event Date & Location Fields */}
             <div className="space-y-4 pt-4 border-t border-slate-100">
               <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-indigo-600" />
-                Informações do Convite (Endereço, Data e Hora)
+                Endereço, Cerimônia / Recepção e Horário
               </h4>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5 text-slate-500" /> Data e Hora do Evento
@@ -190,19 +201,25 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                     onChange={(e) => setStartAt(e.target.value)}
                     className="w-full text-xs rounded-xl border border-slate-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Exemplo no convite: <strong>28 de nov de 2026 às 21:00</strong>
+                  </p>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-slate-500" /> Endereço / Local
+                    <MapPin className="w-3.5 h-3.5 text-slate-500" /> Endereço do Evento (Recepção / Cerimônia)
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Espaço Villa Real, Salão Imperial"
+                  <textarea
+                    rows={2}
+                    placeholder="Ex: Cerimônia: Clube Jaraguá | Recepção: Salão Nobre, Rua dos Esportes, 120"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     className="w-full text-xs rounded-xl border border-slate-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Você pode colocar um ou múltiplos locais (Ex: <em>Cerimônia: Clube Jaraguá • Recepção: Clube Jaraguá</em>).
+                  </p>
                 </div>
               </div>
             </div>
@@ -210,10 +227,9 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
             {/* Upload Option 1: Imagem de Capa do Convite */}
             <div className="space-y-3 pt-4 border-t border-slate-100">
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                Imagem da Capa / Arte do Convite
+                Logotipo / Imagem de Topo do Convite
               </label>
 
-              {/* File Upload Button / Area */}
               <input
                 ref={coverFileInputRef}
                 type="file"
@@ -251,7 +267,6 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                 )}
               </div>
 
-              {/* URL fallback */}
               <div className="relative">
                 <input
                   type="url"
@@ -268,7 +283,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
             {/* Upload Option 2: Imagem de Fundo (Background) */}
             <div className="space-y-3 pt-4 border-t border-slate-100">
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                Imagem de Fundo do Convite Digital (Opcional)
+                Imagem de Fundo da Página (Opcional)
               </label>
 
               <input
@@ -308,7 +323,6 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                 )}
               </div>
 
-              {/* URL fallback */}
               <div className="relative">
                 <input
                   type="url"
@@ -330,59 +344,82 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
           </Card>
         </div>
 
-        {/* Live Preview */}
+        {/* Live Preview (Modelo Exato do Exemplo do Usuário) */}
         <div>
           <div className="sticky top-6 space-y-3">
             <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider">
-              Visualização Prévia do Convite
+              Visualização Prévia do Convite (Modelo Oficial)
             </h4>
+
+            {/* Container externo */}
             <div
-              className="rounded-3xl p-8 shadow-2xl text-center relative overflow-hidden transition-all duration-300 border border-slate-200"
+              className="rounded-3xl p-6 sm:p-8 shadow-xl text-center relative overflow-hidden transition-all duration-300 border border-slate-200"
               style={{
                 background: bgImageUrl ? `url(${bgImageUrl}) center/cover no-repeat` : activeTemplate.bg,
-                color: activeTemplate.text,
-                minHeight: '440px',
+                minHeight: '520px',
               }}
             >
-              <div className="relative z-10 flex flex-col justify-between h-full space-y-6">
-                <div>
-                  <span
-                    className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4"
-                    style={{ backgroundColor: 'rgba(0,0,0,0.25)', color: '#fff' }}
-                  >
-                    {activeTemplate.name}
-                  </span>
-                  <h2 className="text-3xl font-extrabold tracking-tight drop-shadow-md">
-                    {eventTitle || 'Nome do Seu Evento'}
-                  </h2>
-                  <p className="text-sm opacity-90 mt-2 font-medium">Convite Individual com QR Code</p>
-                </div>
-
-                {coverImageUrl && (
-                  <div className="max-w-[260px] mx-auto rounded-2xl overflow-hidden shadow-lg border-2 border-white/80 bg-white">
-                    <img src={coverImageUrl} alt="Capa / Arte do Convite" className="w-full h-auto object-cover max-h-48" />
+              {/* Card Branco Central (como no exemplo do PDF) */}
+              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-slate-100 max-w-md mx-auto text-center space-y-5">
+                {/* Imagem / Logo no Topo */}
+                {coverImageUrl ? (
+                  <div className="max-w-[130px] mx-auto rounded-full overflow-hidden shadow-xs">
+                    <img src={coverImageUrl} alt="Logo do Evento" className="w-full h-auto object-contain mx-auto" />
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 mx-auto rounded-full bg-amber-50 border border-amber-200 flex flex-col items-center justify-center text-[10px] text-amber-800 font-serif shadow-xs p-1">
+                    <span className="italic text-[11px]">Vamos celebrar!</span>
+                    <span className="font-bold uppercase tracking-wider text-[8px] mt-0.5">FOTOQR EVENTO</span>
                   </div>
                 )}
 
-                <div className="bg-white/95 backdrop-blur-md text-slate-800 rounded-2xl p-4 max-w-sm mx-auto shadow-md space-y-2 text-left">
-                  <div className="text-center pb-1 border-b border-slate-100">
-                    <span className="text-[10px] uppercase font-bold text-slate-400">Convidado(a)</span>
-                    <p className="font-bold text-base text-indigo-700">Maria Oliveira</p>
-                  </div>
-                  <div className="text-xs text-slate-600 space-y-1 pt-1">
-                    <p className="flex items-center gap-1.5 font-medium">
-                      <Calendar className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                      <span>{startAt ? new Date(startAt).toLocaleString('pt-BR') : 'Data e Hora a definir'}</span>
-                    </p>
-                    <p className="flex items-center gap-1.5 font-medium">
-                      <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                      <span>{location || 'Local a ser confirmado'}</span>
-                    </p>
-                  </div>
+                {/* Título do Evento em destaque ciano/azul */}
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-cyan-500 tracking-tight leading-tight">
+                  {eventTitle || 'Confraternização Rede de Ensino'}
+                </h2>
+
+                {/* Data e Endereço com ícones */}
+                <div className="space-y-1.5 text-xs text-slate-600 font-medium inline-block text-left">
+                  <p className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-slate-700 shrink-0" />
+                    <span>{formattedDate}</span>
+                  </p>
+
+                  {location ? (
+                    location.split('\n').map((line, idx) => (
+                      <p key={idx} className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
+                        <span>{line}</span>
+                      </p>
+                    ))
+                  ) : (
+                    <>
+                      <p className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
+                        <span>Cerimônia: Clube Jaraguá</span>
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
+                        <span>Recepção: Clube Jaraguá</span>
+                      </p>
+                    </>
+                  )}
                 </div>
 
-                <div className="pt-2">
-                  <p className="text-xs opacity-80 font-medium">Validação por QR Code Exclusivo na Portaria</p>
+                <div className="border-t border-slate-100 pt-3">
+                  <p className="text-xs text-slate-600">
+                    Aqui está o QR Code do convite{' '}
+                    <strong className="text-rose-500 font-bold">Luiz Carlos dos Santos</strong>,
+                    <br />
+                    que deve ser apresentado na recepção do evento.
+                  </p>
+                </div>
+
+                {/* QR Code Demo no Centro */}
+                <div className="p-3 bg-white rounded-2xl border-2 border-slate-800 inline-block shadow-xs">
+                  <div className="w-36 h-36 bg-slate-900 rounded-lg flex items-center justify-center text-white text-[11px] font-mono">
+                    [QR CODE DO CONVITE]
+                  </div>
                 </div>
               </div>
             </div>
