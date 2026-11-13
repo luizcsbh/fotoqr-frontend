@@ -163,8 +163,10 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
 
   const handleGenerateInvite = async (guestId: number) => {
     try {
-      await invitationService.generateInvitation(eventId, guestId);
+      const invite = await invitationService.generateInvitation(eventId, guestId);
       toast.success('Convite com QR Code gerado!');
+      // The event end already passed: the gate would refuse this invitation as expired
+      if (invite?.warning) toast(invite.warning, { icon: '⚠️', duration: 8000 });
       if (onInvitationsUpdated) onInvitationsUpdated();
     } catch (err: any) {
       toast.error(err?.message || 'Erro ao gerar convite.');

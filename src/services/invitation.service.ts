@@ -102,7 +102,9 @@ export const invitationService = {
     return response.data.data;
   },
 
-  async generateBulkInvitations(eventId: string | number): Promise<{ generated: number; totalGuests: number }> {
+  async generateBulkInvitations(
+    eventId: string | number
+  ): Promise<{ generated: number; totalGuests: number; warning?: string | null }> {
     const response = await api.post(`/api/events/${eventId}/invitations`, { bulk: true });
     return response.data.data;
   },

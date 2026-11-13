@@ -121,6 +121,8 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
     try {
       const res = await invitationService.generateBulkInvitations(eventId);
       toast.success(`${res.generated} convites gerados com sucesso!`);
+      // The event end already passed: the gate would refuse these invitations as expired
+      if (res.warning) toast(res.warning, { icon: '⚠️', duration: 8000 });
       fetchInvitations();
     } catch (err: any) {
       toast.error(err?.message || 'Erro ao gerar convites em lote.');
@@ -153,8 +155,9 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
       return;
     }
     try {
-      await invitationService.resendInvitation(id);
+      const reissued = await invitationService.resendInvitation(id);
       toast.success('Convite reemitido com novo QR Code seguro!');
+      if (reissued?.warning) toast(reissued.warning, { icon: '⚠️', duration: 8000 });
       fetchInvitations();
     } catch (err: any) {
       toast.error(err?.message || 'Erro ao reemitir convite.');
