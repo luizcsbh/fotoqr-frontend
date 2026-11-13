@@ -4,6 +4,10 @@ module.exports = {
   extends: [],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: [],
-  rules: {},
+  parserOptions: { ecmaVersion: 'latest', sourceType: 'module', ecmaFeatures: { jsx: true } },
+  plugins: ['react-hooks'],
+  rules: {
+    // Hooks called conditionally / after an early return crash React at runtime
+    'react-hooks/rules-of-hooks': 'error',
+  },
 };

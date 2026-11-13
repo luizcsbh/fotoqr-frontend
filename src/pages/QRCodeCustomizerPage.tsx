@@ -105,9 +105,13 @@ export const QRCodeCustomizerPage: React.FC = () => {
     if (event && !serverCustomization.isLoading && initializedForRef.current !== event.uuid) {
       initializedForRef.current = event.uuid;
       const fromServer = serverCustomization.data ?? null;
-      const saved = fromServer
+      const loaded = fromServer
         ? { ...fromServer, title: fromServer.title || event.title }
         : loadQRCustomization(event.uuid, event.title);
+      // A design saved with a theme this version does not know falls back to the defaults
+      const saved = EVENT_THEMES[loaded.eventType as EventTypeCategory]
+        ? loaded
+        : loadQRCustomization('', event.title);
       setNeedsSync(!fromServer && serverCustomization.isSuccess && hasLocalQRCustomization(event.uuid));
       setEventType(saved.eventType);
       setFgColor(saved.fgColor);

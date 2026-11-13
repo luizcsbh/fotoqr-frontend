@@ -19,7 +19,7 @@ export const ForgotPasswordPage: React.FC = () => {
       await authService.forgotPassword(email);
       setSubmitted(true);
     } catch (err: any) {
-      const msg = err?.response?.data?.error || err?.message || 'Erro ao enviar e-mail. Verifique a configuração SMTP.';
+      const msg = err?.message || 'Erro ao enviar e-mail. Verifique a configuração SMTP.';
       setError(msg);
     } finally {
       setIsSubmitting(false);

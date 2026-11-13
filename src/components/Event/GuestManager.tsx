@@ -53,11 +53,22 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
   const fetchGuests = async () => {
     try {
       setLoading(true);
-      const res = await invitationService.listGuests(eventId, {
-        search: search || undefined,
-        category: categoryFilter || undefined,
-      });
-      setGuests(res.data || []);
+      // The API pages results (max 100 per page): load every page so no guest is left out of the list
+      const all: Guest[] = [];
+      let page = 1;
+      let totalPages = 1;
+      do {
+        const res = await invitationService.listGuests(eventId, {
+          search: search || undefined,
+          category: categoryFilter || undefined,
+          page,
+          limit: 100,
+        });
+        all.push(...(res.data || []));
+        totalPages = res.pagination?.totalPages || 1;
+        page++;
+      } while (page <= totalPages && page <= 100);
+      setGuests(all);
     } catch (err: any) {
       toast.error('Erro ao carregar lista de convidados.');
     } finally {
@@ -100,7 +111,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
       fetchGuests();
       if (onInvitationsUpdated) onInvitationsUpdated();
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Erro ao cadastrar convidado.');
+      toast.error(err?.message || 'Erro ao cadastrar convidado.');
     } finally {
       setSubmitting(false);
     }
@@ -124,7 +135,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
       fetchGuests();
       if (onInvitationsUpdated) onInvitationsUpdated();
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Erro na importação de convidados.');
+      toast.error(err?.message || 'Erro na importação de convidados.');
     } finally {
       setImporting(false);
     }
@@ -146,7 +157,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
       fetchGuests();
       if (onInvitationsUpdated) onInvitationsUpdated();
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Erro ao remover convidado.');
+      toast.error(err?.message || 'Erro ao remover convidado.');
     }
   };
 
@@ -156,7 +167,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
       toast.success('Convite com QR Code gerado!');
       if (onInvitationsUpdated) onInvitationsUpdated();
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Erro ao gerar convite.');
+      toast.error(err?.message || 'Erro ao gerar convite.');
     }
   };
 

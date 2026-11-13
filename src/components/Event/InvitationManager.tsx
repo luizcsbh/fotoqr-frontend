@@ -108,13 +108,22 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
     fetchConfig();
   }, [eventId]);
 
+  // Drop selections that no longer point to an active invitation (revoked, reissued, removed)
+  useEffect(() => {
+    setSelectedIds((prev) => {
+      const activeIds = new Set(invitations.filter((i) => i.status !== 'cancelled').map((i) => i.id));
+      const next = prev.filter((id) => activeIds.has(id));
+      return next.length === prev.length ? prev : next;
+    });
+  }, [invitations]);
+
   const handleBulkGenerate = async () => {
     try {
       const res = await invitationService.generateBulkInvitations(eventId);
       toast.success(`${res.generated} convites gerados com sucesso!`);
       fetchInvitations();
     } catch (err: any) {
-      toast.error('Erro ao gerar convites em lote.');
+      toast.error(err?.message || 'Erro ao gerar convites em lote.');
     }
   };
 
@@ -133,7 +142,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
       toast.success('Convite cancelado.');
       fetchInvitations();
     } catch (err: any) {
-      toast.error('Erro ao cancelar convite.');
+      toast.error(err?.message || 'Erro ao cancelar convite.');
     }
   };
 
@@ -148,7 +157,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
       toast.success('Convite reemitido com novo QR Code seguro!');
       fetchInvitations();
     } catch (err: any) {
-      toast.error('Erro ao reemitir convite.');
+      toast.error(err?.message || 'Erro ao reemitir convite.');
     }
   };
 
@@ -192,7 +201,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
     try {
       await invitationService.markInvitationSent(inv.id, 'whatsapp', inv.guestPhone);
       setInvitations((prev) =>
-        prev.map((item) => (item.id === inv.id ? { ...item, status: 'sent' } : item))
+        prev.map((item) => (item.id === inv.id && item.status === 'pending' ? { ...item, status: 'sent' } : item))
       );
       toast.success(`WhatsApp aberto para ${inv.guestName}! Status atualizado para Enviado.`);
     } catch (err) {
@@ -219,13 +228,13 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
         if (res.sent > 0) {
           toast.success(`E-mail enviado com sucesso para ${inv.guestEmail}!`, { id: `email-${inv.id}` });
           setInvitations((prev) =>
-            prev.map((item) => (item.id === inv.id ? { ...item, status: 'sent' } : item))
+            prev.map((item) => (item.id === inv.id && item.status === 'pending' ? { ...item, status: 'sent' } : item))
           );
         } else {
           toast.error(`Falha no envio de e-mail. Verifique a configuração SMTP.`, { id: `email-${inv.id}` });
         }
       } catch (err: any) {
-        toast.error(err?.response?.data?.error || 'Erro ao enviar e-mail via servidor.', { id: `email-${inv.id}` });
+        toast.error(err?.message || 'Erro ao enviar e-mail via servidor.', { id: `email-${inv.id}` });
       }
     } else {
       // Fallback para cliente de e-mail local (mailto) com link direto real
@@ -240,7 +249,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
       try {
         await invitationService.markInvitationSent(inv.id, 'email', inv.guestEmail);
         setInvitations((prev) =>
-          prev.map((item) => (item.id === inv.id ? { ...item, status: 'sent' } : item))
+          prev.map((item) => (item.id === inv.id && item.status === 'pending' ? { ...item, status: 'sent' } : item))
         );
         toast.success(`Cliente de e-mail aberto para ${inv.guestEmail}! Status atualizado.`);
       } catch (err) {
@@ -292,7 +301,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
       toast.success(`Disparo de e-mails concluído: ${res.sent} enviado(s) com sucesso${res.failed > 0 ? `, ${res.failed} falha(s)` : ''}!`);
       fetchInvitations();
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Falha no envio de e-mails.');
+      toast.error(err?.message || 'Falha no envio de e-mails.');
     } finally {
       setDispatching(false);
       setDispatchChannel(null);
@@ -321,22 +330,23 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
         confirmText: 'Iniciar Disparo',
         cancelText: 'Cancelar',
       });
-      if (confirmed) {
-        try {
-          setDispatching(true);
-          setDispatchChannel('whatsapp');
-          const validIds = invsWithPhone.map((i) => i.id);
-          const res = await invitationService.sendWhatsAppBatch(eventId, validIds);
-          toast.success(`Disparo de WhatsApp concluído: ${res.sent} enviado(s)${res.failed > 0 ? `, ${res.failed} falha(s)` : ''}!`);
-          fetchInvitations();
-        } catch (err: any) {
-          toast.error(err?.response?.data?.error || 'Falha no envio de WhatsApp.');
-        } finally {
-          setDispatching(false);
-          setDispatchChannel(null);
-        }
-        return;
+      // "Cancelar" means cancel: do not fall through to the WhatsApp Web assistant
+      if (!confirmed) return;
+
+      try {
+        setDispatching(true);
+        setDispatchChannel('whatsapp');
+        const validIds = invsWithPhone.map((i) => i.id);
+        const res = await invitationService.sendWhatsAppBatch(eventId, validIds);
+        toast.success(`Disparo de WhatsApp concluído: ${res.sent} enviado(s)${res.failed > 0 ? `, ${res.failed} falha(s)` : ''}!`);
+        fetchInvitations();
+      } catch (err: any) {
+        toast.error(err?.message || 'Falha no envio de WhatsApp.');
+      } finally {
+        setDispatching(false);
+        setDispatchChannel(null);
       }
+      return;
     }
 
     // Se não há API Cloud configurada (ou o organizador prefere enviar pelo seu WhatsApp Web/App direto):

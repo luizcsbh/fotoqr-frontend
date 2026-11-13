@@ -32,6 +32,8 @@ export const QRScannerPage: React.FC = () => {
   const streamRef = useRef<MediaStream | null>(null);
   const animFrameRef = useRef<number>(0);
   const scanningRef = useRef<boolean>(true);
+  // Mirrors `validating` for the decode loop, which runs outside React renders
+  const validatingRef = useRef<boolean>(false);
 
   // Audio Beep Generator using Web Audio API
   const playSound = (type: 'success' | 'error') => {
@@ -82,7 +84,7 @@ export const QRScannerPage: React.FC = () => {
         inversionAttempts: 'dontInvert',
       });
 
-      if (code && code.data) {
+      if (code && code.data && !validatingRef.current) {
         scanningRef.current = false;
         handleValidateRef.current(code.data);
         return; // stop loop
@@ -111,11 +113,13 @@ export const QRScannerPage: React.FC = () => {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        // iOS rejects play() until the video is ready; autoPlay takes over in that case
+        videoRef.current.play().catch(() => {});
       }
       setHasCameraPermission(true);
       setScanning(true);
       scanningRef.current = true;
+      cancelAnimationFrame(animFrameRef.current);
       startDecoding();
     } catch (err) {
       setHasCameraPermission(false);
@@ -134,7 +138,11 @@ export const QRScannerPage: React.FC = () => {
   }, [eventId]);
 
   const handleValidate = async (rawToken: string) => {
-    if (!eventId || validating) return;
+    if (!eventId || validatingRef.current) return;
+
+    // Pause the camera loop while a result is on screen (also when the code was typed by hand)
+    scanningRef.current = false;
+    cancelAnimationFrame(animFrameRef.current);
 
     // Extract token from full URL if scanner captured https://.../convite/<token>
     let token = rawToken.trim();
@@ -143,6 +151,7 @@ export const QRScannerPage: React.FC = () => {
     }
 
     try {
+      validatingRef.current = true;
       setValidating(true);
       const res = await invitationService.validateCheckin(eventId, token, navigator.userAgent);
       setResult(res);
@@ -155,7 +164,7 @@ export const QRScannerPage: React.FC = () => {
         playSound('error');
       }
     } catch (err: any) {
-      const errorMsg = err?.response?.data?.message || 'Erro ao validar QR Code.';
+      const errorMsg = err?.message || 'Erro ao validar QR Code.';
       setResult({
         status: 'INVALIDO',
         allowed: false,
@@ -165,6 +174,7 @@ export const QRScannerPage: React.FC = () => {
       playSound('error');
       setScanning(false);
     } finally {
+      validatingRef.current = false;
       setValidating(false);
     }
   };
@@ -183,6 +193,10 @@ export const QRScannerPage: React.FC = () => {
     setResult(null);
     setScanning(true);
     scanningRef.current = true;
+    cancelAnimationFrame(animFrameRef.current);
+    // The <video> stays mounted under the result card, so the stream is still attached;
+    // make sure it is playing again before decoding
+    videoRef.current?.play().catch(() => {});
     startDecoding();
   };
 
@@ -209,7 +223,7 @@ export const QRScannerPage: React.FC = () => {
 
       {/* Main Camera / Result Area */}
       <div className="my-auto py-4">
-        {result ? (
+        {result && (
           /* Full Screen Result Card */
           <div
             className={`rounded-2xl p-6 text-center space-y-6 shadow-2xl transition-all duration-300 ${
@@ -261,9 +275,10 @@ export const QRScannerPage: React.FC = () => {
               Próxima Leitura
             </Button>
           </div>
-        ) : (
-          /* Camera Viewfinder */
-          <div className="space-y-4">
+        )}
+
+        {/* Camera Viewfinder — always mounted (only hidden) so the camera stream survives between scans */}
+        <div className={`space-y-4 ${result ? 'hidden' : ''}`}>
             <div className="relative rounded-2xl overflow-hidden bg-black aspect-square border-2 border-indigo-500 shadow-2xl flex items-center justify-center">
               <video
                 ref={videoRef}
@@ -292,8 +307,7 @@ export const QRScannerPage: React.FC = () => {
               <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
               Aponte a câmera para o QR Code do convite
             </p>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Manual Input Alternative */}

@@ -40,7 +40,7 @@ export const ResetPasswordPage: React.FC = () => {
       setSuccess(true);
       setTimeout(() => navigate('/login'), 3500);
     } catch (err: any) {
-      setError(err?.response?.data?.error || err?.message || 'Token inválido ou expirado. Solicite um novo link.');
+      setError(err?.message || 'Token inválido ou expirado. Solicite um novo link.');
     } finally {
       setIsSubmitting(false);
     }

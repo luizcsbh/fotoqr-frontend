@@ -646,9 +646,11 @@ export const EventDetailPage: React.FC = () => {
           eventId={event.id}
           eventTitle={event.title}
           eventLocation={event.location}
-          eventDate={event.start_date || event.event_date}
+          eventDate={event.start_at || event.start_date || event.event_date}
           initialCoverImage={event.cover_image}
           initialBgImage={event.background_image}
+          // Refresh the event so reopening the tab shows what was just saved
+          onSave={() => queryClient.invalidateQueries({ queryKey: ['event', id] })}
         />
       )}
 

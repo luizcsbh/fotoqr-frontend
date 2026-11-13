@@ -17,6 +17,7 @@ import {
 import toast from 'react-hot-toast';
 import { invitationService } from '../services/invitation.service';
 import { PublicInvitation } from '../types';
+import { isImageUrl, toCssBackgroundLayer } from '../utils/cssImage';
 
 export const PublicInvitationPage: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -42,11 +43,12 @@ export const PublicInvitationPage: React.FC = () => {
   }, [token]);
 
   const handleDownloadPdf = async () => {
-    if (!data) return;
+    if (!data || !token) return;
     try {
       setDownloading(true);
-      await invitationService.downloadPdf(
-        data.invitation.id,
+      // The guest is not logged in: download by the link token (download by id is admin-only)
+      await invitationService.downloadPublicPdf(
+        token,
         `convite-${data.guest.name.toLowerCase().replace(/\s+/g, '-')}.pdf`
       );
       toast.success('Download do convite em PDF iniciado!');
@@ -84,8 +86,12 @@ export const PublicInvitationPage: React.FC = () => {
         // Share cancelled
       }
     } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success('Link do convite copiado para a área de transferência!');
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success('Link do convite copiado para a área de transferência!');
+      } catch {
+        toast.error('Não foi possível copiar o link. Copie-o da barra de endereços.');
+      }
     }
   };
 
@@ -112,6 +118,9 @@ export const PublicInvitationPage: React.FC = () => {
   }
 
   const { invitation, guest, event } = data;
+  // The editor stores either an image or a template color/gradient for the background
+  const backgroundLayer = toCssBackgroundLayer(event.backgroundImage);
+  const coverImage = isImageUrl(event.coverImage) ? event.coverImage : null;
   const isUsed = invitation.usedEntries >= invitation.maxEntries;
   const isCancelled = invitation.status === 'cancelled';
 
@@ -135,19 +144,20 @@ export const PublicInvitationPage: React.FC = () => {
     <div
       className="min-h-screen flex items-center justify-center p-4 sm:p-6 py-12 relative"
       style={{
-        background: event.backgroundImage
-          ? `linear-gradient(rgba(241, 245, 249, 0.92), rgba(241, 245, 249, 0.96)), url(${event.backgroundImage}) center/cover no-repeat fixed`
+        background: backgroundLayer
+          ? `linear-gradient(rgba(241, 245, 249, 0.92), rgba(241, 245, 249, 0.96)), ${backgroundLayer}`
           : '#eef2f6',
+        backgroundAttachment: backgroundLayer ? 'fixed' : undefined,
       }}
     >
       <div className="w-full max-w-lg space-y-6 relative z-10">
         {/* Main Card with Official Layout (Inspired by AssessoriaVIP/Chromos example) */}
         <div className="bg-white rounded-[32px] shadow-2xl p-8 sm:p-12 text-center border border-slate-100 space-y-6">
           {/* Top Logo / Circular Emblem if provided */}
-          {event.coverImage ? (
+          {coverImage ? (
             <div className="max-w-[130px] mx-auto rounded-full overflow-hidden shadow-xs mb-2">
               <img
-                src={event.coverImage}
+                src={coverImage}
                 alt={event.title}
                 className="w-full h-auto object-contain mx-auto max-h-28"
               />

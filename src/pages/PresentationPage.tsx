@@ -81,7 +81,10 @@ export const PresentationPage: React.FC = () => {
     queryKey: ['presentation', uuid],
     queryFn: () => fetchAllPhotosForPresentation(uuid!),
     enabled: !!uuid,
-    refetchInterval: (query) => (query.state.status === 'error' ? false : 10_000),
+    // Keep polling during the whole event: after a failed refresh, retry a bit slower instead of
+    // stopping for good (a projector left running must recover on its own)
+    refetchInterval: (query) => (query.state.status === 'error' ? 30_000 : 10_000),
+    refetchIntervalInBackground: true,
     retry: false,
   });
 
@@ -101,6 +104,13 @@ export const PresentationPage: React.FC = () => {
       }
     }
   }, [photos.length]);
+
+  // Photos can be deleted or moderated while the slideshow runs: keep the index in range
+  useEffect(() => {
+    if (photos.length > 0 && currentIndex >= photos.length) {
+      setCurrentIndex(0);
+    }
+  }, [photos.length, currentIndex]);
 
   // Slideshow advance handler
   const handleNext = useCallback(() => {
@@ -214,7 +224,8 @@ export const PresentationPage: React.FC = () => {
     );
   }
 
-  if (isError || !event) {
+  // A failed background refresh keeps the photos already loaded on screen
+  if ((isError && !data) || !event) {
     return (
       <div className="min-h-screen bg-black text-white">
         <ColdStartBanner />

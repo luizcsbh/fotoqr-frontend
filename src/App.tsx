@@ -139,7 +139,15 @@ export const App: React.FC = () => {
 
       {/* Invitation & QR Scanner standalone routes */}
       <Route path="/convite/:token" element={<PublicInvitationPage />} />
-      <Route path="/leitor/:eventId" element={<QRScannerPage />} />
+      {/* The scanner calls an authenticated API: send logged-out staff to login and back */}
+      <Route
+        path="/leitor/:eventId"
+        element={
+          <ProtectedRoute>
+            <QRScannerPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };

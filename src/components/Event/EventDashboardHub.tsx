@@ -35,7 +35,8 @@ export const EventDashboardHub: React.FC<EventDashboardHubProps> = ({ eventId })
       const data = await invitationService.getDashboardMetrics(eventId);
       setMetrics(data);
     } catch (err: any) {
-      toast.error('Erro ao carregar estatísticas do evento.');
+      // Same toast id: the 15s polling must not stack a new error toast on every attempt
+      toast.error(err?.message || 'Erro ao carregar estatísticas do evento.', { id: 'dashboard-metrics-error' });
     } finally {
       setLoading(false);
     }
@@ -54,7 +55,7 @@ export const EventDashboardHub: React.FC<EventDashboardHubProps> = ({ eventId })
       await invitationService.exportReport(eventId, type, format);
       toast.success(`Exportação de ${type} (${format.toUpperCase()}) iniciada!`);
     } catch (err: any) {
-      toast.error('Erro ao exportar relatório.');
+      toast.error(err?.message || 'Erro ao exportar relatório.');
     } finally {
       setExporting(false);
     }

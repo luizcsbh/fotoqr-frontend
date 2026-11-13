@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../../services/invitation.service';
+import { isImageUrl } from '../../utils/cssImage';
 
 interface CoverEditorProps {
   eventId: string | number;
@@ -60,9 +61,12 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
   initialBgImage,
   onSave,
 }) => {
-  const [selectedTemplate, setSelectedTemplate] = useState('clean');
-  const [coverImageUrl, setCoverImageUrl] = useState(initialCoverImage || '');
-  const [bgImageUrl, setBgImageUrl] = useState(initialBgImage || '');
+  // A saved template color/gradient is stored as the background: reselect that template
+  const savedTemplate = TEMPLATES.find((t) => t.bg === initialBgImage);
+  const [selectedTemplate, setSelectedTemplate] = useState(savedTemplate?.id || 'clean');
+  // Only real images go into the URL fields (not a template gradient)
+  const [coverImageUrl, setCoverImageUrl] = useState(isImageUrl(initialCoverImage) ? initialCoverImage : '');
+  const [bgImageUrl, setBgImageUrl] = useState(isImageUrl(initialBgImage) ? initialBgImage : '');
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [bgFile, setBgFile] = useState<File | null>(null);
   const [location, setLocation] = useState(initialLocation);
@@ -116,9 +120,11 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
     try {
       setSaving(true);
 
+      // The cover is the logo shown as an <img>: never send the template gradient there
+      // ('' clears it). The background falls back to the selected template's color/gradient.
       const result = await invitationService.updateEventCover(eventId, {
-        coverImage: coverFile ? undefined : (coverImageUrl || activeTemplate.bg),
-        backgroundImage: bgFile ? undefined : (bgImageUrl || activeTemplate.bg),
+        coverImage: coverFile ? undefined : coverImageUrl.startsWith('blob:') ? undefined : coverImageUrl,
+        backgroundImage: bgFile ? undefined : (bgImageUrl && !bgImageUrl.startsWith('blob:') ? bgImageUrl : activeTemplate.bg),
         coverFile: coverFile || undefined,
         bgFile: bgFile || undefined,
         location: location.trim(),
@@ -128,12 +134,12 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
       toast.success('Identidade visual e dados do convite salvos com sucesso!');
       if (onSave) {
         onSave(
-          result?.coverImage || coverImageUrl || activeTemplate.bg,
+          result?.coverImage || '',
           result?.backgroundImage || bgImageUrl || activeTemplate.bg
         );
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Erro ao salvar capa do evento.');
+      toast.error(err?.message || 'Erro ao salvar capa do evento.');
     } finally {
       setSaving(false);
     }

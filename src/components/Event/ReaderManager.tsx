@@ -50,7 +50,7 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
       setReaderEmail('');
       fetchReaders();
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Erro ao autorizar leitor.');
+      toast.error(err?.message || 'Erro ao autorizar leitor.');
     } finally {
       setSubmitting(false);
     }

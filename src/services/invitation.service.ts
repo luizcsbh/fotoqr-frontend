@@ -10,6 +10,18 @@ import {
   DashboardMetrics,
 } from '../types';
 
+/** Triggers a browser download; the object URL is released later (revoking at once cancels it in Safari/Firefox) */
+const saveBlob = (blob: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
+};
+
 export const invitationService = {
   // ── Event Details & Cover ───────────────────────────────────────────────
 
@@ -33,8 +45,8 @@ export const invitationService = {
       const formData = new FormData();
       if (coverData.coverFile) formData.append('coverFile', coverData.coverFile);
       if (coverData.bgFile) formData.append('bgFile', coverData.bgFile);
-      if (coverData.coverImage) formData.append('coverImage', coverData.coverImage);
-      if (coverData.backgroundImage) formData.append('backgroundImage', coverData.backgroundImage);
+      if (coverData.coverImage !== undefined) formData.append('coverImage', coverData.coverImage);
+      if (coverData.backgroundImage !== undefined) formData.append('backgroundImage', coverData.backgroundImage);
       if (coverData.location !== undefined) formData.append('location', coverData.location);
       if (coverData.startAt !== undefined) formData.append('startAt', coverData.startAt);
 
@@ -105,21 +117,24 @@ export const invitationService = {
   },
 
   async getPublicInvitation(tokenOrHash: string): Promise<PublicInvitation> {
-    const response = await api.get(`/api/invitations/public/${tokenOrHash}`);
+    const response = await api.get(`/api/invitations/public/${encodeURIComponent(tokenOrHash)}`);
     return response.data.data;
   },
 
+  /** PDF by invitation id — event admins only */
   async downloadPdf(invitationId: number, filename = 'convite.pdf') {
     const response = await api.get(`/api/invitations/${invitationId}/pdf`, {
       responseType: 'blob',
     });
-    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    saveBlob(new Blob([response.data], { type: 'application/pdf' }), filename);
+  },
+
+  /** PDF for the guest holding the invitation link (no login) */
+  async downloadPublicPdf(tokenOrHash: string, filename = 'convite.pdf') {
+    const response = await api.get(`/api/invitations/public/${encodeURIComponent(tokenOrHash)}/pdf`, {
+      responseType: 'blob',
+    });
+    saveBlob(new Blob([response.data], { type: 'application/pdf' }), filename);
   },
 
   // ── Deliveries ─────────────────────────────────────────────────────────
@@ -196,14 +211,7 @@ export const invitationService = {
       responseType: 'blob',
     });
     const mime = format === 'csv' ? 'text/csv' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    const blob = new Blob([response.data], { type: mime });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `relatorio-${type}-${eventId}.${format}`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    saveBlob(new Blob([response.data], { type: mime }), `relatorio-${type}-${eventId}.${format}`);
   },
 };
 
