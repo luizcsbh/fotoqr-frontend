@@ -141,16 +141,13 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
                       </Badge>
                     </td>
                     <td className="py-3.5 px-4 text-right">
-                      <div className="flex items-center justify-end">
-                        <button
-                          type="button"
-                          title="Revogar Permissão"
-                          onClick={() => handleRemove(r.userId, r.name)}
-                          className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors inline-flex items-center justify-center"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                      <button
+                        title="Revogar Permissão"
+                        onClick={() => handleRemove(r.userId, r.name)}
+                        className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </td>
                   </tr>
                 ))}

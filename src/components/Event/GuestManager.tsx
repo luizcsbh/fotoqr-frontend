@@ -258,25 +258,21 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
                     <td className="py-3.5 px-4 text-xs text-slate-500 max-w-xs truncate">
                       {guest.notes || '-'}
                     </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          type="button"
-                          title="Gerar / Ver Convite QR Code"
-                          onClick={() => handleGenerateInvite(guest.id)}
-                          className="p-1.5 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors inline-flex items-center justify-center"
-                        >
-                          <QrCode className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          title="Remover Convidado"
-                          onClick={() => handleDelete(guest.id, guest.name)}
-                          className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors inline-flex items-center justify-center"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                    <td className="py-3.5 px-4 text-right space-x-2">
+                      <button
+                        title="Gerar / Ver Convite QR Code"
+                        onClick={() => handleGenerateInvite(guest.id)}
+                        className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
+                      >
+                        <QrCode className="w-4 h-4" />
+                      </button>
+                      <button
+                        title="Remover Convidado"
+                        onClick={() => handleDelete(guest.id, guest.name)}
+                        className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </td>
                   </tr>
                 ))}
