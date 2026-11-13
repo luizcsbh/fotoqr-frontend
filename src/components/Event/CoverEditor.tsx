@@ -6,6 +6,7 @@ import {
   Sparkles,
   Image as ImageIcon,
   Save,
+  CheckCircle2,
   Upload,
   X,
   FileImage,
@@ -336,9 +337,17 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
               </div>
             </div>
 
-            <div className="pt-2 flex justify-end">
-              <Button onClick={handleSave} disabled={saving} className="flex items-center gap-2">
-                {saving ? 'Salvando...' : <><Save className="w-4 h-4" /> Salvar Identidade Visual</>}
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleSave}
+                disabled={saving}
+                isLoading={saving}
+                leftIcon={<CheckCircle2 className="w-4 h-4 text-white" />}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-md shadow-indigo-600/20 px-6 py-2.5 rounded-xl transition-all"
+              >
+                Salvar
               </Button>
             </div>
           </Card>
