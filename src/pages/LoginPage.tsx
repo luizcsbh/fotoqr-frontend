@@ -210,6 +210,17 @@ export const LoginPage: React.FC = () => {
               </div>
             </div>
 
+            {!isRegistering && (
+              <div className="text-right -mt-1">
+                <Link
+                  to="/esqueci-a-senha"
+                  className="text-xs font-semibold text-brand-600 hover:text-brand-800 transition-colors"
+                >
+                  Esqueceu sua senha?
+                </Link>
+              </div>
+            )}
+
             {isRegistering && (
               <div>
                 <label htmlFor="password-confirmation" className="block text-sm font-semibold text-slate-700 mb-1.5">

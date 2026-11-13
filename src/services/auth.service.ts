@@ -65,4 +65,12 @@ export const authService = {
   async logout(): Promise<void> {
     await api.post('/api/auth/logout');
   },
+
+  async forgotPassword(email: string): Promise<void> {
+    await api.post('/api/auth/forgot-password', { email });
+  },
+
+  async resetPassword(email: string, token: string, newPassword: string): Promise<void> {
+    await api.post('/api/auth/reset-password', { email, token, newPassword });
+  },
 };

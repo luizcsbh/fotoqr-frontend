@@ -20,6 +20,8 @@ import { CreateEventPage } from './pages/CreateEventPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { PublicInvitationPage } from './pages/PublicInvitationPage';
 import { QRScannerPage } from './pages/QRScannerPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 
 // Standard App Layout with Header and Footer
 const MainLayout: React.FC = () => {
@@ -42,6 +44,8 @@ export const App: React.FC = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/esqueci-a-senha" element={<ForgotPasswordPage />} />
+        <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
 
         {/* Protected Dashboard Routes */}
         <Route
