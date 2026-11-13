@@ -15,7 +15,7 @@ import {
   Phone,
   QrCode,
   FileSpreadsheet,
-  CheckCircle2,
+  Save,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../../services/invitation.service';
@@ -367,7 +367,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
               variant="success"
               disabled={submitting}
               isLoading={submitting}
-              leftIcon={<CheckCircle2 className="w-4 h-4 text-white" />}
+              leftIcon={<Save className="w-4 h-4 text-white" />}
             >
               Salvar Convidado
             </Button>

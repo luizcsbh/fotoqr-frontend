@@ -344,7 +344,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                 onClick={handleSave}
                 disabled={saving}
                 isLoading={saving}
-                leftIcon={<CheckCircle2 className="w-4 h-4 text-white" />}
+                leftIcon={<Save className="w-4 h-4 text-white" />}
                 className="font-semibold px-6 py-2.5 rounded-xl shadow-emerald-600/20"
               >
                 Salvar
