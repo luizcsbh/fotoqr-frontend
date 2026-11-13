@@ -225,7 +225,13 @@ export const ProfilePage: React.FC = () => {
                 </div>
                 <p className="mt-1 text-xs text-slate-500">O e-mail da conta não pode ser alterado.</p>
               </div>
-              <Button type="submit" isLoading={isSavingProfile} leftIcon={<Save className="h-4 w-4" />}>
+              <Button
+                type="submit"
+                variant="success"
+                isLoading={isSavingProfile}
+                leftIcon={<Save className="h-4 w-4" />}
+                className="font-semibold shadow-emerald-600/20"
+              >
                 Salvar perfil
               </Button>
             </form>

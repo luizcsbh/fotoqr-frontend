@@ -339,13 +339,13 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
 
             <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
               <Button
-                variant="primary"
+                variant="success"
                 size="md"
                 onClick={handleSave}
                 disabled={saving}
                 isLoading={saving}
                 leftIcon={<CheckCircle2 className="w-4 h-4 text-white" />}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-md shadow-indigo-600/20 px-6 py-2.5 rounded-xl transition-all"
+                className="font-semibold px-6 py-2.5 rounded-xl shadow-emerald-600/20"
               >
                 Salvar
               </Button>
