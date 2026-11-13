@@ -231,39 +231,44 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
                       {inv.guestEmail && <p>{inv.guestEmail}</p>}
                       {inv.guestPhone && <p className="text-slate-400">{inv.guestPhone}</p>}
                     </td>
-                    <td className="py-3.5 px-4 text-right space-x-1">
-                      <a
-                        href={`/convite/${inv.tokenHash}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        title="Ver Página Pública do Convite"
-                        className="inline-block p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                      <button
-                        title="Baixar Convite em PDF"
-                        onClick={() => handleDownloadPdf(inv.id, inv.guestName)}
-                        className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
-                      >
-                        <FileDown className="w-4 h-4" />
-                      </button>
-                      <button
-                        title="Reemitir Convite (Novo QR Code)"
-                        onClick={() => handleReissue(inv.id)}
-                        className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-md transition-colors"
-                      >
-                        <RotateCcw className="w-4 h-4" />
-                      </button>
-                      {inv.status !== 'cancelled' && (
-                        <button
-                          title="Cancelar Convite"
-                          onClick={() => handleRevoke(inv.id)}
-                          className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <a
+                          href={`/convite/${inv.tokenHash}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="Ver Página Pública do Convite"
+                          className="p-1.5 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors inline-flex items-center justify-center"
                         >
-                          <Ban className="w-4 h-4" />
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                        <button
+                          type="button"
+                          title="Baixar Convite em PDF"
+                          onClick={() => handleDownloadPdf(inv.id, inv.guestName)}
+                          className="p-1.5 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors inline-flex items-center justify-center"
+                        >
+                          <FileDown className="w-4 h-4" />
                         </button>
-                      )}
+                        <button
+                          type="button"
+                          title="Reemitir Convite (Novo QR Code)"
+                          onClick={() => handleReissue(inv.id)}
+                          className="p-1.5 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-lg transition-colors inline-flex items-center justify-center"
+                        >
+                          <RotateCcw className="w-4 h-4" />
+                        </button>
+                        {inv.status !== 'cancelled' && (
+                          <button
+                            type="button"
+                            title="Cancelar Convite"
+                            onClick={() => handleRevoke(inv.id)}
+                            className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors inline-flex items-center justify-center"
+                          >
+                            <Ban className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
