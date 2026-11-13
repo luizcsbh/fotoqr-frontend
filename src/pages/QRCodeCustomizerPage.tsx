@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { eventService } from '../services/event.service';
 import { Button } from '../components/UI/Button';
+import { useAlert } from '../hooks/useAlert';
 import { LoadingScreen } from '../components/Layout/LoadingScreen';
 import { getShareableEventUrl } from '../utils/url';
 import { getFotoQrImageSettings } from '../utils/qrLogo';
@@ -49,6 +50,7 @@ import { ApiError } from '../types';
 export const QRCodeCustomizerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { showConfirm } = useAlert();
 
   // Fetch Event
   const {
@@ -250,8 +252,17 @@ export const QRCodeCustomizerPage: React.FC = () => {
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
   }, [hasUnsavedChanges]);
 
-  const handleBack = () => {
-    if (hasUnsavedChanges && !window.confirm('Você tem alterações não salvas no QR Code. Sair mesmo assim?')) return;
+  const handleBack = async () => {
+    if (hasUnsavedChanges) {
+      const confirmed = await showConfirm({
+        title: 'Alterações não salvas',
+        message: 'Você tem alterações não salvas na personalização do QR Code. Deseja realmente sair sem salvar?',
+        variant: 'warning',
+        confirmText: 'Sair sem salvar',
+        cancelText: 'Continuar editando',
+      });
+      if (!confirmed) return;
+    }
     navigate(`/dashboard/evento/${id}`);
   };
 

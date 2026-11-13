@@ -5,6 +5,7 @@ import { Badge } from '../UI/Badge';
 import { EmptyState } from '../UI/EmptyState';
 import { ScanLine, UserPlus, Trash2, Smartphone, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useAlert } from '../../hooks/useAlert';
 import { invitationService } from '../../services/invitation.service';
 import { ReaderUser } from '../../types';
 
@@ -13,6 +14,7 @@ interface ReaderManagerProps {
 }
 
 export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
+  const { showConfirm } = useAlert();
   const [readers, setReaders] = useState<ReaderUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [readerEmail, setReaderEmail] = useState('');
@@ -55,7 +57,14 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
   };
 
   const handleRemove = async (userId: number, name: string) => {
-    if (!window.confirm(`Remover autorização de leitura de ${name}?`)) return;
+    const confirmed = await showConfirm({
+      title: 'Revogar Autorização de Leitor',
+      message: `Tem certeza que deseja remover a autorização de leitura de ${name}?`,
+      variant: 'danger',
+      confirmText: 'Sim, revogar',
+      cancelText: 'Cancelar',
+    });
+    if (!confirmed) return;
 
     try {
       await invitationService.removeReader(eventId, userId);

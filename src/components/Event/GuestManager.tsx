@@ -18,6 +18,7 @@ import {
   Save,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useAlert } from '../../hooks/useAlert';
 import { invitationService } from '../../services/invitation.service';
 import { Guest, GuestCategory } from '../../types';
 
@@ -29,6 +30,7 @@ interface GuestManagerProps {
 const CATEGORIES: GuestCategory[] = ['VIP', 'Convidado', 'Equipe', 'Imprensa', 'Organizador', 'Personalizado'];
 
 export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitationsUpdated }) => {
+  const { showConfirm } = useAlert();
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -129,9 +131,14 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
   };
 
   const handleDelete = async (guestId: number, guestName: string) => {
-    if (!window.confirm(`Tem certeza que deseja remover ${guestName}? O convite vinculado também será cancelado.`)) {
-      return;
-    }
+    const confirmed = await showConfirm({
+      title: 'Remover Convidado',
+      message: `Tem certeza que deseja remover ${guestName}? O convite vinculado também será cancelado.`,
+      variant: 'danger',
+      confirmText: 'Sim, remover',
+      cancelText: 'Cancelar',
+    });
+    if (!confirmed) return;
 
     try {
       await invitationService.deleteGuest(eventId, guestId);

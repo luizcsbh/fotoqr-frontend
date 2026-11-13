@@ -3,6 +3,8 @@ import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
 import { Badge } from '../UI/Badge';
 import { EmptyState } from '../UI/EmptyState';
+import { Alert } from '../UI/Alert';
+import { useAlert } from '../../hooks/useAlert';
 import {
   QrCode,
   Send,
@@ -68,6 +70,7 @@ export const generateWhatsAppInviteMessage = (guestName: string, eventTitle: str
 };
 
 export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, eventTitle = 'Evento Especial' }) => {
+  const { showAlert, showConfirm } = useAlert();
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -116,9 +119,15 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
   };
 
   const handleRevoke = async (id: number) => {
-    if (!window.confirm('Tem certeza que deseja cancelar este convite? Ele não poderá mais ser usado para entrada.')) {
-      return;
-    }
+    const confirmed = await showConfirm({
+      title: 'Cancelar Convite',
+      message: 'Tem certeza que deseja cancelar este convite? Ele não poderá mais ser usado para entrada na portaria.',
+      variant: 'danger',
+      confirmText: 'Sim, cancelar',
+      cancelText: 'Voltar',
+    });
+    if (!confirmed) return;
+
     try {
       await invitationService.revokeInvitation(id);
       toast.success('Convite cancelado.');
@@ -234,18 +243,26 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
     }
 
     if (!deliveryConfig?.smtpConfigured) {
-      alert(
-        '⚠️ Servidor SMTP não configurado no backend (.env).\n\n' +
-        'Para disparo automático em massa pelo servidor, adicione as credenciais SMTP no arquivo .env:\n' +
-        '• SMTP_HOST\n• SMTP_PORT\n• SMTP_USER\n• SMTP_PASS\n\n' +
-        'Você também pode enviar individualmente pelo seu cliente de e-mail clicando no ícone de envelope ao lado de cada convidado.'
-      );
+      await showAlert({
+        title: 'Servidor SMTP não configurado',
+        message:
+          'Para disparo automático em massa pelo servidor, adicione as credenciais SMTP no arquivo .env:\n\n' +
+          '• SMTP_HOST\n• SMTP_PORT\n• SMTP_USER\n• SMTP_PASS\n\n' +
+          'Você também pode enviar individualmente pelo seu cliente de e-mail clicando no ícone de envelope ao lado de cada convidado.',
+        variant: 'warning',
+        confirmText: 'Entendi',
+      });
       return;
     }
 
-    if (!window.confirm(`Deseja enviar o convite por e-mail para ${isAll ? 'TODOS os convidados' : `${count} convidado(s) selecionado(s)`}?`)) {
-      return;
-    }
+    const confirmed = await showConfirm({
+      title: 'Disparo de Convites por E-mail',
+      message: `Deseja enviar o convite por e-mail para ${isAll ? 'TODOS os convidados' : `${count} convidado(s) selecionado(s)`}?`,
+      variant: 'info',
+      confirmText: 'Iniciar Disparo',
+      cancelText: 'Cancelar',
+    });
+    if (!confirmed) return;
 
     try {
       setDispatching(true);
@@ -274,7 +291,14 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
 
     // Se o backend tem a API Cloud oficial configurada
     if (deliveryConfig?.whatsappApiConfigured) {
-      if (window.confirm(`Deseja disparar convites via WhatsApp Cloud API para ${invsWithPhone.length} convidado(s)?`)) {
+      const confirmed = await showConfirm({
+        title: 'Disparo via WhatsApp Cloud API',
+        message: `Deseja disparar convites via WhatsApp Cloud API para ${invsWithPhone.length} convidado(s)?`,
+        variant: 'info',
+        confirmText: 'Iniciar Disparo',
+        cancelText: 'Cancelar',
+      });
+      if (confirmed) {
         try {
           setDispatching(true);
           setDispatchChannel('whatsapp');
@@ -330,6 +354,18 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
 
   return (
     <div className="space-y-6">
+      {/* Alerta de Status do Servidor de E-mail (SMTP) */}
+      {deliveryConfig && !deliveryConfig.smtpConfigured && (
+        <Alert
+          variant="warning"
+          title="Servidor de E-mails (SMTP) não configurado"
+          dismissible
+        >
+          Para realizar disparos automáticos em lote pelo servidor, adicione as credenciais SMTP no arquivo{' '}
+          <code className="bg-amber-100/70 px-1 py-0.5 rounded font-mono text-xs">.env</code> do backend (Brevo, Gmail ou provedor SMTP). O envio manual direto via cliente de e-mail e o envio por WhatsApp continuam disponíveis normalmente.
+        </Alert>
+      )}
+
       {/* Top Action Panel */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
         <div className="flex flex-wrap items-center gap-3">
