@@ -278,8 +278,8 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
       await showAlert({
         title: 'Servidor SMTP não configurado',
         message:
-          'Para disparo automático em massa pelo servidor, adicione as credenciais SMTP no arquivo .env:\n\n' +
-          '• SMTP_HOST\n• SMTP_PORT\n• SMTP_USER\n• SMTP_PASS\n\n' +
+          'Para disparo automático em massa pelo servidor, configure o envio de e-mail no .env do backend:\n\n' +
+          '• BREVO_API_KEY (recomendado — API HTTPS do Brevo)\n• ou SMTP_HOST, SMTP_PORT, SMTP_USER e SMTP_PASS\n\n' +
           'Você também pode enviar individualmente pelo seu cliente de e-mail clicando no ícone de envelope ao lado de cada convidado.',
         variant: 'warning',
         confirmText: 'Entendi',
