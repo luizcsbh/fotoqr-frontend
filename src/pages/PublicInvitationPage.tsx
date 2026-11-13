@@ -13,6 +13,7 @@ import {
   Clock,
   Sparkles,
   Download,
+  Copy,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../services/invitation.service';
@@ -71,6 +72,17 @@ export const PublicInvitationPage: React.FC = () => {
       toast.success('Download do QR Code concluído!');
     } catch {
       toast.error('Erro ao baixar a imagem do QR Code.');
+    }
+  };
+
+  // Same code the QR carries: the gate staff can type it in the scanner when the camera fails
+  const handleCopyToken = async () => {
+    if (!token) return;
+    try {
+      await navigator.clipboard.writeText(token);
+      toast.success('Código do convite copiado!');
+    } catch {
+      toast.error('Não foi possível copiar o código.');
     }
   };
 
@@ -244,6 +256,27 @@ export const PublicInvitationPage: React.FC = () => {
                     className="w-56 h-56 sm:w-64 sm:h-64 mx-auto object-contain"
                   />
                 </div>
+                {token && (
+                  <div className="max-w-xs mx-auto space-y-1">
+                    <p className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                      Código do convite
+                    </p>
+                    <div className="flex items-start gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+                      <code className="flex-1 text-[11px] leading-relaxed text-slate-700 font-mono break-all select-all text-left">
+                        {token}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={handleCopyToken}
+                        className="shrink-0 p-1 text-slate-400 hover:text-slate-700 rounded transition-colors"
+                        title="Copiar código"
+                        aria-label="Copiar código do convite"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <p className="text-xs text-slate-500 font-medium">
                   Entradas permitidas: <strong>{invitation.maxEntries}</strong>
                 </p>
