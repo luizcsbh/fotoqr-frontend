@@ -191,7 +191,7 @@ export const EventDashboardHub: React.FC<EventDashboardHubProps> = ({ eventId })
                   </div>
                   <ProgressBar
                     progress={cat.total > 0 ? (cat.present / cat.total) * 100 : 0}
-                    color="indigo"
+                    color="blue"
                   />
                 </div>
               ))}
@@ -237,7 +237,7 @@ export const EventDashboardHub: React.FC<EventDashboardHubProps> = ({ eventId })
                       </td>
                       <td className="py-2.5 px-3 text-xs text-slate-600">{entry.readerName || 'Portaria'}</td>
                       <td className="py-2.5 px-3 text-right">
-                        <Badge variant={entry.result === 'VALIDO' ? 'success' : 'error'}>
+                        <Badge variant={entry.result === 'VALIDO' ? 'success' : 'danger'}>
                           {entry.result}
                         </Badge>
                       </td>

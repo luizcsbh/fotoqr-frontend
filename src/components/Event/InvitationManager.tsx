@@ -128,7 +128,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
   };
 
   const getStatusBadge = (status: string, used: number, max: number) => {
-    if (status === 'cancelled') return <Badge variant="error">Cancelado</Badge>;
+    if (status === 'cancelled') return <Badge variant="danger">Cancelado</Badge>;
     if (used >= max || status === 'used') return <Badge variant="success">Utilizado ({used}/{max})</Badge>;
     if (status === 'sent') return <Badge variant="info">Enviado ({used}/{max})</Badge>;
     return <Badge variant="warning">Pendente ({used}/{max})</Badge>;
@@ -184,13 +184,11 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
           <div className="p-8 text-center text-slate-500 text-sm">Carregando convites...</div>
         ) : invitations.length === 0 ? (
           <EmptyState
-            icon={QrCode}
+            icon={<QrCode className="w-8 h-8" />}
             title="Nenhum convite emitido ainda"
             description="Cadastre convidados e clique no botão acima para gerar convites individuais com QR Code exclusivo."
-            action={{
-              label: 'Gerar Convites em Lote',
-              onClick: handleBulkGenerate,
-            }}
+            actionText="Gerar Convites em Lote"
+            onAction={handleBulkGenerate}
           />
         ) : (
           <div className="overflow-x-auto">

@@ -115,7 +115,7 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
           <div className="p-8 text-center text-slate-500 text-sm">Carregando operadores...</div>
         ) : readers.length === 0 ? (
           <EmptyState
-            icon={Smartphone}
+            icon={<Smartphone className="w-8 h-8" />}
             title="Nenhum operador de portaria cadastrado"
             description="Adicione o e-mail de um membro da equipe para que ele possa abrir a câmera e validar ingressos na entrada."
           />
@@ -136,7 +136,7 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
                     <td className="py-3.5 px-4 font-semibold text-slate-800">{r.name}</td>
                     <td className="py-3.5 px-4 text-slate-600">{r.email}</td>
                     <td className="py-3.5 px-4">
-                      <Badge variant={r.active ? 'success' : 'default'}>
+                      <Badge variant={r.active ? 'success' : 'neutral'}>
                         {r.active ? 'Ativo' : 'Inativo'}
                       </Badge>
                     </td>

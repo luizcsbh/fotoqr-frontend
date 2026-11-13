@@ -212,13 +212,11 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
           <div className="p-8 text-center text-slate-500 text-sm">Carregando convidados...</div>
         ) : guests.length === 0 ? (
           <EmptyState
-            icon={Users}
+            icon={<Users className="w-8 h-8" />}
             title="Nenhum convidado cadastrado"
             description="Cadastre convidados individualmente ou importe uma planilha CSV/XLSX."
-            action={{
-              label: 'Adicionar Primeiro Convidado',
-              onClick: () => setShowAddModal(true),
-            }}
+            actionText="Adicionar Primeiro Convidado"
+            onAction={() => setShowAddModal(true)}
           />
         ) : (
           <div className="overflow-x-auto">
