@@ -136,9 +136,15 @@ export const QRScannerPage: React.FC = () => {
   const handleValidate = async (rawToken: string) => {
     if (!eventId || validating) return;
 
+    // Extract token from full URL if scanner captured https://.../convite/<token>
+    let token = rawToken.trim();
+    if (token.includes('/convite/')) {
+      token = token.split('/convite/').pop()?.split('?')[0].split('#')[0].trim() || token;
+    }
+
     try {
       setValidating(true);
-      const res = await invitationService.validateCheckin(eventId, rawToken, navigator.userAgent);
+      const res = await invitationService.validateCheckin(eventId, token, navigator.userAgent);
       setResult(res);
       setScanning(false);
 
@@ -163,6 +169,9 @@ export const QRScannerPage: React.FC = () => {
     }
   };
 
+  // Keep ref in sync so the decode loop always calls the latest version
+  handleValidateRef.current = handleValidate;
+
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!manualCode.trim()) return;
@@ -173,6 +182,8 @@ export const QRScannerPage: React.FC = () => {
   const handleNextScan = () => {
     setResult(null);
     setScanning(true);
+    scanningRef.current = true;
+    startDecoding();
   };
 
   return (
@@ -261,6 +272,7 @@ export const QRScannerPage: React.FC = () => {
                 muted
                 className="w-full h-full object-cover"
               />
+              <canvas ref={canvasRef} className="hidden" />
 
               {/* Viewfinder Overlay Reticle */}
               <div className="absolute inset-0 border-4 border-indigo-400/50 m-8 rounded-xl pointer-events-none flex items-center justify-center">
