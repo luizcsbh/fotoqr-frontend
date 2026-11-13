@@ -14,6 +14,7 @@ import {
   ExternalLink,
   CheckCircle2,
   AlertCircle,
+  Users,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../../services/invitation.service';
@@ -28,6 +29,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
   const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [dispatching, setDispatching] = useState(false);
+  const [dispatchChannel, setDispatchChannel] = useState<'email' | 'whatsapp' | null>(null);
 
   const fetchInvitations = async () => {
     try {
@@ -48,15 +50,17 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
   const handleBulkGenerate = async () => {
     try {
       const res = await invitationService.generateBulkInvitations(eventId);
-      toast.success(`${res.generated} novos convites gerados com sucesso!`);
+      toast.success(`${res.generated} convites gerados com sucesso!`);
       fetchInvitations();
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Erro ao emitir convites em lote.');
+      toast.error('Erro ao gerar convites em lote.');
     }
   };
 
   const handleRevoke = async (id: number) => {
-    if (!window.confirm('Tem certeza que deseja cancelar este convite? Ele não poderá mais ser usado para entrar.')) return;
+    if (!window.confirm('Tem certeza que deseja cancelar este convite? Ele não poderá mais ser usado para entrada.')) {
+      return;
+    }
     try {
       await invitationService.revokeInvitation(id);
       toast.success('Convite cancelado.');
@@ -85,29 +89,59 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
     }
   };
 
+  // Disparo para todos ou selecionados via E-mail
   const handleDispatchEmail = async (ids?: number[]) => {
+    const isAll = !ids || ids.length === 0;
+    const count = isAll ? invitations.length : ids.length;
+
+    if (count === 0) {
+      toast.error('Nenhum convite disponível para envio.');
+      return;
+    }
+
+    if (!window.confirm(`Deseja enviar o convite por e-mail para ${isAll ? 'TODOS os convidados' : `${count} convidado(s) selecionado(s)`}?`)) {
+      return;
+    }
+
     try {
       setDispatching(true);
+      setDispatchChannel('email');
       const res = await invitationService.sendEmailBatch(eventId, ids, false);
-      toast.success(`Disparo de e-mails concluído: ${res.sent} enviados com sucesso.`);
+      toast.success(`Disparo de e-mails concluído: ${res.sent} enviado(s) com sucesso${res.failed > 0 ? `, ${res.failed} falha(s)` : ''}!`);
       fetchInvitations();
     } catch (err: any) {
-      toast.error('Falha no envio de e-mails.');
+      toast.error(err?.response?.data?.error || 'Falha no envio de e-mails.');
     } finally {
       setDispatching(false);
+      setDispatchChannel(null);
     }
   };
 
+  // Disparo para todos ou selecionados via WhatsApp
   const handleDispatchWhatsApp = async (ids?: number[]) => {
+    const isAll = !ids || ids.length === 0;
+    const count = isAll ? invitations.length : ids.length;
+
+    if (count === 0) {
+      toast.error('Nenhum convite disponível para envio.');
+      return;
+    }
+
+    if (!window.confirm(`Deseja disparar o convite por WhatsApp para ${isAll ? 'TODOS os convidados' : `${count} convidado(s) selecionado(s)`}?`)) {
+      return;
+    }
+
     try {
       setDispatching(true);
+      setDispatchChannel('whatsapp');
       const res = await invitationService.sendWhatsAppBatch(eventId, ids);
-      toast.success(`Disparo de WhatsApp concluído: ${res.sent} enviados.`);
+      toast.success(`Disparo de WhatsApp concluído: ${res.sent} enviado(s)${res.failed > 0 ? `, ${res.failed} falha(s)` : ''}!`);
       fetchInvitations();
     } catch (err: any) {
-      toast.error('Falha no envio de WhatsApp.');
+      toast.error(err?.response?.data?.error || 'Falha no envio de WhatsApp.');
     } finally {
       setDispatching(false);
+      setDispatchChannel(null);
     }
   };
 
@@ -137,43 +171,62 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
   return (
     <div className="space-y-6">
       {/* Top Action Panel */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+        <div className="flex flex-wrap items-center gap-3">
           <Button
             size="sm"
             variant="outline"
             onClick={handleBulkGenerate}
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-1.5 font-semibold border-indigo-200 text-indigo-700 hover:bg-indigo-50"
           >
             <QrCode className="w-4 h-4 text-indigo-600" />
             Gerar Convites para Todos
           </Button>
-          <span className="text-xs text-slate-500">
-            Total emitidos: <strong>{invitations.length}</strong>
+
+          <span className="text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 font-medium">
+            Total emitidos: <strong className="text-slate-800">{invitations.length}</strong>
+            {selectedIds.length > 0 && (
+              <span className="text-indigo-600 font-bold ml-1.5">
+                • {selectedIds.length} selecionado(s)
+              </span>
+            )}
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Action Buttons for Dispatch (Email & WhatsApp) */}
+        <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+          {/* Disparar E-mail */}
           <Button
             size="sm"
             variant="secondary"
             disabled={dispatching || invitations.length === 0}
+            isLoading={dispatching && dispatchChannel === 'email'}
             onClick={() => handleDispatchEmail(selectedIds.length > 0 ? selectedIds : undefined)}
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-2 font-semibold shadow-xs"
           >
-            <Mail className="w-4 h-4 text-indigo-600" />
-            {selectedIds.length > 0 ? `Enviar E-mail (${selectedIds.length})` : 'Disparar E-mail p/ Todos'}
+            <Mail className="w-4 h-4 text-indigo-600 shrink-0" />
+            <span>
+              {selectedIds.length > 0
+                ? `Enviar E-mail (${selectedIds.length})`
+                : 'Disparar E-mail para Todos'}
+            </span>
           </Button>
 
+          {/* Disparar WhatsApp */}
           <Button
             size="sm"
-            variant="secondary"
+            variant="success"
             disabled={dispatching || invitations.length === 0}
+            isLoading={dispatching && dispatchChannel === 'whatsapp'}
             onClick={() => handleDispatchWhatsApp(selectedIds.length > 0 ? selectedIds : undefined)}
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-2 font-semibold shadow-xs"
           >
-            <MessageSquare className="w-4 h-4 text-emerald-600" />
-            {selectedIds.length > 0 ? `Enviar WhatsApp (${selectedIds.length})` : 'Disparar WhatsApp p/ Todos'}
+            <MessageSquare className="w-4 h-4 text-white shrink-0" />
+            <span>
+              {selectedIds.length > 0
+                ? `Enviar WhatsApp (${selectedIds.length})`
+                : 'Disparar WhatsApp para Todos'}
+            </span>
           </Button>
         </div>
       </div>
@@ -181,7 +234,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
       {/* Invitations Table */}
       <Card className="overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-slate-500 text-sm">Carregando convites...</div>
+          <div className="p-8 text-center text-slate-500 text-sm font-medium">Carregando convites...</div>
         ) : invitations.length === 0 ? (
           <EmptyState
             icon={<QrCode className="w-8 h-8" />}
@@ -200,7 +253,8 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
                       type="checkbox"
                       checked={selectedIds.length > 0 && selectedIds.length === invitations.length}
                       onChange={toggleSelectAll}
-                      className="rounded text-indigo-600 focus:ring-indigo-500"
+                      className="rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      title="Selecionar todos os convites"
                     />
                   </th>
                   <th className="py-3 px-4">Convidado</th>
@@ -217,7 +271,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
                         type="checkbox"
                         checked={selectedIds.includes(inv.id)}
                         onChange={() => toggleSelect(inv.id)}
-                        className="rounded text-indigo-600 focus:ring-indigo-500"
+                        className="rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                       />
                     </td>
                     <td className="py-3.5 px-4">
@@ -230,6 +284,9 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
                     <td className="py-3.5 px-4 text-xs text-slate-600">
                       {inv.guestEmail && <p>{inv.guestEmail}</p>}
                       {inv.guestPhone && <p className="text-slate-400">{inv.guestPhone}</p>}
+                      {!inv.guestEmail && !inv.guestPhone && (
+                        <span className="text-slate-400 italic">Sem contato cadastrado</span>
+                      )}
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
@@ -282,4 +339,3 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId })
     </div>
   );
 };
-
