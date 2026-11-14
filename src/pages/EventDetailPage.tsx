@@ -14,6 +14,7 @@ import {
   ToggleLeft,
   ToggleRight,
   Music2,
+  MessageSquareHeart,
   ShieldCheck,
   ExternalLink,
   RefreshCw,
@@ -43,6 +44,7 @@ import { InvitationManager } from '../components/Event/InvitationManager';
 import { ReaderManager } from '../components/Event/ReaderManager';
 import { CoverEditor } from '../components/Event/CoverEditor';
 import { EventDashboardHub } from '../components/Event/EventDashboardHub';
+import { MessageWallManager } from '../components/Event/MessageWallManager';
 import toast from 'react-hot-toast';
 
 export const EventDetailPage: React.FC = () => {
@@ -51,13 +53,14 @@ export const EventDetailPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
-  type TabType = 'photos' | 'guests' | 'invitations' | 'readers' | 'dj' | 'cover' | 'metrics';
+  type TabType = 'photos' | 'guests' | 'invitations' | 'readers' | 'dj' | 'mural' | 'cover' | 'metrics';
   const EVENT_TABS: { id: TabType; label: string; Icon: React.ElementType }[] = [
     { id: 'photos', label: 'Galeria & Fotos', Icon: Camera },
     { id: 'guests', label: 'Convidados', Icon: Users },
     { id: 'invitations', label: 'Convites & Envios', Icon: QrCode },
     { id: 'readers', label: 'Portaria & Leitores', Icon: ScanLine },
     { id: 'dj', label: 'DJ & Playlist', Icon: Music2 },
+    { id: 'mural', label: 'Mural de Recados', Icon: MessageSquareHeart },
     { id: 'cover', label: 'Capa & Convite', Icon: Palette },
     { id: 'metrics', label: 'Métricas & Relatórios', Icon: BarChart3 },
   ];
@@ -70,6 +73,7 @@ export const EventDetailPage: React.FC = () => {
     if (v === 'guests' || v === 'convidados') return 'guests';
     if (v === 'invitations' || v === 'convites') return 'invitations';
     if (v === 'readers' || v === 'leitores' || v === 'portaria') return 'readers';
+    if (v === 'mural' || v === 'recados') return 'mural';
     if (v === 'cover' || v === 'capa') return 'cover';
     if (v === 'metrics' || v === 'metricas' || v === 'relatorios') return 'metrics';
     return null;
@@ -156,6 +160,23 @@ export const EventDetailPage: React.FC = () => {
     },
     onError: () => {
       toast.error('Erro ao atualizar a playlist do DJ.');
+    },
+  });
+
+  // Turn the guest message wall on/off
+  const messageWallMutation = useMutation({
+    mutationFn: (enabled: boolean) => eventService.setMessageWall(id!, enabled),
+    onSuccess: (updated) => {
+      queryClient.setQueryData(['event', id], updated);
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      toast.success(
+        updated.enable_message_wall
+          ? 'Mural ativado! Os convidados já podem deixar recados.'
+          : 'Mural desativado. Novos recados estão bloqueados.'
+      );
+    },
+    onError: () => {
+      toast.error('Erro ao atualizar o mural de recados.');
     },
   });
 
@@ -357,6 +378,31 @@ export const EventDetailPage: React.FC = () => {
             )}
           </button>
 
+          {/* Toggle guest message wall button */}
+          <button
+            type="button"
+            onClick={() => messageWallMutation.mutate(!event.enable_message_wall)}
+            disabled={messageWallMutation.isPending}
+            title={
+              event.enable_message_wall
+                ? 'Clique para desativar o mural de recados'
+                : 'Clique para os convidados deixarem recados que aparecem no telão'
+            }
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-xs ${
+              event.enable_message_wall
+                ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            <MessageSquareHeart className={`w-3.5 h-3.5 ${event.enable_message_wall ? 'text-rose-500' : 'text-slate-400'}`} />
+            <span>{event.enable_message_wall ? 'Mural: Ativo' : 'Ativar mural'}</span>
+            {event.enable_message_wall ? (
+              <ToggleRight className="w-4 h-4 text-rose-500 ml-0.5" />
+            ) : (
+              <ToggleLeft className="w-4 h-4 text-slate-400 ml-0.5" />
+            )}
+          </button>
+
           {/* Toggle photo approval (moderation) button */}
           <button
             type="button"
@@ -406,6 +452,12 @@ export const EventDetailPage: React.FC = () => {
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-violet-700 bg-violet-50 border border-violet-200 px-2.5 py-0.5 rounded-full">
                 <Music2 className="w-3 h-3" />
                 Playlist DJ Ativa
+              </span>
+            )}
+            {event.enable_message_wall && (
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">
+                <MessageSquareHeart className="w-3 h-3" />
+                Mural Ativo
               </span>
             )}
             {event.require_photo_approval && (
@@ -523,7 +575,7 @@ export const EventDetailPage: React.FC = () => {
       >
         {EVENT_TABS.map(({ id, label, Icon }) => {
           const isActive = activeTab === id;
-          const activeColor = id === 'dj' ? 'bg-violet-600' : 'bg-indigo-600';
+          const activeColor = id === 'dj' ? 'bg-violet-600' : id === 'mural' ? 'bg-rose-500' : 'bg-indigo-600';
           return (
             <button
               key={id}
@@ -671,6 +723,17 @@ export const EventDetailPage: React.FC = () => {
           djPlaylistEnabled={!!event.enable_dj_playlist}
           onToggleDjPlaylist={() => djPlaylistMutation.mutate(!event.enable_dj_playlist)}
           isTogglingDjPlaylist={djPlaylistMutation.isPending}
+        />
+      )}
+
+      {/* Guest message wall */}
+      {activeTab === 'mural' && (
+        <MessageWallManager
+          eventId={event.id}
+          eventUuid={event.uuid}
+          enabled={!!event.enable_message_wall}
+          onToggle={() => messageWallMutation.mutate(!event.enable_message_wall)}
+          isToggling={messageWallMutation.isPending}
         />
       )}
 

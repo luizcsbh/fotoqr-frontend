@@ -17,6 +17,7 @@ export const normalizeEvent = (ev: any): Event => {
     is_active: ev.is_active !== undefined ? Boolean(ev.is_active) : (ev.isActive !== undefined ? Boolean(ev.isActive) : true),
     enable_dj_playlist: Boolean(ev.enable_dj_playlist ?? ev.enableDjPlaylist ?? false),
     require_photo_approval: Boolean(ev.require_photo_approval ?? ev.requirePhotoApproval ?? false),
+    enable_message_wall: Boolean(ev.enable_message_wall ?? ev.enableMessageWall ?? false),
     photo_count: ev.photo_count !== undefined ? Number(ev.photo_count) : (ev.photoCount !== undefined ? Number(ev.photoCount) : 0),
     storage_mode: ev.storage_mode || ev.storageMode || 'fallback',
     category: ev.category ?? undefined,
@@ -80,6 +81,12 @@ export const eventService = {
 
   async setDjPlaylist(id: string, enabled: boolean): Promise<Event> {
     const response = await api.patch(`/api/events/${id}/dj-playlist`, { enabled });
+    const raw = response.data?.data || response.data?.event || response.data;
+    return normalizeEvent(raw);
+  },
+
+  async setMessageWall(id: string, enabled: boolean): Promise<Event> {
+    const response = await api.patch(`/api/events/${id}/message-wall`, { enabled });
     const raw = response.data?.data || response.data?.event || response.data;
     return normalizeEvent(raw);
   },

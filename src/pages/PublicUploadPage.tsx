@@ -11,6 +11,7 @@ import { ColdStartBanner } from '../components/ColdStartBanner';
 import { Button } from '../components/UI/Button';
 import { LoadingScreen } from '../components/Layout/LoadingScreen';
 import { DJMusicRequestWidget } from '../components/Music/DJMusicRequestWidget';
+import { MessageWallForm } from '../components/Event/MessageWallForm';
 
 export const PublicUploadPage: React.FC = () => {
   const { uuid } = useParams<{ uuid: string }>();
@@ -261,6 +262,9 @@ export const PublicUploadPage: React.FC = () => {
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
           <span>Suas fotos são enviadas diretamente para os anfitriões do evento.</span>
         </div>
+
+        {/* Guest message wall */}
+        {!isInactive && event.enable_message_wall && uuid && <MessageWallForm eventUuid={uuid} />}
 
         {/* DJ Music Request Widget */}
         {!isInactive && event.enable_dj_playlist && uuid && (

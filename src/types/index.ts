@@ -38,6 +38,8 @@ export interface Event {
   is_active: boolean;
   enable_dj_playlist: boolean;
   require_photo_approval: boolean;
+  /** Guests can leave messages on the wall (shown on the Telão). */
+  enable_message_wall?: boolean;
   qr_code_url?: string;
   photo_count?: number;
   created_at: string;

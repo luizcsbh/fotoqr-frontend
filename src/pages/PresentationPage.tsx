@@ -16,6 +16,7 @@ import {
   Sparkles,
   Image as ImageIcon,
   Camera,
+  MessageSquareHeart,
 } from 'lucide-react';
 import { api } from '../services/api';
 import { resolvePhotoUrls } from '../services/photo.service';
@@ -25,6 +26,7 @@ import { getFotoQrImageSettings } from '../utils/qrLogo';
 import { LoadingScreen } from '../components/Layout/LoadingScreen';
 import { ColdStartBanner } from '../components/ColdStartBanner';
 import { Button } from '../components/UI/Button';
+import type { WallMessage } from '../services/messageWall.service';
 
 // ─── API Helper ──────────────────────────────────────────────────────────────
 
@@ -33,17 +35,21 @@ interface PresentationEvent {
   title: string;
   description?: string;
   photoCount: number;
+  enableMessageWall?: boolean;
 }
 
 interface GalleryResponse {
   event: PresentationEvent;
   photos: Photo[];
   total: number;
+  /** Guest wall messages, newest first (empty when the wall is off). */
+  messages: WallMessage[];
 }
 
 async function fetchAllPhotosForPresentation(uuid: string): Promise<GalleryResponse> {
   const res = await api.get(`/api/events/${uuid}/gallery`, {
-    params: { page: 1, limit: 100 },
+    // messages=1: the wall messages come in the same refresh (one request per poll)
+    params: { page: 1, limit: 100, messages: 1 },
     timeout: 90_000,
   });
   const d = res.data?.data ?? res.data;
@@ -55,8 +61,12 @@ async function fetchAllPhotosForPresentation(uuid: string): Promise<GalleryRespo
     event: d.event,
     photos: resolvePhotoUrls(Array.isArray(d.photos) ? d.photos : []),
     total: d.total ?? 0,
+    messages: Array.isArray(d.messages) ? d.messages : [],
   };
 }
+
+const WALL_ROTATE_SECONDS = 9;
+const wallPrefKey = (uuid?: string) => `fotoqr_telao_mural_${uuid}`;
 
 // ─── Main Presentation Page Component ────────────────────────────────────────
 
@@ -73,6 +83,19 @@ export const PresentationPage: React.FC = () => {
   const [showControls, setShowControls] = useState(true);
   const [showQR, setShowQR] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  // Message wall on the Telão (a display setting remembered on this screen; on by default)
+  const [showWall, setShowWall] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(wallPrefKey(uuid)) !== 'off';
+    } catch {
+      return true;
+    }
+  });
+  const [wallIndex, setWallIndex] = useState(0);
+  const [wallTick, setWallTick] = useState(0);
+  const [freshMessageId, setFreshMessageId] = useState<string | null>(null);
+  const seenMessageIdsRef = useRef<Set<string> | null>(null);
+
   // Number of photos that just arrived (0 = no banner)
   const [newPhotoAlert, setNewPhotoAlert] = useState(0);
 
@@ -98,6 +121,46 @@ export const PresentationPage: React.FC = () => {
   const photos = useMemo(() => data?.photos ?? [], [data]);
   const event = data?.event;
   const qrUrl = uuid ? getShareableEventUrl(uuid) : '';
+  const wallEnabled = Boolean(event?.enableMessageWall);
+  const messages = useMemo(() => (wallEnabled ? data?.messages ?? [] : []), [data, wallEnabled]);
+  const currentMessage = messages.length > 0 ? messages[wallIndex % messages.length] : undefined;
+
+  const toggleWall = useCallback(() => {
+    setShowWall((on) => {
+      try {
+        localStorage.setItem(wallPrefKey(uuid), on ? 'off' : 'on');
+      } catch {
+        // display preference only
+      }
+      return !on;
+    });
+  }, [uuid]);
+
+  // A message that just arrived goes straight to the wall card (the list is newest first)
+  useEffect(() => {
+    if (!data) return;
+    const ids = messages.map((m) => String(m.id));
+    const firstLoad = seenMessageIdsRef.current === null;
+    const seen = seenMessageIdsRef.current ?? new Set<string>();
+    seenMessageIdsRef.current = new Set(ids);
+    if (firstLoad) return;
+    const arrived = ids.filter((id) => !seen.has(id));
+    if (arrived.length > 0) {
+      setWallIndex(0);
+      setWallTick((t) => t + 1);
+      setFreshMessageId(ids[0]);
+    }
+  }, [data, messages]);
+
+  // Rotate the wall messages on their own clock, next to the photos
+  useEffect(() => {
+    if (!showWall || messages.length <= 1) return;
+    const timer = setInterval(() => {
+      setWallIndex((i) => (i + 1) % messages.length);
+      setFreshMessageId(null);
+    }, WALL_ROTATE_SECONDS * 1000);
+    return () => clearInterval(timer);
+  }, [showWall, messages.length, wallTick]);
 
   const showPhotoById = useCallback(
     (id: string) => {
@@ -253,6 +316,8 @@ export const PresentationPage: React.FC = () => {
         toggleFullscreen();
       } else if (e.key === 'q' || e.key === 'Q') {
         setShowQR((s) => !s);
+      } else if (e.key === 'm' || e.key === 'M') {
+        toggleWall();
       } else if (e.key === 'Escape') {
         if (document.fullscreenElement) {
           document.exitFullscreen().catch(() => {});
@@ -264,7 +329,7 @@ export const PresentationPage: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNext, handlePrev, navigate, goBack]);
+  }, [handleNext, handlePrev, navigate, goBack, toggleWall]);
 
   if (isLoading) {
     return (
@@ -407,6 +472,33 @@ export const PresentationPage: React.FC = () => {
         </div>
       )}
 
+      {/* ─── Message Wall card (guest messages rotate next to the photos) ───── */}
+      {showWall && currentMessage && (
+        <div
+          key={`${currentMessage.id}-${wallTick}`}
+          className="absolute bottom-6 right-6 z-20 w-[min(26rem,calc(100vw-3rem))] rounded-3xl border border-white/15 bg-slate-900/85 p-5 text-white shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+        >
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-rose-300">
+              <MessageSquareHeart className="h-4 w-4" />
+              Mural de recados
+            </span>
+            {freshMessageId === String(currentMessage.id) && (
+              <span className="rounded-full bg-rose-500 px-2.5 py-0.5 text-[11px] font-bold">Novo recado!</span>
+            )}
+          </div>
+          <p className="text-base sm:text-lg font-semibold leading-snug whitespace-pre-line break-words line-clamp-6">
+            “{currentMessage.message}”
+          </p>
+          <p className="mt-3 text-sm font-bold text-rose-200 truncate">— {currentMessage.name}</p>
+          {messages.length > 1 && (
+            <p className="mt-1 text-[11px] text-slate-400">
+              {(wallIndex % messages.length) + 1} de {messages.length} recados
+            </p>
+          )}
+        </div>
+      )}
+
       {/* ─── Top Overlay Header Bar (Autohides) ────────────────────────────── */}
       <div
         className={`absolute top-0 inset-x-0 z-30 p-4 sm:p-6 bg-gradient-to-b from-black/85 via-black/40 to-transparent flex items-center justify-between transition-opacity duration-300 ${
@@ -504,6 +596,25 @@ export const PresentationPage: React.FC = () => {
           </div>
 
           <div className="w-px h-6 bg-white/15 mx-1" />
+
+          {/* Message wall toggle (display setting) */}
+          <button
+            onClick={toggleWall}
+            disabled={!wallEnabled}
+            className={`inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl transition-colors disabled:opacity-40 ${
+              wallEnabled && showWall ? 'text-rose-300 bg-rose-950/60' : 'text-slate-400 hover:text-white hover:bg-white/10'
+            }`}
+            title={
+              !wallEnabled
+                ? 'Ative o mural de recados na página do evento'
+                : showWall
+                  ? 'Ocultar os recados no telão (M)'
+                  : 'Exibir os recados no telão (M)'
+            }
+          >
+            <MessageSquareHeart className="w-5 h-5" />
+            <span>{!wallEnabled ? 'Mural desativado' : showWall ? 'Ocultar mural' : 'Ativar mural'}</span>
+          </button>
 
           {/* QR Code Visibility Toggle */}
           <button
