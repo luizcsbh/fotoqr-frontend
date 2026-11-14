@@ -52,6 +52,15 @@ export const EventDetailPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   type TabType = 'photos' | 'guests' | 'invitations' | 'readers' | 'dj' | 'cover' | 'metrics';
+  const EVENT_TABS: { id: TabType; label: string; Icon: React.ElementType }[] = [
+    { id: 'photos', label: 'Galeria & Fotos', Icon: Camera },
+    { id: 'guests', label: 'Convidados', Icon: Users },
+    { id: 'invitations', label: 'Convites & Envios', Icon: QrCode },
+    { id: 'readers', label: 'Portaria & Leitores', Icon: ScanLine },
+    { id: 'dj', label: 'DJ & Playlist', Icon: Music2 },
+    { id: 'cover', label: 'Capa & Convite', Icon: Palette },
+    { id: 'metrics', label: 'Métricas & Relatórios', Icon: BarChart3 },
+  ];
 
   const parseTab = (val?: string | null): TabType | null => {
     if (!val) return null;
@@ -507,86 +516,32 @@ export const EventDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Module Tabs Navigation */}
-      <div className="flex border-b border-slate-200 overflow-x-auto gap-1 sm:gap-2 no-scrollbar bg-white p-2 rounded-2xl shadow-xs">
-        <button
-          onClick={() => setActiveTab('photos')}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
-            activeTab === 'photos'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
-        >
-          <Camera className="w-4 h-4" />
-          Galeria & Fotos
-        </button>
-        <button
-          onClick={() => setActiveTab('guests')}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
-            activeTab === 'guests'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          Convidados
-        </button>
-        <button
-          onClick={() => setActiveTab('invitations')}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
-            activeTab === 'invitations'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
-        >
-          <QrCode className="w-4 h-4" />
-          Convites & Envios
-        </button>
-        <button
-          onClick={() => setActiveTab('readers')}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
-            activeTab === 'readers'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
-        >
-          <ScanLine className="w-4 h-4" />
-          Portaria & Leitores
-        </button>
-        <button
-          onClick={() => setActiveTab('dj')}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
-            activeTab === 'dj'
-              ? 'bg-violet-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
-        >
-          <Music2 className="w-4 h-4" />
-          DJ &amp; Playlist
-        </button>
-        <button
-          onClick={() => setActiveTab('cover')}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
-            activeTab === 'cover'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
-        >
-          <Palette className="w-4 h-4" />
-          Capa & Convite
-        </button>
-        <button
-          onClick={() => setActiveTab('metrics')}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
-            activeTab === 'metrics'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
-        >
-          <BarChart3 className="w-4 h-4" />
-          Métricas & Relatórios
-        </button>
-      </div>
+      {/* Module Tabs Navigation: wraps into rows and stretches to fill the width, never scrolls sideways */}
+      <nav
+        aria-label="Seções do evento"
+        className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs"
+      >
+        {EVENT_TABS.map(({ id, label, Icon }) => {
+          const isActive = activeTab === id;
+          const activeColor = id === 'dj' ? 'bg-violet-600' : 'bg-indigo-600';
+          return (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setActiveTab(id)}
+              aria-current={isActive ? 'page' : undefined}
+              className={`flex sm:flex-auto items-center justify-center gap-2 min-h-11 py-2 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm text-left leading-tight sm:whitespace-nowrap last:col-span-2 transition-all ${
+                isActive
+                  ? `${activeColor} text-white shadow-sm`
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              }`}
+            >
+              <Icon className="w-4 h-4 shrink-0" />
+              <span>{label}</span>
+            </button>
+          );
+        })}
+      </nav>
 
       {/* Tab 1: Photos & Live Gallery */}
       {activeTab === 'photos' && (

@@ -275,12 +275,12 @@ export const DJConsolePage: React.FC = () => {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex gap-1 bg-white/5 p-1 rounded-2xl border border-white/10 overflow-x-auto">
+        <div className="flex flex-wrap gap-1 bg-white/5 p-1 rounded-2xl border border-white/10">
           {FILTER_TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setFilter(tab.key)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+              className={`flex flex-auto items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 filter === tab.key
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-white/50 hover:text-white/80'

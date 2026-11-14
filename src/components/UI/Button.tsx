@@ -24,7 +24,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'inline-flex items-center justify-center font-medium rounded-xl whitespace-nowrap transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-[0.98] select-none';
+    'inline-flex max-w-full items-center justify-center text-center leading-tight font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-[0.98] select-none';
 
   // Standard control heights shared with form fields (inputs/selects are h-11 = 44px):
   // md and lg are both 44px so a submit button always lines up with the fields next to it;
@@ -68,12 +68,12 @@ export const Button: React.FC<ButtonProps> = ({
       {isLoading ? (
         <>
           <Loader2 className="w-4 h-4 animate-spin text-current" />
-          <span>{children}</span>
+          <span className="min-w-0">{children}</span>
         </>
       ) : (
         <>
           {leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>}
-          <span>{children}</span>
+          <span className="min-w-0">{children}</span>
           {rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
         </>
       )}

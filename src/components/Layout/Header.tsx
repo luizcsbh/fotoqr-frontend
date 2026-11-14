@@ -50,7 +50,7 @@ export const Header: React.FC = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-4">
+          <nav className="hidden lg:flex items-center gap-4 whitespace-nowrap">
             {isAuthenticated ? (
               <>
                 <Link
@@ -140,7 +140,7 @@ export const Header: React.FC = () => {
           </nav>
 
           {/* Mobile menu button */}
-          <div className="flex md:hidden items-center">
+          <div className="flex lg:hidden items-center">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none"
@@ -155,7 +155,7 @@ export const Header: React.FC = () => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-100 bg-white/95 backdrop-blur-md px-4 pt-3 pb-5 space-y-3 animate-in slide-in-from-top-4 duration-200 shadow-xl">
+        <div className="lg:hidden border-t border-slate-100 bg-white/95 backdrop-blur-md px-4 pt-3 pb-5 space-y-3 animate-in slide-in-from-top-4 duration-200 shadow-xl">
           {isAuthenticated ? (
             <>
               <div className="flex items-center gap-3 px-3 py-2 bg-slate-50 rounded-xl mb-2">
