@@ -22,6 +22,7 @@ import { PublicInvitationPage } from './pages/PublicInvitationPage';
 import { QRScannerPage } from './pages/QRScannerPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { DJConsolePage } from './pages/DJConsolePage';
 
 // Standard App Layout with Header and Footer
 const MainLayout: React.FC = () => {
@@ -97,7 +98,23 @@ export const App: React.FC = () => {
           }
         />
         <Route
+          path="/dashboard/event/:id/:tab"
+          element={
+            <ProtectedRoute>
+              <EventDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/dashboard/evento/:id"
+          element={
+            <ProtectedRoute>
+              <EventDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/evento/:id/:tab"
           element={
             <ProtectedRoute>
               <EventDetailPage />
@@ -145,6 +162,31 @@ export const App: React.FC = () => {
         element={
           <ProtectedRoute>
             <QRScannerPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/portaria/:eventId"
+        element={
+          <ProtectedRoute>
+            <QRScannerPage />
+          </ProtectedRoute>
+        }
+      />
+      {/* DJ Console: standalone page for the DJ to control the playlist */}
+      <Route
+        path="/dj/:uuid"
+        element={
+          <ProtectedRoute>
+            <DJConsolePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dj/:uuid/playlist"
+        element={
+          <ProtectedRoute>
+            <DJConsolePage />
           </ProtectedRoute>
         }
       />

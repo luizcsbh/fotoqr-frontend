@@ -11,6 +11,8 @@ interface PendingPhotosPanelProps {
   eventId: string;
   /** Whether new uploads currently wait for approval */
   approvalRequired: boolean;
+  onToggleApproval?: () => void;
+  isTogglingApproval?: boolean;
 }
 
 const PAGE_SIZE = 48;
@@ -19,7 +21,12 @@ const PAGE_SIZE = 48;
  * Review queue for the event owner: guest photos waiting for approval before they
  * show up in the public gallery, slideshow and downloads.
  */
-export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({ eventId, approvalRequired }) => {
+export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({
+  eventId,
+  approvalRequired,
+  onToggleApproval,
+  isTogglingApproval = false,
+}) => {
   const queryClient = useQueryClient();
   const [busyId, setBusyId] = useState<string | null>(null);
   // Photos flagged (or not checked) by automatic moderation start blurred until the owner reveals them
@@ -76,8 +83,40 @@ export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({ eventId,
     onError: (err) => showError(err, 'Erro ao aprovar fotos.'),
   });
 
-  // Nothing to show when review is off and the queue is empty
-  if (!approvalRequired && !isLoading && total === 0) return null;
+  // If review is off and there are no pending photos, show an informative banner with toggle
+  if (!approvalRequired && !isLoading && total === 0) {
+    return (
+      <div className="bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-slate-200/70 text-slate-500 flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-sm font-bold text-slate-800">Moderação de fotos desativada</h4>
+              <span className="text-[10px] font-bold uppercase bg-slate-200/70 text-slate-600 px-2 py-0.5 rounded-full">
+                Publicação imediata
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Fotos enviadas pelos convidados aparecem instantaneamente na galeria pública e no telão.
+            </p>
+          </div>
+        </div>
+        {onToggleApproval && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={onToggleApproval}
+            isLoading={isTogglingApproval}
+            className="border-slate-300 text-slate-700 hover:bg-white hover:text-slate-900 shrink-0 font-semibold"
+          >
+            Ativar Moderação de Fotos
+          </Button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-8 border border-amber-200/80 shadow-sm space-y-5">
@@ -87,26 +126,47 @@ export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({ eventId,
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-900">
-              Fotos aguardando aprovação {total > 0 && <span className="text-amber-600">({total})</span>}
-            </h3>
-            <p className="text-xs text-slate-500">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900">
+                Fotos aguardando aprovação {total > 0 && <span className="text-amber-600">({total})</span>}
+              </h3>
+              {approvalRequired && (
+                <span className="text-[10px] font-bold uppercase bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full border border-amber-200">
+                  Moderação Ativa
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
               Só aparecem na galeria, no telão e nos downloads depois que você aprovar. Fotos marcadas pela moderação automática chegam desfocadas.
             </p>
           </div>
         </div>
 
-        {total > 0 && (
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => approveAllMutation.mutate()}
-            isLoading={approveAllMutation.isPending}
-            leftIcon={<CheckCheck className="w-4 h-4" />}
-          >
-            Aprovar todas
-          </Button>
-        )}
+        <div className="flex items-center gap-2 flex-wrap">
+          {total > 0 && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => approveAllMutation.mutate()}
+              isLoading={approveAllMutation.isPending}
+              leftIcon={<CheckCheck className="w-4 h-4" />}
+            >
+              Aprovar todas ({total})
+            </Button>
+          )}
+
+          {onToggleApproval && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggleApproval}
+              isLoading={isTogglingApproval}
+              className="text-xs text-amber-700 hover:bg-amber-50 font-medium"
+            >
+              {approvalRequired ? 'Desativar Moderação' : 'Ativar Moderação'}
+            </Button>
+          )}
+        </div>
       </div>
 
       {isLoading ? (

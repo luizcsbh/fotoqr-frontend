@@ -40,6 +40,22 @@ export const musicService = {
     return res.data.data;
   },
 
+  /** List DJs authorized for an event (event owner) */
+  async listDJs(eventId: string | number): Promise<{ id: number; userId: number; name: string; email: string; active: boolean }[]> {
+    const res = await api.get(`/api/events/${eventId}/djs`);
+    return res.data.data || [];
+  },
+
+  /** Authorize a DJ by email (event owner) */
+  async addDJ(eventId: string | number, email: string): Promise<void> {
+    await api.post(`/api/events/${eventId}/djs`, { email });
+  },
+
+  /** Revoke a DJ's permission (event owner) */
+  async removeDJ(eventId: string | number, userId: number): Promise<void> {
+    await api.delete(`/api/events/${eventId}/djs/${userId}`);
+  },
+
   /** Search Spotify tracks via backend proxy */
   async searchSpotify(query: string): Promise<{
     data: SpotifyTrack[];

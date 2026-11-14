@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft,
@@ -36,7 +36,7 @@ import { Modal } from '../components/UI/Modal';
 import { LoadingScreen } from '../components/Layout/LoadingScreen';
 import { formatFileSize } from '../components/Upload/PhotoPreview';
 import { getGalleryUrl, getPresentationUrl } from '../utils/url';
-import { DJPlaylistPanel } from '../components/Music/DJPlaylistPanel';
+import { DJManager } from '../components/Music/DJManager';
 import { PendingPhotosPanel } from '../components/Gallery/PendingPhotosPanel';
 import { GuestManager } from '../components/Event/GuestManager';
 import { InvitationManager } from '../components/Event/InvitationManager';
@@ -46,15 +46,45 @@ import { EventDashboardHub } from '../components/Event/EventDashboardHub';
 import toast from 'react-hot-toast';
 
 export const EventDetailPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, tab: routeTab } = useParams<{ id: string; tab?: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
+
+  type TabType = 'photos' | 'guests' | 'invitations' | 'readers' | 'dj' | 'cover' | 'metrics';
+
+  const parseTab = (val?: string | null): TabType | null => {
+    if (!val) return null;
+    const v = val.toLowerCase();
+    if (v === 'dj' || v === 'playlist') return 'dj';
+    if (v === 'photos' || v === 'fotos' || v === 'galeria') return 'photos';
+    if (v === 'guests' || v === 'convidados') return 'guests';
+    if (v === 'invitations' || v === 'convites') return 'invitations';
+    if (v === 'readers' || v === 'leitores' || v === 'portaria') return 'readers';
+    if (v === 'cover' || v === 'capa') return 'cover';
+    if (v === 'metrics' || v === 'metricas' || v === 'relatorios') return 'metrics';
+    return null;
+  };
+
+  const initialTab = parseTab(routeTab) || parseTab(searchParams.get('tab')) || parseTab(searchParams.get('aba')) || 'photos';
+  const [activeTab, setActiveTabState] = useState<TabType>(initialTab);
+
+  useEffect(() => {
+    const tabFromUrl = parseTab(routeTab) || parseTab(searchParams.get('tab')) || parseTab(searchParams.get('aba'));
+    if (tabFromUrl && tabFromUrl !== activeTab) {
+      setActiveTabState(tabFromUrl);
+    }
+  }, [routeTab, searchParams]);
+
+  const setActiveTab = (newTab: TabType) => {
+    setActiveTabState(newTab);
+    setSearchParams({ tab: newTab }, { replace: true });
+  };
 
   const [page, setPage] = useState(1);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDownloadingZip, setIsDownloadingZip] = useState(false);
   const [deletingPhotoId, setDeletingPhotoId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'photos' | 'guests' | 'invitations' | 'readers' | 'cover' | 'metrics'>('photos');
 
   // Fetch Event details
   const {
@@ -294,40 +324,54 @@ export const EventDetailPage: React.FC = () => {
           </Button>
 
           {/* Toggle DJ playlist button */}
-          <Button
-            variant={event.enable_dj_playlist ? 'outline' : 'secondary'}
-            size="sm"
+          <button
+            type="button"
             onClick={() => djPlaylistMutation.mutate(!event.enable_dj_playlist)}
-            isLoading={djPlaylistMutation.isPending}
+            disabled={djPlaylistMutation.isPending}
             title={
               event.enable_dj_playlist
-                ? 'Clique para desativar os pedidos de música dos convidados'
-                : 'Clique para permitir que os convidados peçam músicas ao DJ'
+                ? 'Clique para desativar a playlist do DJ'
+                : 'Clique para permitir que os convidados peçam músicas'
             }
-            leftIcon={
-              <Music2 className={`w-4 h-4 ${event.enable_dj_playlist ? 'text-violet-600' : 'text-slate-400'}`} />
-            }
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-xs ${
+              event.enable_dj_playlist
+                ? 'bg-violet-50 text-violet-700 border-violet-200 hover:bg-violet-100'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+            }`}
           >
-            {event.enable_dj_playlist ? 'Playlist do DJ Ativa' : 'Ativar Playlist do DJ'}
-          </Button>
+            <Music2 className={`w-3.5 h-3.5 ${event.enable_dj_playlist ? 'text-violet-600' : 'text-slate-400'}`} />
+            <span>{event.enable_dj_playlist ? 'Playlist DJ: Ativa' : 'Playlist DJ: Desativada'}</span>
+            {event.enable_dj_playlist ? (
+              <ToggleRight className="w-4 h-4 text-violet-600 ml-0.5" />
+            ) : (
+              <ToggleLeft className="w-4 h-4 text-slate-400 ml-0.5" />
+            )}
+          </button>
 
           {/* Toggle photo approval (moderation) button */}
-          <Button
-            variant={event.require_photo_approval ? 'outline' : 'secondary'}
-            size="sm"
+          <button
+            type="button"
             onClick={() => photoApprovalMutation.mutate(!event.require_photo_approval)}
-            isLoading={photoApprovalMutation.isPending}
+            disabled={photoApprovalMutation.isPending}
             title={
               event.require_photo_approval
-                ? 'Clique para publicar as novas fotos na hora, sem aprovação'
+                ? 'Clique para publicar as fotos na hora, sem moderação'
                 : 'Clique para revisar as fotos dos convidados antes de aparecerem na galeria'
             }
-            leftIcon={
-              <ShieldCheck className={`w-4 h-4 ${event.require_photo_approval ? 'text-amber-600' : 'text-slate-400'}`} />
-            }
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-xs ${
+              event.require_photo_approval
+                ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+            }`}
           >
-            {event.require_photo_approval ? 'Moderação Ativa' : 'Moderar Fotos'}
-          </Button>
+            <ShieldCheck className={`w-3.5 h-3.5 ${event.require_photo_approval ? 'text-amber-600' : 'text-slate-400'}`} />
+            <span>{event.require_photo_approval ? 'Moderação: Ativa' : 'Moderação: Desativada'}</span>
+            {event.require_photo_approval ? (
+              <ToggleRight className="w-4 h-4 text-amber-600 ml-0.5" />
+            ) : (
+              <ToggleLeft className="w-4 h-4 text-slate-400 ml-0.5" />
+            )}
+          </button>
 
           {/* Delete event button */}
           <Button
@@ -349,6 +393,18 @@ export const EventDetailPage: React.FC = () => {
             <Badge variant={event.is_active ? 'success' : 'neutral'} dot={event.is_active}>
               {event.is_active ? 'Recebendo Fotos em Tempo Real' : 'Envios Pausados'}
             </Badge>
+            {event.enable_dj_playlist && (
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-violet-700 bg-violet-50 border border-violet-200 px-2.5 py-0.5 rounded-full">
+                <Music2 className="w-3 h-3" />
+                Playlist DJ Ativa
+              </span>
+            )}
+            {event.require_photo_approval && (
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                <ShieldCheck className="w-3 h-3" />
+                Moderação Ativa
+              </span>
+            )}
             <span className="text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
               {storageLabels[event.storage_mode] || event.storage_mode}
             </span>
@@ -498,6 +554,17 @@ export const EventDetailPage: React.FC = () => {
           Portaria & Leitores
         </button>
         <button
+          onClick={() => setActiveTab('dj')}
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
+            activeTab === 'dj'
+              ? 'bg-violet-600 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <Music2 className="w-4 h-4" />
+          DJ &amp; Playlist
+        </button>
+        <button
           onClick={() => setActiveTab('cover')}
           className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
             activeTab === 'cover'
@@ -524,8 +591,13 @@ export const EventDetailPage: React.FC = () => {
       {/* Tab 1: Photos & Live Gallery */}
       {activeTab === 'photos' && (
         <div className="space-y-6">
-          {/* Photo review queue (moderation) */}
-          <PendingPhotosPanel eventId={event.id} approvalRequired={event.require_photo_approval} />
+          {/* Photo review queue & moderation controls */}
+          <PendingPhotosPanel
+            eventId={event.id}
+            approvalRequired={event.require_photo_approval}
+            onToggleApproval={() => photoApprovalMutation.mutate(!event.require_photo_approval)}
+            isTogglingApproval={photoApprovalMutation.isPending}
+          />
 
           {/* Grid: QR Code & Stats */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -618,10 +690,6 @@ export const EventDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* DJ Playlist Panel */}
-          {event.uuid && event.enable_dj_playlist && (
-            <DJPlaylistPanel eventUuid={event.uuid} />
-          )}
         </div>
       )}
 
@@ -640,7 +708,18 @@ export const EventDetailPage: React.FC = () => {
         <ReaderManager eventId={event.id} />
       )}
 
-      {/* Tab 5: Cover & Invitation Design */}
+      {/* Tab 5: DJ & Playlist Management */}
+      {activeTab === 'dj' && (
+        <DJManager
+          eventId={event.id}
+          eventUuid={event.uuid}
+          djPlaylistEnabled={!!event.enable_dj_playlist}
+          onToggleDjPlaylist={() => djPlaylistMutation.mutate(!event.enable_dj_playlist)}
+          isTogglingDjPlaylist={djPlaylistMutation.isPending}
+        />
+      )}
+
+      {/* Tab 6: Cover & Invitation Design */}
       {activeTab === 'cover' && (
         <CoverEditor
           eventId={event.id}
@@ -654,7 +733,7 @@ export const EventDetailPage: React.FC = () => {
         />
       )}
 
-      {/* Tab 6: Dashboard Metrics & Reports */}
+      {/* Tab 8: Dashboard Metrics & Reports */}
       {activeTab === 'metrics' && (
         <EventDashboardHub eventId={event.id} />
       )}

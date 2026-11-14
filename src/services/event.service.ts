@@ -42,6 +42,8 @@ export const eventService = {
       endDate: data.end_date,
       eventDate: data.start_date || data.event_date,
       storageMode: data.storage_mode || 'fallback',
+      enableDjPlaylist: data.enable_dj_playlist ?? false,
+      requirePhotoApproval: data.require_photo_approval ?? false,
     };
     const response = await api.post('/api/events', payload);
     const raw = response.data?.data || response.data?.event || response.data;

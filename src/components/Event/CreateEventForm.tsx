@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CreateEventData } from '../../types';
 import { Button } from '../UI/Button';
-import { Calendar, Clock, MapPin, Users, Tag } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Tag, Music2, ShieldCheck } from 'lucide-react';
 
 interface CreateEventFormProps {
   onSubmit: (data: CreateEventData) => Promise<void>;
@@ -40,6 +40,8 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
   const [location, setLocation] = useState('');
   const [capacity, setCapacity] = useState<number | ''>('');
   const [maxEntries, setMaxEntries] = useState(1);
+  const [enableDjPlaylist, setEnableDjPlaylist] = useState(false);
+  const [requirePhotoApproval, setRequirePhotoApproval] = useState(false);
 
   const [startDateTime, setStartDateTime] = useState(() => {
     const now = new Date();
@@ -95,6 +97,8 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
       end_at: new Date(endDateTime).toISOString(),
       event_date: startDateTime.split('T')[0],
       storage_mode: 'fallback',
+      enable_dj_playlist: enableDjPlaylist,
+      require_photo_approval: requirePhotoApproval,
     });
   };
 
@@ -257,6 +261,77 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             }`}
           />
           {errors.endDateTime && <p className="mt-1 text-xs text-red-600">{errors.endDateTime}</p>}
+        </div>
+      </div>
+
+      {/* Optional Features: DJ & Moderation */}
+      <div className="pt-2 border-t border-slate-100 space-y-3">
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+          Recursos Interativos do Evento
+        </span>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* DJ Playlist Toggle */}
+          <div
+            onClick={() => setEnableDjPlaylist((prev) => !prev)}
+            className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
+              enableDjPlaylist
+                ? 'bg-violet-50/70 border-violet-300 ring-2 ring-violet-400/20'
+                : 'bg-slate-50 border-slate-200 hover:border-slate-300'
+            }`}
+          >
+            <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${
+              enableDjPlaylist ? 'bg-violet-600 text-white' : 'bg-slate-200 text-slate-600'
+            }`}>
+              <Music2 className="w-4 h-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-800">Playlist do DJ</span>
+                <input
+                  type="checkbox"
+                  checked={enableDjPlaylist}
+                  onChange={(e) => setEnableDjPlaylist(e.target.checked)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="rounded text-violet-600 focus:ring-violet-500"
+                />
+              </div>
+              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
+                Convidados podem pedir músicas pelo celular ao enviar fotos.
+              </p>
+            </div>
+          </div>
+
+          {/* Photo Moderation Toggle */}
+          <div
+            onClick={() => setRequirePhotoApproval((prev) => !prev)}
+            className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
+              requirePhotoApproval
+                ? 'bg-amber-50/70 border-amber-300 ring-2 ring-amber-400/20'
+                : 'bg-slate-50 border-slate-200 hover:border-slate-300'
+            }`}
+          >
+            <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${
+              requirePhotoApproval ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-600'
+            }`}>
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-800">Moderação de Fotos</span>
+                <input
+                  type="checkbox"
+                  checked={requirePhotoApproval}
+                  onChange={(e) => setRequirePhotoApproval(e.target.checked)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="rounded text-amber-600 focus:ring-amber-500"
+                />
+              </div>
+              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
+                Fotos dos convidados só aparecem na galeria após sua aprovação.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

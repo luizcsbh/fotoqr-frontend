@@ -74,6 +74,8 @@ export interface CreateEventData {
   start_date?: string;
   end_date?: string;
   storage_mode?: StorageMode;
+  enable_dj_playlist?: boolean;
+  require_photo_approval?: boolean;
 }
 
 export interface UploadResult {
