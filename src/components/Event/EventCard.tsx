@@ -12,6 +12,10 @@ import { getFotoQrImageSettings } from '../../utils/qrLogo';
 import { loadQRCustomization, EVENT_THEMES } from '../../utils/qrThemes';
 import toast from 'react-hot-toast';
 
+/** Shared look of the four card actions: same height, full cell width, icon left + label. */
+const FOOTER_ACTION =
+  'inline-flex h-10 w-full min-w-0 items-center justify-center gap-1.5 rounded-xl border px-3 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-60';
+
 interface EventCardProps {
   event: Event;
   onToggleActive?: (id: string, currentStatus: boolean) => void;
@@ -137,7 +141,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             <button
               type="button"
               onClick={() => setIsQRModalOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-brand-500 transition-all shrink-0 relative group/qr focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="relative inline-flex shrink-0 flex-col items-center gap-1 rounded-xl border border-slate-200/80 bg-white p-1.5 text-[11px] font-semibold text-slate-600 shadow-xs transition-all hover:border-brand-500 hover:shadow-md group/qr focus:outline-none focus:ring-2 focus:ring-brand-500"
               title="Clique para ampliar o QR Code"
             >
               <QRCodeCanvas
@@ -146,10 +150,10 @@ export const EventCard: React.FC<EventCardProps> = ({
                 level="H"
                 imageSettings={getFotoQrImageSettings(64)}
               />
-              <div className="absolute inset-0 bg-slate-900/60 rounded-xl opacity-0 group-hover/qr:opacity-100 transition-opacity flex items-center justify-center text-white">
-                <Maximize2 className="w-5 h-5 drop-shadow" />
-              </div>
-              <span>Ampliar</span>
+              <span className="inline-flex items-center gap-1">
+                <Maximize2 className="h-3 w-3" />
+                Ampliar
+              </span>
             </button>
           </div>
 
@@ -175,70 +179,56 @@ export const EventCard: React.FC<EventCardProps> = ({
           </div>
         </div>
 
-        {/* Footer Actions */}
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100/60">
-          <div className="flex items-center gap-1.5">
-            {onToggleActive && (
-              <button
-                type="button"
-                onClick={() => onToggleActive(event.id, event.is_active)}
-                disabled={isToggling}
-                className={`flex items-center gap-1 text-xs font-semibold px-2 py-1.5 rounded-lg transition-colors ${
-                  event.is_active
-                    ? 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100'
-                    : 'text-slate-500 bg-slate-100 hover:bg-slate-200'
-                }`}
-                title={event.is_active ? 'Pausar recebimento de fotos' : 'Reativar recebimento de fotos'}
-              >
-                {event.is_active ? (
-                  <>
-                    <ToggleRight className="w-4 h-4 text-emerald-600" />
-                    <span className="hidden sm:inline">Ativo</span>
-                  </>
-                ) : (
-                  <>
-                    <ToggleLeft className="w-4 h-4 text-slate-400" />
-                    <span className="hidden sm:inline">Pausado</span>
-                  </>
-                )}
-              </button>
-            )}
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsQRModalOpen(true)}
-              leftIcon={<QrCode className="w-3.5 h-3.5 text-brand-600" />}
-              className="text-xs"
+        {/* Footer Actions: equal-width cells, same height and gap; they never leave the card */}
+        <div className="grid grid-cols-2 gap-2">
+          {onToggleActive && (
+            <button
+              type="button"
+              onClick={() => onToggleActive(event.id, event.is_active)}
+              disabled={isToggling}
+              className={`${FOOTER_ACTION} ${
+                event.is_active
+                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                  : 'border-slate-200 bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+              title={event.is_active ? 'Pausar recebimento de fotos' : 'Reativar recebimento de fotos'}
             >
-              QR Code
-            </Button>
+              {event.is_active ? (
+                <ToggleRight className="h-4 w-4 shrink-0 text-emerald-600" />
+              ) : (
+                <ToggleLeft className="h-4 w-4 shrink-0 text-slate-400" />
+              )}
+              <span className="truncate">{event.is_active ? 'Ativo' : 'Pausado'}</span>
+            </button>
+          )}
 
-            <a
-              href={getPresentationUrl(event.uuid)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex"
-            >
-              <Button
-                variant="ghost"
-                size="sm"
-                leftIcon={<Tv className="w-3.5 h-3.5 text-slate-700" />}
-                className="text-xs text-slate-700 hover:text-slate-900"
-                title="Abrir Modo Apresentação para retroprojetor"
-              >
-                Telão
-              </Button>
-            </a>
-          </div>
+          <button
+            type="button"
+            onClick={() => setIsQRModalOpen(true)}
+            className={`${FOOTER_ACTION} border-slate-300 bg-white text-slate-700 hover:bg-slate-50`}
+          >
+            <QrCode className="h-4 w-4 shrink-0 text-brand-600" />
+            <span className="truncate">QR Code</span>
+          </button>
+
+          <a
+            href={getPresentationUrl(event.uuid)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${FOOTER_ACTION} border-slate-200 bg-white text-slate-700 hover:bg-slate-50`}
+            title="Abrir Modo Apresentação para retroprojetor"
+          >
+            <Tv className="h-4 w-4 shrink-0 text-slate-600" />
+            <span className="truncate">Telão</span>
+          </a>
 
           <Link
             to={manageUrl}
-            className="ml-auto inline-flex items-center gap-1.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 px-3 py-1.5 rounded-xl shadow-xs hover:shadow transition-all"
+            className={`${FOOTER_ACTION} border-brand-600 bg-brand-600 text-white hover:bg-brand-700 ${onToggleActive ? '' : 'col-span-2'}`}
             title="Gerenciar evento, fotos e links de acesso"
           >
-            <span>Gerenciar</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className="h-4 w-4 shrink-0" />
+            <span className="truncate">Gerenciar</span>
           </Link>
         </div>
       </Card>
