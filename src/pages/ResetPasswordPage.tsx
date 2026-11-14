@@ -1,9 +1,12 @@
 import React, { useState, FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Camera, Eye, EyeOff, LockKeyhole, QrCode, Shield, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Camera, QrCode, CheckCircle2, AlertCircle } from 'lucide-react';
 import { authService } from '../services/auth.service';
 import { Card } from '../components/UI/Card';
 import { Button } from '../components/UI/Button';
+import { PasswordInput } from '../components/UI/PasswordInput';
+import { PasswordMatchHint, PasswordRequirements } from '../components/UI/PasswordRequirements';
+import { isPasswordValid } from '../utils/passwordRules';
 
 export const ResetPasswordPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -13,8 +16,6 @@ export const ResetPasswordPage: React.FC = () => {
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -25,12 +26,8 @@ export const ResetPasswordPage: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    if (newPassword !== confirmPassword) {
-      setError('As senhas não coincidem.');
-      return;
-    }
-    if (newPassword.length < 8) {
-      setError('A senha deve ter pelo menos 8 caracteres.');
+    if (!isPasswordValid(newPassword, confirmPassword)) {
+      setError('A nova senha ainda não atende a todos os requisitos da lista.');
       return;
     }
 
@@ -89,54 +86,38 @@ export const ResetPasswordPage: React.FC = () => {
                 <label htmlFor="new-password" className="block text-sm font-semibold text-slate-700 mb-1.5">
                   Nova senha
                 </label>
-                <div className="relative">
-                  <LockKeyhole className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input
-                    id="new-password"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    minLength={8}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Mínimo 8 caracteres"
-                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-28 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(v => !v)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    <span>{showPassword ? 'Ocultar' : 'Mostrar'}</span>
-                  </button>
-                </div>
+                <PasswordInput
+                  id="new-password"
+                  autoComplete="new-password"
+                  required
+                  maxLength={72}
+                  aria-describedby="new-password-rules"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Digite a nova senha"
+                />
+                <PasswordRequirements
+                  id="new-password-rules"
+                  className="mt-2"
+                  password={newPassword}
+                  confirmation={confirmPassword}
+                />
               </div>
 
               <div>
                 <label htmlFor="confirm-password" className="block text-sm font-semibold text-slate-700 mb-1.5">
                   Confirmar nova senha
                 </label>
-                <div className="relative">
-                  <Shield className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input
-                    id="confirm-password"
-                    type={showConfirm ? 'text' : 'password'}
-                    required
-                    minLength={8}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Repita a nova senha"
-                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-28 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm(v => !v)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
-                  >
-                    {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    <span>{showConfirm ? 'Ocultar' : 'Mostrar'}</span>
-                  </button>
-                </div>
+                <PasswordInput
+                  id="confirm-password"
+                  autoComplete="new-password"
+                  required
+                  maxLength={72}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Repita a nova senha"
+                />
+                <PasswordMatchHint password={newPassword} confirmation={confirmPassword} />
               </div>
 
               {error && (
@@ -145,7 +126,13 @@ export const ResetPasswordPage: React.FC = () => {
                 </p>
               )}
 
-              <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                isLoading={isSubmitting}
+                disabled={!isPasswordValid(newPassword, confirmPassword)}
+              >
                 Salvar nova senha
               </Button>
             </form>

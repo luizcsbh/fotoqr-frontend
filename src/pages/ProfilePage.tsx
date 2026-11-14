@@ -2,8 +2,11 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { Camera, KeyRound, Mail, Save, Upload, UserRound } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
+import { PasswordInput } from '../components/UI/PasswordInput';
+import { PasswordMatchHint, PasswordRequirements } from '../components/UI/PasswordRequirements';
 import { useAuth } from '../hooks/useAuth';
 import { authService } from '../services/auth.service';
+import { isPasswordValid } from '../utils/passwordRules';
 
 function getErrorMessage(error: unknown): string {
   if (typeof error === 'object' && error !== null && 'message' in error) {
@@ -110,8 +113,8 @@ export const ProfilePage: React.FC = () => {
     event.preventDefault();
     setPasswordError('');
     setPasswordMessage('');
-    if (newPassword !== passwordConfirmation) {
-      setPasswordError('A nova senha e a confirmação não coincidem.');
+    if (!isPasswordValid(newPassword, passwordConfirmation)) {
+      setPasswordError('A nova senha ainda não atende a todos os requisitos da lista.');
       return;
     }
     setIsSavingPassword(true);
@@ -247,51 +250,55 @@ export const ProfilePage: React.FC = () => {
                 <label htmlFor="current-password" className="mb-1.5 block text-sm font-semibold text-slate-700">
                   Senha atual
                 </label>
-                <input
+                <PasswordInput
                   id="current-password"
-                  type="password"
                   autoComplete="current-password"
-                  minLength={8}
                   maxLength={72}
                   required
                   value={currentPassword}
                   onChange={(event) => setCurrentPassword(event.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
                 <label htmlFor="new-password" className="mb-1.5 block text-sm font-semibold text-slate-700">
                   Nova senha
                 </label>
-                <input
+                <PasswordInput
                   id="new-password"
-                  type="password"
                   autoComplete="new-password"
-                  minLength={8}
                   maxLength={72}
                   required
+                  aria-describedby="new-password-rules"
                   value={newPassword}
                   onChange={(event) => setNewPassword(event.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                />
+                <PasswordRequirements
+                  id="new-password-rules"
+                  className="mt-2"
+                  password={newPassword}
+                  confirmation={passwordConfirmation}
                 />
               </div>
               <div>
                 <label htmlFor="password-confirmation" className="mb-1.5 block text-sm font-semibold text-slate-700">
                   Confirmar nova senha
                 </label>
-                <input
+                <PasswordInput
                   id="password-confirmation"
-                  type="password"
                   autoComplete="new-password"
-                  minLength={8}
                   maxLength={72}
                   required
                   value={passwordConfirmation}
                   onChange={(event) => setPasswordConfirmation(event.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
+                <PasswordMatchHint password={newPassword} confirmation={passwordConfirmation} />
               </div>
-              <Button type="submit" isLoading={isSavingPassword} leftIcon={<KeyRound className="h-4 w-4" />}>
+              <Button
+                type="submit"
+                isLoading={isSavingPassword}
+                disabled={!currentPassword || !isPasswordValid(newPassword, passwordConfirmation)}
+                leftIcon={<KeyRound className="h-4 w-4" />}
+              >
                 Atualizar senha
               </Button>
             </form>

@@ -6,4 +6,5 @@ export * from './Card';
 export * from './EmptyState';
 export * from './Modal';
 export * from './ProgressBar';
-
+export * from './PasswordInput';
+export * from './PasswordRequirements';

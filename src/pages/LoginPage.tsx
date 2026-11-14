@@ -4,18 +4,17 @@ import {
   ArrowLeft,
   Camera,
   CheckCircle2,
-  Eye,
-  EyeOff,
-  LockKeyhole,
   Mail,
   QrCode,
-  Shield,
   UserRound,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { authService } from '../services/auth.service';
 import { Card } from '../components/UI/Card';
 import { Button } from '../components/UI/Button';
+import { PasswordInput } from '../components/UI/PasswordInput';
+import { PasswordMatchHint, PasswordRequirements } from '../components/UI/PasswordRequirements';
+import { isPasswordValid } from '../utils/passwordRules';
 
 function getErrorMessage(error: unknown): string {
   if (typeof error === 'object' && error !== null && 'message' in error) {
@@ -35,8 +34,6 @@ export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isPasswordConfirmationVisible, setIsPasswordConfirmationVisible] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -51,8 +48,8 @@ export const LoginPage: React.FC = () => {
     event.preventDefault();
     setError('');
 
-    if (isRegistering && password !== passwordConfirmation) {
-      setError('As senhas não coincidem.');
+    if (isRegistering && !isPasswordValid(password, passwordConfirmation)) {
+      setError('A senha ainda não atende a todos os requisitos.');
       return;
     }
 
@@ -183,32 +180,25 @@ export const LoginPage: React.FC = () => {
               <label htmlFor="password" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Senha
               </label>
-              <div className="relative">
-                <LockKeyhole className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  id="password"
-                  name="password"
-                  type={isPasswordVisible ? 'text' : 'password'}
-                  autoComplete={isRegistering ? 'new-password' : 'current-password'}
-                  required
-                  minLength={8}
-                  maxLength={72}
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="Pelo menos 8 caracteres"
-                  className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-28 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              <PasswordInput
+                id="password"
+                name="password"
+                autoComplete={isRegistering ? 'new-password' : 'current-password'}
+                required
+                maxLength={72}
+                aria-describedby={isRegistering ? 'register-password-rules' : undefined}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder={isRegistering ? 'Crie uma senha' : 'Sua senha'}
+              />
+              {isRegistering && (
+                <PasswordRequirements
+                  id="register-password-rules"
+                  className="mt-2"
+                  password={password}
+                  confirmation={passwordConfirmation}
                 />
-                <button
-                  type="button"
-                  onClick={() => setIsPasswordVisible((visible) => !visible)}
-                  aria-label={isPasswordVisible ? 'Ocultar senha' : 'Mostrar senha'}
-                  aria-pressed={isPasswordVisible}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-3 top-1/2 -translate-y-1/2 rounded-md text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                >
-                  {isPasswordVisible ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  <span>{isPasswordVisible ? 'Ocultar' : 'Mostrar'}</span>
-                </button>
-              </div>
+              )}
             </div>
 
             {!isRegistering && (
@@ -227,32 +217,17 @@ export const LoginPage: React.FC = () => {
                 <label htmlFor="password-confirmation" className="block text-sm font-semibold text-slate-700 mb-1.5">
                   Confirme sua senha
                 </label>
-                <div className="relative">
-                  <Shield className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input
-                    id="password-confirmation"
-                    name="password-confirmation"
-                    type={isPasswordConfirmationVisible ? 'text' : 'password'}
-                    autoComplete="new-password"
-                    required
-                    minLength={8}
-                    maxLength={72}
-                    value={passwordConfirmation}
-                    onChange={(event) => setPasswordConfirmation(event.target.value)}
-                    placeholder="Digite a senha novamente"
-                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-28 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setIsPasswordConfirmationVisible((visible) => !visible)}
-                    aria-label={isPasswordConfirmationVisible ? 'Ocultar confirmação da senha' : 'Mostrar confirmação da senha'}
-                    aria-pressed={isPasswordConfirmationVisible}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-3 top-1/2 -translate-y-1/2 rounded-md text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  >
-                    {isPasswordConfirmationVisible ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    <span>{isPasswordConfirmationVisible ? 'Ocultar' : 'Mostrar'}</span>
-                  </button>
-                </div>
+                <PasswordInput
+                  id="password-confirmation"
+                  name="password-confirmation"
+                  autoComplete="new-password"
+                  required
+                  maxLength={72}
+                  value={passwordConfirmation}
+                  onChange={(event) => setPasswordConfirmation(event.target.value)}
+                  placeholder="Digite a senha novamente"
+                />
+                <PasswordMatchHint password={password} confirmation={passwordConfirmation} />
               </div>
             )}
 
@@ -262,7 +237,13 @@ export const LoginPage: React.FC = () => {
               </p>
             )}
 
-            <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>
+            <Button
+              type="submit"
+              className="w-full"
+              size="lg"
+              isLoading={isSubmitting}
+              disabled={isRegistering && !isPasswordValid(password, passwordConfirmation)}
+            >
               {isRegistering ? 'Criar minha conta' : 'Entrar'}
             </Button>
           </form>
