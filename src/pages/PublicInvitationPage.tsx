@@ -14,6 +14,7 @@ import {
   Sparkles,
   Download,
   Copy,
+  LayoutTemplate,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../services/invitation.service';
@@ -312,7 +313,7 @@ export const PublicInvitationPage: React.FC = () => {
               Baixar Imagem do QR Code
             </Button>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <Button
                 variant="outline"
                 size="md"
@@ -332,6 +333,16 @@ export const PublicInvitationPage: React.FC = () => {
                 leftIcon={<FileDown className="w-4 h-4 text-slate-700" />}
               >
                 Baixar PDF
+              </Button>
+
+              <Button
+                variant="outline"
+                size="md"
+                onClick={() => window.open(`/placa/${token}`, '_blank')}
+                className="flex items-center justify-center gap-1.5 rounded-xl border-slate-200"
+                leftIcon={<LayoutTemplate className="w-4 h-4" style={{ color: look.buttonColor }} />}
+              >
+                Placa de Mesa
               </Button>
             </div>
           </div>

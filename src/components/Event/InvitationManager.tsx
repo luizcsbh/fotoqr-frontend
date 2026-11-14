@@ -22,6 +22,7 @@ import {
   Phone,
   Sparkles,
   Info,
+  LayoutTemplate,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { invitationService } from '../../services/invitation.service';
@@ -627,6 +628,20 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                             <FileDown className="w-4 h-4 shrink-0" />
                             <span>Baixar PDF</span>
                           </button>
+
+                          {/* 4b. Placa de Mesa */}
+                          {!isCancelled && (
+                            <a
+                              href={`/placa/${inv.tokenHash}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              title="Abrir Placa de Mesa (imprimível)"
+                              className="gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 inline-flex items-center justify-center rounded-lg transition-colors text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50"
+                            >
+                              <LayoutTemplate className="w-4 h-4 shrink-0" />
+                              <span>Placa</span>
+                            </a>
+                          )}
 
                           {/* 5. Reemitir Convite */}
                           <button

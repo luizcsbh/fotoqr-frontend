@@ -24,6 +24,7 @@ import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { DJConsolePage } from './pages/DJConsolePage';
 import { StaffAccessPage } from './pages/StaffAccessPage';
+import { TableCardPage } from './pages/TableCardPage';
 
 // Standard App Layout with Header and Footer
 const MainLayout: React.FC = () => {
@@ -157,6 +158,7 @@ export const App: React.FC = () => {
 
       {/* Invitation & QR Scanner standalone routes */}
       <Route path="/convite/:token" element={<PublicInvitationPage />} />
+      <Route path="/placa/:token" element={<TableCardPage />} />
       {/* DJ / reader exclusive link: opens a session restricted to that console */}
       <Route path="/acesso/:token" element={<StaffAccessPage />} />
       {/* The scanner calls an authenticated API: send logged-out staff to login and back */}
