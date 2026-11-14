@@ -206,7 +206,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                     type="datetime-local"
                     value={startAt}
                     onChange={(e) => setStartAt(e.target.value)}
-                    className="w-full text-xs rounded-xl border border-slate-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="h-11 w-full text-sm rounded-xl border border-slate-200 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                   <p className="text-[11px] text-slate-400 mt-1">
                     Exemplo no convite: <strong>28 de nov de 2026 às 21:00</strong>
@@ -281,7 +281,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                   value={coverFile ? '' : coverImageUrl}
                   disabled={Boolean(coverFile)}
                   onChange={(e) => setCoverImageUrl(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-200 py-2.5 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-400"
+                  className="h-11 w-full text-sm rounded-xl border border-slate-200 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-400"
                 />
                 <ImageIcon className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
               </div>
@@ -337,7 +337,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                   value={bgFile ? '' : bgImageUrl}
                   disabled={Boolean(bgFile)}
                   onChange={(e) => setBgImageUrl(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-200 py-2.5 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-400"
+                  className="h-11 w-full text-sm rounded-xl border border-slate-200 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-400"
                 />
                 <Sparkles className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
               </div>
@@ -351,7 +351,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                 disabled={saving}
                 isLoading={saving}
                 leftIcon={<Save className="w-4 h-4 text-white" />}
-                className="font-semibold px-6 py-2.5 rounded-xl shadow-emerald-600/20"
+                className="font-semibold px-6 rounded-xl shadow-emerald-600/20"
               >
                 Salvar
               </Button>

@@ -206,7 +206,7 @@ export const ProfilePage: React.FC = () => {
                   required
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
@@ -220,7 +220,7 @@ export const ProfilePage: React.FC = () => {
                     type="email"
                     readOnly
                     value={user?.email || ''}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-slate-500"
+                    className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-500"
                   />
                 </div>
                 <p className="mt-1 text-xs text-slate-500">O e-mail da conta não pode ser alterado.</p>
@@ -256,7 +256,7 @@ export const ProfilePage: React.FC = () => {
                   required
                   value={currentPassword}
                   onChange={(event) => setCurrentPassword(event.target.value)}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
@@ -272,7 +272,7 @@ export const ProfilePage: React.FC = () => {
                   required
                   value={newPassword}
                   onChange={(event) => setNewPassword(event.target.value)}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
@@ -288,7 +288,7 @@ export const ProfilePage: React.FC = () => {
                   required
                   value={passwordConfirmation}
                   onChange={(event) => setPasswordConfirmation(event.target.value)}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <Button type="submit" isLoading={isSavingPassword} leftIcon={<KeyRound className="h-4 w-4" />}>

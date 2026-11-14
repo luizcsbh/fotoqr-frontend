@@ -269,7 +269,7 @@ export const QRScannerPage: React.FC = () => {
               variant="secondary"
               size="lg"
               onClick={handleNextScan}
-              className="w-full bg-white text-slate-900 hover:bg-slate-100 font-bold py-3.5 shadow-lg flex items-center justify-center gap-2"
+              className="w-full bg-white text-slate-900 hover:bg-slate-100 font-bold shadow-lg flex items-center justify-center gap-2"
             >
               <RotateCcw className="w-5 h-5 text-indigo-600" />
               Próxima Leitura
@@ -319,7 +319,7 @@ export const QRScannerPage: React.FC = () => {
             value={manualCode}
             onChange={(e) => setManualCode(e.target.value)}
             disabled={validating}
-            className="flex-1 text-sm bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="h-11 flex-1 text-sm bg-slate-800 border border-slate-700 text-white rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           <Button type="submit" size="sm" disabled={validating || !manualCode.trim()}>
             <Search className="w-4 h-4" />

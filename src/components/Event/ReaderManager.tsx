@@ -94,7 +94,7 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
             placeholder="E-mail da conta do operador..."
             value={readerEmail}
             onChange={(e) => setReaderEmail(e.target.value)}
-            className="flex-1 text-sm rounded-lg border border-slate-300 px-3 py-2.5 focus:ring-2 focus:ring-indigo-500"
+            className="h-11 flex-1 text-sm rounded-lg border border-slate-300 px-3 focus:ring-2 focus:ring-indigo-500"
           />
           <Button type="submit" disabled={submitting} className="flex items-center gap-1.5">
             <UserPlus className="w-4 h-4" />

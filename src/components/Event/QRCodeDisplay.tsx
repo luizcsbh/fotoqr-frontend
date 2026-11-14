@@ -129,7 +129,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
         <Button
           variant="secondary"
           size="sm"
-          className="w-full bg-linear-to-r from-brand-50 to-emerald-50 border-brand-200 text-brand-900 hover:border-brand-300 font-bold shadow-xs py-2.5"
+          className="w-full bg-linear-to-r from-brand-50 to-emerald-50 border-brand-200 text-brand-900 hover:border-brand-300 font-bold shadow-xs"
           leftIcon={<Sparkles className="w-4 h-4 text-brand-600" />}
         >
           Personalizar Cores & Placas de Mesa
@@ -171,7 +171,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
             type="text"
             readOnly
             value={publicUrl}
-            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-mono select-all focus:outline-none"
+            className="h-11 w-full bg-white border border-slate-200 rounded-xl px-3 text-sm text-slate-800 font-mono select-all focus:outline-none"
           />
           <button
             type="button"

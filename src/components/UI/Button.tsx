@@ -26,10 +26,14 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles =
     'inline-flex items-center justify-center font-medium rounded-xl whitespace-nowrap transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-[0.98] select-none';
 
+  // Standard control heights shared with form fields (inputs/selects are h-11 = 44px):
+  // md and lg are both 44px so a submit button always lines up with the fields next to it;
+  // lg only stands out by its larger text and padding. sm (36px) is for compact toolbars.
+  // min-h keeps the standard height while still letting long labels wrap on small screens.
   const sizeStyles: Record<ButtonSize, string> = {
-    sm: 'px-3 py-1.5 text-xs gap-1.5',
-    md: 'px-4 py-2.5 text-sm gap-2 shadow-sm',
-    lg: 'px-6 py-3.5 text-base gap-2.5 shadow-md',
+    sm: 'min-h-9 px-3 py-1 text-xs gap-1.5',
+    md: 'min-h-11 px-4 py-1.5 text-sm gap-2 shadow-sm',
+    lg: 'min-h-11 px-6 py-1.5 text-base gap-2.5 shadow-md',
   };
 
   const variantStyles: Record<ButtonVariant, string> = {

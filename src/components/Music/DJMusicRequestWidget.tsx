@@ -443,7 +443,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
               onChange={(e) => setGuestName(e.target.value)}
               placeholder="Ex: Maria"
               maxLength={50}
-              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
+              className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
             />
           </div>
 
@@ -489,7 +489,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                   value={query}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   placeholder="Nome da música ou artista..."
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
+                  className="h-11 w-full pl-9 pr-4 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
                 />
                 {isSearching && (
                   <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-500 animate-spin" />
@@ -636,7 +636,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                   onChange={(e) => setManualTitle(e.target.value)}
                   placeholder="Ex: Evidências"
                   maxLength={255}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
+                  className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
                 />
               </div>
               <div>
@@ -647,7 +647,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                   onChange={(e) => setManualArtist(e.target.value)}
                   placeholder="Ex: Chitãozinho & Xororó"
                   maxLength={255}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
+                  className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
                 />
               </div>
             </div>

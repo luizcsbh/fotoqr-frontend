@@ -288,7 +288,7 @@ export const EventCard: React.FC<EventCardProps> = ({
                 type="text"
                 readOnly
                 value={publicUrl}
-                className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-mono select-all focus:outline-none"
+                className="h-11 w-full bg-white border border-slate-200 rounded-lg px-2.5 text-sm text-slate-800 font-mono select-all focus:outline-none"
               />
               <button
                 type="button"

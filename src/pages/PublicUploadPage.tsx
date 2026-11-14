@@ -247,7 +247,7 @@ export const PublicUploadPage: React.FC = () => {
                   onClick={uploadAll}
                   isLoading={isUploading}
                   leftIcon={<Upload className="w-5 h-5" />}
-                  className="w-full text-base font-bold shadow-xl shadow-brand-600/30 rounded-2xl py-4"
+                  className="w-full text-base font-bold shadow-xl shadow-brand-600/30 rounded-2xl"
                 >
                   Enviar {items.length} {items.length === 1 ? 'Foto' : 'Fotos'} para o Álbum
                 </Button>

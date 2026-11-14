@@ -437,7 +437,7 @@ export const CreateEventPage: React.FC = () => {
                         setFgColor(e.target.value);
                         setSelectedPresetId('custom');
                       }}
-                      className="w-10 h-10 rounded-xl border border-slate-300 p-0.5 cursor-pointer bg-white shrink-0"
+                      className="w-11 h-11 rounded-xl border border-slate-300 p-0.5 cursor-pointer bg-white shrink-0"
                     />
                     <input
                       type="text"
@@ -448,7 +448,7 @@ export const CreateEventPage: React.FC = () => {
                           setSelectedPresetId('custom');
                         }
                       }}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500 font-semibold"
+                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-900 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500 font-semibold"
                     />
                   </div>
                 </div>
@@ -466,7 +466,7 @@ export const CreateEventPage: React.FC = () => {
                         setBgColor(e.target.value);
                         setSelectedPresetId('custom');
                       }}
-                      className="w-10 h-10 rounded-xl border border-slate-300 p-0.5 cursor-pointer bg-white shrink-0"
+                      className="w-11 h-11 rounded-xl border border-slate-300 p-0.5 cursor-pointer bg-white shrink-0"
                     />
                     <input
                       type="text"
@@ -477,7 +477,7 @@ export const CreateEventPage: React.FC = () => {
                           setSelectedPresetId('custom');
                         }
                       }}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500 font-semibold"
+                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-900 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500 font-semibold"
                     />
                   </div>
                 </div>
@@ -528,7 +528,7 @@ export const CreateEventPage: React.FC = () => {
                     if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
                   }}
                   placeholder={`Ex: ${activeTheme.defaultTitlePlaceholder}`}
-                  className={`w-full px-4 py-2.5 rounded-xl border bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
+                  className={`h-11 w-full px-4 rounded-xl border bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
                     errors.title ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'
                   }`}
                 />
@@ -570,7 +570,7 @@ export const CreateEventPage: React.FC = () => {
                         setEndDateTime(formatToDateTimeLocal(newEnd));
                       }
                     }}
-                    className={`w-full px-3.5 py-2.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
+                    className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
                       errors.startDateTime ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'
                     }`}
                   />
@@ -591,7 +591,7 @@ export const CreateEventPage: React.FC = () => {
                       setEndDateTime(e.target.value);
                       if (errors.endDateTime) setErrors((prev) => ({ ...prev, endDateTime: undefined }));
                     }}
-                    className={`w-full px-3.5 py-2.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
+                    className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
                       errors.endDateTime ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'
                     }`}
                   />
@@ -616,7 +616,7 @@ export const CreateEventPage: React.FC = () => {
                       value={wifiName}
                       onChange={(e) => setWifiName(e.target.value)}
                       placeholder="Ex: Espaço Festa Wi-Fi"
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="h-11 w-full px-3 rounded-xl border border-slate-200 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
                   <div>
@@ -629,7 +629,7 @@ export const CreateEventPage: React.FC = () => {
                       value={wifiPassword}
                       onChange={(e) => setWifiPassword(e.target.value)}
                       placeholder="Ex: festa2026"
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="h-11 w-full px-3 rounded-xl border border-slate-200 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
                 </div>

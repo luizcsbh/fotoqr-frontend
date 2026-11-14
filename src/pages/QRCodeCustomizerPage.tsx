@@ -931,7 +931,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                         setFgColor(e.target.value);
                         setSelectedPresetId('custom');
                       }}
-                      className="w-10 h-10 rounded-xl border border-slate-300 p-0.5 cursor-pointer bg-white shrink-0"
+                      className="w-11 h-11 rounded-xl border border-slate-300 p-0.5 cursor-pointer bg-white shrink-0"
                     />
                     <input
                       type="text"
@@ -942,7 +942,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                           setSelectedPresetId('custom');
                         }
                       }}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-mono text-slate-800 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-800 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
                 </div>
@@ -960,7 +960,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                         setBgColor(e.target.value);
                         setSelectedPresetId('custom');
                       }}
-                      className="w-10 h-10 rounded-xl border border-slate-300 p-0.5 cursor-pointer bg-white shrink-0"
+                      className="w-11 h-11 rounded-xl border border-slate-300 p-0.5 cursor-pointer bg-white shrink-0"
                     />
                     <input
                       type="text"
@@ -971,7 +971,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                           setSelectedPresetId('custom');
                         }
                       }}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-mono text-slate-800 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-800 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
                 </div>
@@ -1020,7 +1020,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Ex: Nosso Casamento, Aniversário da Sofia..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
 
@@ -1034,7 +1034,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
                     placeholder="Ex: Compartilhe suas fotos e eternize esse momento!"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
 
@@ -1048,7 +1048,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                     value={instructions}
                     onChange={(e) => setInstructions(e.target.value)}
                     placeholder="Ex: Aponte a câmera do celular para o QR Code abaixo"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
 
@@ -1069,7 +1069,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                         value={wifiName}
                         onChange={(e) => setWifiName(e.target.value)}
                         placeholder="Ex: Espaço Flores Wi-Fi"
-                        className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="h-11 w-full px-3 rounded-lg border border-slate-200 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                       />
                     </div>
                     <div>
@@ -1082,7 +1082,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                         value={wifiPassword}
                         onChange={(e) => setWifiPassword(e.target.value)}
                         placeholder="Ex: festa2026"
-                        className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="h-11 w-full px-3 rounded-lg border border-slate-200 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                       />
                     </div>
                   </div>

@@ -82,7 +82,7 @@ export const SuccessPage: React.FC = () => {
               size="lg"
               onClick={() => navigate(`/evento/${uuid}`)}
               leftIcon={<PlusCircle className="w-5 h-5" />}
-              className="w-full text-base font-bold shadow-lg shadow-brand-600/25 py-3.5"
+              className="w-full text-base font-bold shadow-lg shadow-brand-600/25"
             >
               Enviar Mais Fotos
             </Button>
@@ -91,7 +91,7 @@ export const SuccessPage: React.FC = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full text-base font-semibold py-3.5"
+                className="w-full text-base font-semibold"
                 leftIcon={<Images className="w-5 h-5" />}
               >
                 Ver Galeria do Evento

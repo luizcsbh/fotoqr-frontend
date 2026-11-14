@@ -756,7 +756,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                           setIsWhatsAppModalOpen(false);
                         }
                       }}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5"
+                      className="flex-1 flex items-center justify-center gap-2"
                     >
                       <MessageSquare className="w-4 h-4 text-white" />
                       <span>Abrir no WhatsApp e Avançar</span>

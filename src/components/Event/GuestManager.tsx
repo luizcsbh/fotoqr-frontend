@@ -184,7 +184,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
               placeholder="Buscar por nome, email ou telefone..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full text-sm rounded-lg border border-slate-300 py-2 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="h-11 w-full text-sm rounded-lg border border-slate-300 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
           </div>
@@ -197,7 +197,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="text-sm rounded-lg border border-slate-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="h-11 text-sm rounded-lg border border-slate-300 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">Todas as Categorias</option>
             {CATEGORIES.map((c) => (
@@ -320,7 +320,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ex: Maria Silva"
-              className="w-full text-sm rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500"
+              className="h-11 w-full text-sm rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -334,7 +334,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="maria@exemplo.com"
-                className="w-full text-sm rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500"
+                className="h-11 w-full text-sm rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
@@ -347,7 +347,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="(11) 98765-4321"
-                className="w-full text-sm rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500"
+                className="h-11 w-full text-sm rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           </div>
@@ -359,7 +359,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as GuestCategory)}
-              className="w-full text-sm rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500"
+              className="h-11 w-full text-sm rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>{c}</option>

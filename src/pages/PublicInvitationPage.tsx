@@ -290,7 +290,7 @@ export const PublicInvitationPage: React.FC = () => {
               variant="primary"
               size="lg"
               onClick={handleDownloadQrCode}
-              className="w-full flex items-center justify-center gap-2 shadow-md font-bold bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl py-3"
+              className="w-full flex items-center justify-center gap-2 shadow-md font-bold bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl"
             >
               <Download className="w-5 h-5" /> Baixar Imagem do QR Code
             </Button>

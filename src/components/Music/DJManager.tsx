@@ -177,7 +177,7 @@ export const DJManager: React.FC<DJManagerProps> = ({
             placeholder="E-mail da conta do DJ no FotoQR..."
             value={djEmail}
             onChange={(e) => setDjEmail(e.target.value)}
-            className="flex-1 text-sm rounded-lg border border-slate-300 px-3 py-2.5 focus:ring-2 focus:ring-violet-500"
+            className="h-11 flex-1 text-sm rounded-lg border border-slate-300 px-3 focus:ring-2 focus:ring-violet-500"
           />
           <Button type="submit" disabled={submitting} className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700">
             <UserPlus className="w-4 h-4" />
