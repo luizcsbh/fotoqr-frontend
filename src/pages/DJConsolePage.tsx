@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Music2,
@@ -8,11 +8,11 @@ import {
   X,
   Clock,
   Play,
+  Pause,
   Trash2,
   Loader2,
   CheckCircle2,
   RefreshCw,
-  ArrowLeft,
   ListMusic,
 } from 'lucide-react';
 import { musicService } from '../services/music.service';
@@ -51,6 +51,52 @@ export const DJConsolePage: React.FC = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterTab>('all');
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Stop any preview when leaving the page
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+      audioRef.current = null;
+    };
+  }, []);
+
+  const stopPreview = () => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    setPlayingId(null);
+  };
+
+  const handlePlay = (song: MusicRequest) => {
+    // Same song playing → pause
+    if (playingId === song.id) {
+      stopPreview();
+      return;
+    }
+
+    stopPreview();
+
+    // 30s Spotify preview, played right here
+    if (song.spotifyPreviewUrl) {
+      const audio = new Audio(song.spotifyPreviewUrl);
+      audio.onended = () => setPlayingId((cur) => (cur === song.id ? null : cur));
+      audio
+        .play()
+        .then(() => setPlayingId(song.id))
+        .catch(() => toast.error('Não foi possível tocar a prévia desta música.'));
+      audioRef.current = audio;
+      return;
+    }
+
+    // No preview: open the full track on Spotify, or search it on YouTube
+    const url = song.spotifyTrackId
+      ? `https://open.spotify.com/track/${song.spotifyTrackId}`
+      : `https://www.youtube.com/results?search_query=${encodeURIComponent(
+          `${song.title} ${song.artist}`
+        )}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
 
   const { data: musicData, isLoading, refetch } = useQuery({
     queryKey: ['music', uuid],
@@ -148,13 +194,6 @@ export const DJConsolePage: React.FC = () => {
             >
               <RefreshCw className="w-4 h-4 text-white/70" />
             </button>
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-1.5 text-xs font-semibold text-white/60 hover:text-white/90 transition-colors px-3 py-2 bg-white/10 hover:bg-white/20 rounded-xl"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              Dashboard
-            </Link>
           </div>
         </div>
       </div>
@@ -305,6 +344,32 @@ export const DJConsolePage: React.FC = () => {
                         <Loader2 className="w-4 h-4 animate-spin text-violet-400" />
                       ) : (
                         <>
+                          {/* Play / pause */}
+                          <button
+                            type="button"
+                            title={
+                              playingId === song.id
+                                ? 'Pausar'
+                                : song.spotifyPreviewUrl
+                                  ? 'Tocar prévia'
+                                  : song.spotifyTrackId
+                                    ? 'Abrir no Spotify'
+                                    : 'Buscar no YouTube'
+                            }
+                            onClick={() => handlePlay(song)}
+                            className={`p-2 rounded-xl transition-colors ${
+                              playingId === song.id
+                                ? 'bg-violet-500/30 text-violet-300'
+                                : 'hover:bg-violet-500/20 text-white/40 hover:text-violet-300'
+                            }`}
+                          >
+                            {playingId === song.id ? (
+                              <Pause className="w-4 h-4" />
+                            ) : (
+                              <Play className="w-4 h-4" />
+                            )}
+                          </button>
+
                           {/* Mark as played */}
                           {song.status !== 'played' && (
                             <button
@@ -367,6 +432,9 @@ export const DJConsolePage: React.FC = () => {
         {/* Legend */}
         {songs.length > 0 && (
           <div className="flex flex-wrap gap-4 text-[11px] text-white/30 px-1">
+            <span className="flex items-center gap-1.5">
+              <Play className="w-3 h-3 text-violet-300" /> Tocar música
+            </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Marcar como tocada
             </span>
