@@ -253,8 +253,8 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                   size="sm"
                   onClick={() => coverFileInputRef.current?.click()}
                   className="flex items-center justify-center gap-2 border-dashed border-2 border-indigo-200 hover:border-indigo-400 bg-indigo-50/40 text-indigo-700"
+                  leftIcon={<Upload className="w-4 h-4 text-indigo-600" />}
                 >
-                  <Upload className="w-4 h-4 text-indigo-600" />
                   Importar Imagem do Computador
                 </Button>
 
@@ -309,8 +309,8 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                   size="sm"
                   onClick={() => bgFileInputRef.current?.click()}
                   className="flex items-center justify-center gap-2 border-dashed border-2 border-slate-200 hover:border-slate-400 text-slate-700"
+                  leftIcon={<Upload className="w-4 h-4 text-slate-600" />}
                 >
-                  <Upload className="w-4 h-4 text-slate-600" />
                   Importar Imagem de Fundo
                 </Button>
 

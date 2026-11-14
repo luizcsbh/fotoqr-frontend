@@ -3,10 +3,21 @@ import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
 import { Badge } from '../UI/Badge';
 import { EmptyState } from '../UI/EmptyState';
-import { Music2, UserPlus, Trash2, Smartphone, ExternalLink, ToggleRight, ToggleLeft } from 'lucide-react';
+import { Music2, UserPlus, Smartphone, ExternalLink, ToggleRight, ToggleLeft, Link2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAlert } from '../../hooks/useAlert';
 import { musicService } from '../../services/music.service';
+import { StaffLinkActions } from '../Event/StaffLinkActions';
+
+/** Toast after authorizing a DJ/reader: tells whether their exclusive link went out by e-mail. */
+function announceStaffAdded(role: string, result: { emailSent?: boolean; emailError?: string; accessLink?: string }) {
+  if (result.emailSent) {
+    toast.success(`${role} autorizado! O link exclusivo foi enviado por e-mail.`);
+  } else {
+    toast.success(`${role} autorizado! Use "Copiar link" para enviar o acesso.`);
+    if (result.emailError) toast.error(result.emailError, { duration: 6000 });
+  }
+}
 
 export interface DJUser {
   id: number;
@@ -14,6 +25,8 @@ export interface DJUser {
   name: string;
   email: string;
   active: boolean;
+  /** Exclusive link that opens only the DJ console */
+  accessLink?: string;
 }
 
 interface DJManagerProps {
@@ -37,8 +50,6 @@ export const DJManager: React.FC<DJManagerProps> = ({
   const [djEmail, setDjEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const djConsoleUrl = `${window.location.origin}/dj/${eventUuid}`;
-
   const fetchDJs = async () => {
     try {
       setLoading(true);
@@ -58,13 +69,12 @@ export const DJManager: React.FC<DJManagerProps> = ({
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!djEmail.trim()) {
-      toast.error('Informe o e-mail do DJ cadastrado no FotoQR.');
+      toast.error('Informe o e-mail do DJ.');
       return;
     }
     try {
       setSubmitting(true);
-      await musicService.addDJ(eventId, djEmail.trim());
-      toast.success('DJ autorizado com sucesso!');
+      announceStaffAdded('DJ', await musicService.addDJ(eventId, djEmail.trim()));
       setDjEmail('');
       fetchDJs();
     } catch (err: any) {
@@ -90,11 +100,6 @@ export const DJManager: React.FC<DJManagerProps> = ({
     } catch {
       toast.error('Erro ao revogar DJ.');
     }
-  };
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(djConsoleUrl);
-    toast.success('Link copiado!');
   };
 
   return (
@@ -174,45 +179,36 @@ export const DJManager: React.FC<DJManagerProps> = ({
           <input
             type="email"
             required
-            placeholder="E-mail da conta do DJ no FotoQR..."
+            placeholder="E-mail do DJ..."
             value={djEmail}
             onChange={(e) => setDjEmail(e.target.value)}
             className="h-11 flex-1 text-sm rounded-lg border border-slate-300 px-3 focus:ring-2 focus:ring-violet-500"
           />
-          <Button type="submit" disabled={submitting} className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700">
-            <UserPlus className="w-4 h-4" />
+          <Button
+            type="submit"
+            isLoading={submitting}
+            className="bg-violet-600 hover:bg-violet-700"
+            leftIcon={<UserPlus className="w-4 h-4" />}
+          >
             {submitting ? 'Autorizando...' : 'Autorizar DJ'}
           </Button>
         </form>
 
-        {/* DJ Console Link */}
-        <div className="mt-5 pt-5 border-t border-slate-100 space-y-2">
-          <p className="text-xs text-slate-500 font-medium">Link do painel exclusivo para o DJ:</p>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-            <code className="flex-1 text-xs bg-slate-100 text-slate-700 px-3 py-2 rounded-lg font-mono break-all">
-              {djConsoleUrl}
-            </code>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={copyLink}
-                className="text-xs font-semibold text-violet-600 hover:text-violet-800 px-3 py-2 bg-violet-50 hover:bg-violet-100 rounded-lg transition-colors"
-              >
-                Copiar link
-              </button>
-              <a
-                href={`/dj/${eventUuid}`}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                Abrir
-              </a>
-            </div>
-          </div>
-          <p className="text-[11px] text-slate-400">
-            O DJ precisa ter uma conta no FotoQR e estar logado para acessar o painel.
+        {/* Exclusive links */}
+        <div className="mt-5 pt-5 border-t border-slate-100 space-y-3">
+          <p className="text-xs text-slate-600 flex items-start gap-2">
+            <Link2 className="w-4 h-4 text-violet-600 shrink-0 mt-0.5" />
+            <span>
+              Cada DJ recebe por e-mail um <strong>link exclusivo</strong> que abre direto o painel da playlist, sem senha.
+              Esse acesso não abre o dashboard nem as configurações do evento. Use as ações da lista para copiar, reenviar ou
+              gerar um novo link (o anterior deixa de funcionar).
+            </span>
           </p>
+          <a href={`/dj/${eventUuid}`} target="_blank" rel="noreferrer" className="inline-flex">
+            <Button variant="outline" size="sm" leftIcon={<ExternalLink className="w-3.5 h-3.5" />}>
+              Abrir painel do DJ
+            </Button>
+          </a>
         </div>
       </Card>
 
@@ -234,7 +230,7 @@ export const DJManager: React.FC<DJManagerProps> = ({
                   <th className="py-3 px-4">Nome</th>
                   <th className="py-3 px-4">E-mail</th>
                   <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Ação</th>
+                  <th className="py-3 px-4 text-right">Link exclusivo e ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -248,13 +244,15 @@ export const DJManager: React.FC<DJManagerProps> = ({
                       </Badge>
                     </td>
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        title="Revogar Permissão"
-                        onClick={() => handleRemove(dj.userId, dj.name)}
-                        className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <StaffLinkActions
+                        eventId={eventId}
+                        kind="dj"
+                        userId={dj.userId}
+                        name={dj.name}
+                        accessLink={dj.accessLink}
+                        onLinkChanged={fetchDJs}
+                        onRemove={() => handleRemove(dj.userId, dj.name)}
+                      />
                     </td>
                   </tr>
                 ))}

@@ -2,9 +2,19 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { LoadingScreen } from './LoadingScreen';
+import { staffConsolePath } from '../../services/staff.service';
 
-export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  /**
+   * Which exclusive-link session (DJ or reader) may open this route. Any other route — the dashboard
+   * included — sends such a session back to its own console.
+   */
+  allowStaff?: 'dj' | 'reader';
+}
+
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowStaff }) => {
+  const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -13,6 +23,10 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ childr
 
   if (!isAuthenticated) {
     return <Navigate to="/login?mode=login" state={{ from: location }} replace />;
+  }
+
+  if (user?.scope && user.scope.kind !== allowStaff) {
+    return <Navigate to={staffConsolePath(user.scope)} replace />;
   }
 
   return <>{children}</>;

@@ -118,9 +118,10 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onClose, onPrev, onN
       {index > 0 && (
         <button
           onClick={(e) => { e.stopPropagation(); onPrev(); }}
-          className="absolute left-4 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md transition-colors z-10"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute left-4 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md transition-colors z-10"
         >
           <ChevronLeft className="w-6 h-6" />
+          <span>Anterior</span>
         </button>
       )}
 
@@ -136,9 +137,10 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onClose, onPrev, onN
       {index < photos.length - 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); onNext(); }}
-          className="absolute right-4 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md transition-colors z-10"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-4 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md transition-colors z-10"
         >
           <ChevronRight className="w-6 h-6" />
+          <span>Próxima</span>
         </button>
       )}
     </div>
@@ -529,7 +531,7 @@ export const EventGalleryPage: React.FC = () => {
                     size="sm"
                     onClick={() => setPage((p) => p + 1)}
                     disabled={page >= totalPages}
-                    rightIcon={<ChevronRight className="w-4 h-4" />}
+                    leftIcon={<ChevronRight className="w-4 h-4" />}
                   >
                     Próxima
                   </Button>

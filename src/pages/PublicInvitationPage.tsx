@@ -268,11 +268,12 @@ export const PublicInvitationPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleCopyToken}
-                        className="shrink-0 p-1 text-slate-400 hover:text-slate-700 rounded transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 shrink-0 text-slate-400 hover:text-slate-700 rounded transition-colors"
                         title="Copiar código"
                         aria-label="Copiar código do convite"
                       >
                         <Copy className="w-4 h-4" />
+                        <span>Copiar</span>
                       </button>
                     </div>
                   </div>
@@ -291,8 +292,9 @@ export const PublicInvitationPage: React.FC = () => {
               size="lg"
               onClick={handleDownloadQrCode}
               className="w-full flex items-center justify-center gap-2 shadow-md font-bold bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl"
+              leftIcon={<Download className="w-5 h-5" />}
             >
-              <Download className="w-5 h-5" /> Baixar Imagem do QR Code
+              Baixar Imagem do QR Code
             </Button>
 
             <div className="grid grid-cols-2 gap-3">
@@ -301,8 +303,9 @@ export const PublicInvitationPage: React.FC = () => {
                 size="md"
                 onClick={handleShare}
                 className="flex items-center justify-center gap-1.5 rounded-xl border-slate-200"
+                leftIcon={<Share2 className="w-4 h-4 text-cyan-600" />}
               >
-                <Share2 className="w-4 h-4 text-cyan-600" /> Compartilhar
+                Compartilhar
               </Button>
 
               <Button
@@ -311,8 +314,9 @@ export const PublicInvitationPage: React.FC = () => {
                 disabled={downloading}
                 onClick={handleDownloadPdf}
                 className="flex items-center justify-center gap-1.5 rounded-xl"
+                leftIcon={<FileDown className="w-4 h-4 text-slate-700" />}
               >
-                <FileDown className="w-4 h-4 text-slate-700" /> Baixar PDF
+                Baixar PDF
               </Button>
             </div>
           </div>

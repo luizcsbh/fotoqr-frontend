@@ -143,10 +143,11 @@ export const Header: React.FC = () => {
           <div className="flex md:hidden items-center">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none"
               aria-label="Abrir menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <span>{mobileMenuOpen ? 'Fechar' : 'Menu'}</span>
             </button>
           </div>
         </div>

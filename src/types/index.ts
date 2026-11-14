@@ -7,6 +7,11 @@ export interface User {
   role?: string;
   avatar_url?: string;
   created_at?: string;
+  /**
+   * Set when this session was opened by a DJ/reader exclusive link: it may only use that console
+   * (the dashboard and the rest of the app are off-limits).
+   */
+  scope?: { kind: 'dj' | 'reader'; eventId: number; eventUuid: string };
 }
 
 export interface Event {
@@ -238,6 +243,8 @@ export interface ReaderUser {
   email: string;
   active: boolean;
   createdAt: string;
+  /** Exclusive link that opens only the portaria QR reader */
+  accessLink?: string;
 }
 
 export interface CheckinValidationResult {

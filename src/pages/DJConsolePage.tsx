@@ -64,6 +64,33 @@ function getExternalTrack(song: MusicRequest): { source: 'spotify' | 'deezer' | 
   };
 }
 
+const DJ_ACTION_TONES = {
+  violet: 'text-violet-300 bg-violet-500/10 hover:bg-violet-500/25 border-violet-400/20',
+  emerald: 'text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/25 border-emerald-400/20',
+  blue: 'text-blue-300 bg-blue-500/10 hover:bg-blue-500/25 border-blue-400/20',
+  red: 'text-red-300 bg-red-500/10 hover:bg-red-500/25 border-red-400/20',
+} as const;
+
+/** Song action in the DJ console: icon on the left and the action name beside it. */
+const DJActionButton: React.FC<{
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  tone: keyof typeof DJ_ACTION_TONES;
+  active?: boolean;
+}> = ({ onClick, icon, label, tone, active }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`inline-flex items-center gap-1.5 min-h-9 px-3 rounded-xl border text-xs font-semibold transition-colors ${
+      DJ_ACTION_TONES[tone]
+    } ${active ? 'ring-1 ring-violet-300/60' : ''}`}
+  >
+    {icon}
+    <span>{label}</span>
+  </button>
+);
+
 export const DJConsolePage: React.FC = () => {
   const { uuid } = useParams<{ uuid: string }>();
   const queryClient = useQueryClient();
@@ -71,6 +98,8 @@ export const DJConsolePage: React.FC = () => {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterTab>('all');
   const [playingId, setPlayingId] = useState<string | null>(null);
+  // Song whose Spotify player (embed) is open under its row
+  const [spotifyEmbedId, setSpotifyEmbedId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Stop any preview when leaving the page
@@ -85,11 +114,12 @@ export const DJConsolePage: React.FC = () => {
     audioRef.current?.pause();
     audioRef.current = null;
     setPlayingId(null);
+    setSpotifyEmbedId(null);
   };
 
   const handlePlay = (song: MusicRequest) => {
-    // Same song playing → pause
-    if (playingId === song.id) {
+    // Same song playing (audio preview or open Spotify player) → stop
+    if (playingId === song.id || spotifyEmbedId === song.id) {
       stopPreview();
       return;
     }
@@ -113,7 +143,14 @@ export const DJConsolePage: React.FC = () => {
       return;
     }
 
-    // No preview: open the full track where it came from, or search it on YouTube
+    // Spotify track without an audio preview (Spotify no longer provides most of them):
+    // show Spotify's own player inline — 30s preview, or the full track when logged in to Spotify
+    if (getExternalTrack(song).source === 'spotify') {
+      setSpotifyEmbedId(song.id);
+      return;
+    }
+
+    // Otherwise open the track where it came from, or search it on YouTube
     window.open(getExternalTrack(song).url, '_blank', 'noopener,noreferrer');
   };
 
@@ -208,10 +245,11 @@ export const DJConsolePage: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => refetch()}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
               title="Atualizar lista"
             >
               <RefreshCw className="w-4 h-4 text-white/70" />
+              <span>Atualizar</span>
             </button>
           </div>
         </div>
@@ -295,155 +333,142 @@ export const DJConsolePage: React.FC = () => {
                 const isPlayed = song.status === 'played';
                 const isRejected = song.status === 'rejected';
 
+                const track = getExternalTrack(song);
+                const isListening = playingId === song.id || spotifyEmbedId === song.id;
+
                 return (
-                  <div
-                    key={song.id}
-                    className={`flex items-center gap-3 px-5 py-4 transition-colors hover:bg-white/5 ${
-                      isPlayed || isRejected ? 'opacity-50' : ''
-                    }`}
-                  >
-                    {/* Position */}
-                    <span className="text-xs font-black text-white/20 w-5 text-center shrink-0">
-                      {idx + 1}
-                    </span>
+                  <div key={song.id} className="px-5 py-4 transition-colors hover:bg-white/5 space-y-3">
+                    <div className={`flex items-center gap-3 ${isPlayed || isRejected ? 'opacity-50' : ''}`}>
+                      {/* Position */}
+                      <span className="text-xs font-black text-white/20 w-5 text-center shrink-0">
+                        {idx + 1}
+                      </span>
 
-                    {/* Album art */}
-                    {song.albumArtUrl ? (
-                      <img
-                        src={song.albumArtUrl}
-                        alt={song.albumName || song.title}
-                        className="w-11 h-11 rounded-xl object-cover shadow-md shrink-0"
-                      />
-                    ) : (
-                      <div className="w-11 h-11 rounded-xl bg-violet-900/50 flex items-center justify-center shrink-0">
-                        <Music2 className="w-5 h-5 text-violet-400/50" />
-                      </div>
-                    )}
+                      {/* Album art */}
+                      {song.albumArtUrl ? (
+                        <img
+                          src={song.albumArtUrl}
+                          alt={song.albumName || song.title}
+                          className="w-11 h-11 rounded-xl object-cover shadow-md shrink-0"
+                        />
+                      ) : (
+                        <div className="w-11 h-11 rounded-xl bg-violet-900/50 flex items-center justify-center shrink-0">
+                          <Music2 className="w-5 h-5 text-violet-400/50" />
+                        </div>
+                      )}
 
-                    {/* Song info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span
-                          className={`font-bold text-sm truncate ${
-                            isPlayed ? 'line-through text-white/30' : 'text-white'
-                          }`}
-                        >
-                          {song.title}
-                        </span>
-                        {getExternalTrack(song).source === 'spotify' && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 bg-green-900/60 text-green-400 rounded-full border border-green-700/40 shrink-0">
-                            SPOTIFY
+                      {/* Song info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span
+                            className={`font-bold text-sm truncate ${
+                              isPlayed ? 'line-through text-white/30' : 'text-white'
+                            }`}
+                          >
+                            {song.title}
                           </span>
-                        )}
-                        {getExternalTrack(song).source === 'deezer' && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 bg-purple-900/60 text-purple-300 rounded-full border border-purple-700/40 shrink-0">
-                            DEEZER
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1.5 text-xs text-white/40 mt-0.5">
-                        <span className="truncate">{song.artist}</span>
-                        {song.guestName && (
-                          <>
-                            <span>•</span>
-                            <span className="text-violet-400 font-medium shrink-0">
-                              por {song.guestName}
+                          {track.source === 'spotify' && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 bg-green-900/60 text-green-400 rounded-full border border-green-700/40 shrink-0">
+                              SPOTIFY
                             </span>
-                          </>
-                        )}
+                          )}
+                          {track.source === 'deezer' && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 bg-purple-900/60 text-purple-300 rounded-full border border-purple-700/40 shrink-0">
+                              DEEZER
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-white/40 mt-0.5">
+                          <span className="truncate">{song.artist}</span>
+                          {song.guestName && (
+                            <>
+                              <span>•</span>
+                              <span className="text-violet-400 font-medium shrink-0">
+                                por {song.guestName}
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </div>
+
+                      {/* Status badge */}
+                      <span
+                        className={`hidden sm:inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${STATUS_COLORS[song.status]}`}
+                      >
+                        {STATUS_ICONS[song.status]}
+                        {STATUS_LABELS[song.status]}
+                      </span>
                     </div>
 
-                    {/* Status badge */}
-                    <span
-                      className={`hidden sm:inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${STATUS_COLORS[song.status]}`}
-                    >
-                      {STATUS_ICONS[song.status]}
-                      {STATUS_LABELS[song.status]}
-                    </span>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-1 shrink-0">
+                    {/* Actions: icon on the left + action name, like every other button */}
+                    <div className="flex flex-wrap items-center gap-2 sm:pl-8">
+                      <DJActionButton
+                        onClick={() => handlePlay(song)}
+                        icon={isListening ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                        label={
+                          isListening
+                            ? 'Parar'
+                            : song.spotifyPreviewUrl
+                              ? 'Ouvir prévia'
+                              : track.source === 'spotify'
+                                ? 'Ouvir no Spotify'
+                                : track.label
+                        }
+                        tone="violet"
+                        active={isListening}
+                      />
                       {isUpdating ? (
                         <Loader2 className="w-4 h-4 animate-spin text-violet-400" />
                       ) : (
                         <>
-                          {/* Play / pause */}
-                          <button
-                            type="button"
-                            title={
-                              playingId === song.id
-                                ? 'Pausar'
-                                : song.spotifyPreviewUrl
-                                  ? 'Tocar prévia'
-                                  : getExternalTrack(song).label
-                            }
-                            onClick={() => handlePlay(song)}
-                            className={`p-2 rounded-xl transition-colors ${
-                              playingId === song.id
-                                ? 'bg-violet-500/30 text-violet-300'
-                                : 'hover:bg-violet-500/20 text-white/40 hover:text-violet-300'
-                            }`}
-                          >
-                            {playingId === song.id ? (
-                              <Pause className="w-4 h-4" />
-                            ) : (
-                              <Play className="w-4 h-4" />
-                            )}
-                          </button>
-
-                          {/* Mark as played */}
                           {song.status !== 'played' && (
-                            <button
-                              type="button"
-                              title="Marcar como tocada"
+                            <DJActionButton
                               onClick={() => handleStatus(song.id, 'played')}
-                              className="p-2 rounded-xl hover:bg-emerald-500/20 text-white/30 hover:text-emerald-400 transition-colors"
-                            >
-                              <CheckCircle2 className="w-4 h-4" />
-                            </button>
+                              icon={<CheckCircle2 className="w-3.5 h-3.5" />}
+                              label="Marcar como tocada"
+                              tone="emerald"
+                            />
                           )}
-
-                          {/* Approve (pending only) */}
                           {song.status === 'pending' && (
-                            <button
-                              type="button"
-                              title="Aprovar"
+                            <DJActionButton
                               onClick={() => handleStatus(song.id, 'approved')}
-                              className="p-2 rounded-xl hover:bg-blue-500/20 text-white/30 hover:text-blue-400 transition-colors"
-                            >
-                              <Check className="w-4 h-4" />
-                            </button>
+                              icon={<Check className="w-3.5 h-3.5" />}
+                              label="Aprovar"
+                              tone="blue"
+                            />
                           )}
-
-                          {/* Reject (pending or approved only) */}
                           {(song.status === 'pending' || song.status === 'approved') && (
-                            <button
-                              type="button"
-                              title="Recusar"
+                            <DJActionButton
                               onClick={() => handleStatus(song.id, 'rejected')}
-                              className="p-2 rounded-xl hover:bg-red-500/20 text-white/30 hover:text-red-400 transition-colors"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
+                              icon={<X className="w-3.5 h-3.5" />}
+                              label="Recusar"
+                              tone="red"
+                            />
                           )}
                         </>
                       )}
-
-                      {/* Delete */}
                       {isDeleting ? (
                         <Loader2 className="w-4 h-4 animate-spin text-red-400" />
                       ) : (
-                        <button
-                          type="button"
-                          title="Remover da lista"
+                        <DJActionButton
                           onClick={() => handleDelete(song.id)}
-                          className="p-2 rounded-xl hover:bg-red-500/20 text-white/20 hover:text-red-400 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                          icon={<Trash2 className="w-3.5 h-3.5" />}
+                          label="Remover"
+                          tone="red"
+                        />
                       )}
                     </div>
+
+                    {/* Spotify's own player: 30s preview, or the full track when logged in to Spotify */}
+                    {spotifyEmbedId === song.id && song.spotifyTrackId && (
+                      <iframe
+                        title={`Spotify: ${song.title} — ${song.artist}`}
+                        src={`https://open.spotify.com/embed/track/${encodeURIComponent(song.spotifyTrackId)}?theme=0`}
+                        className="w-full h-[80px] rounded-xl border-0 sm:ml-8 sm:w-[calc(100%-2rem)]"
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy"
+                      />
+                    )}
                   </div>
                 );
               })}
@@ -451,26 +476,6 @@ export const DJConsolePage: React.FC = () => {
           )}
         </div>
 
-        {/* Legend */}
-        {songs.length > 0 && (
-          <div className="flex flex-wrap gap-4 text-[11px] text-white/30 px-1">
-            <span className="flex items-center gap-1.5">
-              <Play className="w-3 h-3 text-violet-300" /> Tocar música
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Marcar como tocada
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Check className="w-3 h-3 text-blue-400" /> Aprovar pedido
-            </span>
-            <span className="flex items-center gap-1.5">
-              <X className="w-3 h-3 text-red-400" /> Recusar pedido
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Trash2 className="w-3 h-3 text-white/30" /> Remover da lista
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );

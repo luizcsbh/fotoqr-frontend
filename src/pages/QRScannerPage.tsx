@@ -270,8 +270,8 @@ export const QRScannerPage: React.FC = () => {
               size="lg"
               onClick={handleNextScan}
               className="w-full bg-white text-slate-900 hover:bg-slate-100 font-bold shadow-lg flex items-center justify-center gap-2"
+              leftIcon={<RotateCcw className="w-5 h-5 text-indigo-600" />}
             >
-              <RotateCcw className="w-5 h-5 text-indigo-600" />
               Próxima Leitura
             </Button>
           </div>
@@ -321,8 +321,8 @@ export const QRScannerPage: React.FC = () => {
             disabled={validating}
             className="h-11 flex-1 text-sm bg-slate-800 border border-slate-700 text-white rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
-          <Button type="submit" size="sm" disabled={validating || !manualCode.trim()}>
-            <Search className="w-4 h-4" />
+          <Button type="submit" size="md" disabled={validating || !manualCode.trim()} leftIcon={<Search className="w-4 h-4" />}>
+            Buscar
           </Button>
         </form>
       </div>

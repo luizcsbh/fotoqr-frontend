@@ -202,9 +202,10 @@ export const DJPlaylistPanel: React.FC<DJPlaylistPanelProps> = ({ eventUuid }) =
                           type="button"
                           title="Marcar como tocada"
                           onClick={() => handleStatus(song.id, 'played')}
-                          className="p-1.5 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 transition-colors"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 transition-colors"
                         >
                           <CheckCircle2 className="w-4 h-4" />
+                          <span>Tocada</span>
                         </button>
                       )}
                       {song.status === 'pending' && (
@@ -212,9 +213,10 @@ export const DJPlaylistPanel: React.FC<DJPlaylistPanelProps> = ({ eventUuid }) =
                           type="button"
                           title="Aprovar"
                           onClick={() => handleStatus(song.id, 'approved')}
-                          className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
                         >
                           <Check className="w-4 h-4" />
+                          <span>Aprovar</span>
                         </button>
                       )}
                     </>
@@ -227,9 +229,10 @@ export const DJPlaylistPanel: React.FC<DJPlaylistPanelProps> = ({ eventUuid }) =
                       type="button"
                       title="Remover da lista"
                       onClick={() => handleDelete(song.id)}
-                      className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
+                      <span>Remover</span>
                     </button>
                   )}
                 </div>

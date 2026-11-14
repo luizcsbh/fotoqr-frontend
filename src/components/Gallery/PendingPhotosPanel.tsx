@@ -240,13 +240,14 @@ export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({
                       disabled={isBusy}
                       onClick={() => rejectMutation.mutate(photo.id)}
                       title="Recusar e excluir"
-                      className="inline-flex items-center justify-center px-2.5 py-1.5 rounded-xl bg-white/90 hover:bg-red-50 text-red-600 disabled:opacity-60 transition-colors"
+                      className="gap-1.5 text-xs font-semibold min-h-9 px-3 inline-flex items-center justify-center px-2.5 py-1.5 rounded-xl bg-white/90 hover:bg-red-50 text-red-600 disabled:opacity-60 transition-colors"
                     >
                       {busyId === photo.id && rejectMutation.isPending ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       ) : (
                         <Trash2 className="w-3.5 h-3.5" />
                       )}
+                      <span>Recusar</span>
                     </button>
                   </div>
                 </div>

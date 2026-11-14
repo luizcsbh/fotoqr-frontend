@@ -41,14 +41,18 @@ export const musicService = {
   },
 
   /** List DJs authorized for an event (event owner) */
-  async listDJs(eventId: string | number): Promise<{ id: number; userId: number; name: string; email: string; active: boolean }[]> {
+  async listDJs(eventId: string | number): Promise<{ id: number; userId: number; name: string; email: string; active: boolean; accessLink?: string }[]> {
     const res = await api.get(`/api/events/${eventId}/djs`);
     return res.data.data || [];
   },
 
-  /** Authorize a DJ by email (event owner) */
-  async addDJ(eventId: string | number, email: string): Promise<void> {
-    await api.post(`/api/events/${eventId}/djs`, { email });
+  /** Authorize a DJ by email (event owner); the server e-mails them their exclusive link */
+  async addDJ(
+    eventId: string | number,
+    email: string
+  ): Promise<{ userId: number; accessLink: string; emailSent: boolean; emailError?: string }> {
+    const res = await api.post(`/api/events/${eventId}/djs`, { email });
+    return res.data.data;
   },
 
   /** Revoke a DJ's permission (event owner) */

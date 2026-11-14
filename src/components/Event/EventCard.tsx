@@ -137,7 +137,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             <button
               type="button"
               onClick={() => setIsQRModalOpen(true)}
-              className="p-1.5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-brand-500 transition-all shrink-0 relative group/qr focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-brand-500 transition-all shrink-0 relative group/qr focus:outline-none focus:ring-2 focus:ring-brand-500"
               title="Clique para ampliar o QR Code"
             >
               <QRCodeCanvas
@@ -149,6 +149,7 @@ export const EventCard: React.FC<EventCardProps> = ({
               <div className="absolute inset-0 bg-slate-900/60 rounded-xl opacity-0 group-hover/qr:opacity-100 transition-opacity flex items-center justify-center text-white">
                 <Maximize2 className="w-5 h-5 drop-shadow" />
               </div>
+              <span>Ampliar</span>
             </button>
           </div>
 

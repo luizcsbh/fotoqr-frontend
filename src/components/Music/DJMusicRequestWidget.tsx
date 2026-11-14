@@ -197,12 +197,14 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
         </div>
         <div className="flex items-center gap-1 shrink-0">
           <button type="button" onClick={onToggleMute} title={isMuted ? 'Ativar som' : 'Silenciar'}
-            className="p-1.5 rounded-lg text-violet-400 hover:text-white hover:bg-violet-800 transition-colors">
+            className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-lg text-violet-400 hover:text-white hover:bg-violet-800 transition-colors">
             {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+            <span>{isMuted ? 'Ativar som' : 'Silenciar'}</span>
           </button>
           <button type="button" onClick={onPlayPause} title={isPlaying ? 'Pausar' : 'Reproduzir'}
-            className="p-1.5 rounded-lg bg-violet-500 hover:bg-violet-400 text-white transition-colors">
+            className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-lg bg-violet-500 hover:bg-violet-400 text-white transition-colors">
             {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+            <span>{isPlaying ? 'Pausar' : 'Tocar'}</span>
           </button>
           <button type="button" onClick={onStop} title="Parar prévia"
             className="p-1.5 rounded-lg text-violet-400 hover:text-white hover:bg-violet-800 transition-colors">
@@ -547,10 +549,11 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                           {hasPreview && (
                             <button type="button" onClick={() => audio.play(track.previewUrl!)}
                               title={isPlaying ? 'Pausar prévia' : 'Ouvir prévia'}
-                              className={`p-1.5 rounded-lg transition-colors ${
+                              className={`inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-lg transition-colors ${
                                 isPlaying ? 'bg-violet-100 text-violet-700' : 'text-slate-400 hover:text-violet-600 hover:bg-violet-50'
                               }`}>
                               {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                              <span>{isPlaying ? 'Pausar' : 'Ouvir'}</span>
                             </button>
                           )}
                           <span className="text-[10px] text-slate-400 w-8 text-right tabular-nums">{formatDuration(track.durationMs)}</span>
@@ -603,10 +606,11 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                       {selectedTrack.previewUrl && (
                         <button type="button" onClick={() => audio.play(selectedTrack.previewUrl!)}
                           title={audio.isPlaying(selectedTrack.previewUrl) ? 'Pausar' : 'Ouvir prévia'}
-                          className={`p-1.5 rounded-lg transition-colors ${
+                          className={`inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-lg transition-colors ${
                             audio.isPlaying(selectedTrack.previewUrl) ? 'bg-violet-200 text-violet-800' : 'bg-violet-100 text-violet-600 hover:bg-violet-200'
                           }`}>
                           {audio.isPlaying(selectedTrack.previewUrl) ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                          <span>{audio.isPlaying(selectedTrack.previewUrl) ? 'Pausar' : 'Ouvir'}</span>
                         </button>
                       )}
                       <Check className="w-5 h-5 text-violet-600" />

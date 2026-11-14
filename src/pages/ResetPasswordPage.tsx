@@ -99,14 +99,15 @@ export const ResetPasswordPage: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Mínimo 8 caracteres"
-                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-28 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    <span>{showPassword ? 'Ocultar' : 'Mostrar'}</span>
                   </button>
                 </div>
               </div>
@@ -125,14 +126,15 @@ export const ResetPasswordPage: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Repita a nova senha"
-                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-28 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirm(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
                   >
                     {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    <span>{showConfirm ? 'Ocultar' : 'Mostrar'}</span>
                   </button>
                 </div>
               </div>

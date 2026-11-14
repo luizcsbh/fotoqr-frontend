@@ -731,10 +731,11 @@ export const QRCodeCustomizerPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={handleBack}
-              className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-600 hover:text-slate-900"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 hover:bg-slate-100 rounded-xl transition-colors text-slate-600 hover:text-slate-900"
               title="Voltar ao evento"
             >
               <ArrowLeft className="w-5 h-5" />
+              <span>Voltar</span>
             </button>
             <div>
               <div className="flex items-center gap-2">

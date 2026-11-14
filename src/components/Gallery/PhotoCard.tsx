@@ -120,11 +120,12 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({
                 type="button"
                 onClick={() => onDelete(photo.id)}
                 disabled={isDeleting}
-                className="p-1.5 rounded-lg bg-red-600/80 hover:bg-red-600 text-white backdrop-blur-md transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-lg bg-red-600/80 hover:bg-red-600 text-white backdrop-blur-md transition-colors"
                 title="Excluir foto"
                 aria-label="Excluir foto"
               >
                 <Trash2 className="w-3.5 h-3.5" />
+                <span>Excluir</span>
               </button>
             )}
           </div>

@@ -416,8 +416,8 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
             variant="outline"
             onClick={handleBulkGenerate}
             className="flex items-center gap-1.5 font-semibold border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+            leftIcon={<QrCode className="w-4 h-4 text-indigo-600" />}
           >
-            <QrCode className="w-4 h-4 text-indigo-600" />
             Gerar Convites para Todos
           </Button>
 
@@ -441,8 +441,8 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
             isLoading={dispatching && dispatchChannel === 'email'}
             onClick={() => handleDispatchEmail(selectedIds.length > 0 ? selectedIds : undefined)}
             className="flex items-center gap-2 font-semibold shadow-xs"
+            leftIcon={<Mail className="w-4 h-4 text-indigo-600 shrink-0" />}
           >
-            <Mail className="w-4 h-4 text-indigo-600 shrink-0" />
             <span>
               {selectedIds.length > 0
                 ? `Enviar E-mail (${selectedIds.length})`
@@ -458,8 +458,8 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
             isLoading={dispatching && dispatchChannel === 'whatsapp'}
             onClick={() => handleDispatchWhatsApp(selectedIds.length > 0 ? selectedIds : undefined)}
             className="flex items-center gap-2 font-semibold shadow-xs"
+            leftIcon={<MessageSquare className="w-4 h-4 text-white shrink-0" />}
           >
-            <MessageSquare className="w-4 h-4 text-white shrink-0" />
             <span>
               {selectedIds.length > 0
                 ? `Enviar WhatsApp (${selectedIds.length})`
@@ -556,7 +556,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                             }
                             disabled={isCancelled || !inv.guestPhone}
                             onClick={() => !isCancelled && handleDirectWhatsApp(inv)}
-                            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                            className={`gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 inline-flex items-center justify-center rounded-lg transition-colors ${
                               isCancelled
                                 ? 'text-slate-300 cursor-not-allowed'
                                 : inv.guestPhone
@@ -565,6 +565,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                             }`}
                           >
                             <MessageSquare className="w-4 h-4 shrink-0" />
+                            <span>WhatsApp</span>
                           </button>
 
                           {/* 2. Enviar Real por E-mail */}
@@ -579,7 +580,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                             }
                             disabled={isCancelled || !inv.guestEmail}
                             onClick={() => !isCancelled && handleDirectEmail(inv)}
-                            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                            className={`gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 inline-flex items-center justify-center rounded-lg transition-colors ${
                               isCancelled
                                 ? 'text-slate-300 cursor-not-allowed'
                                 : inv.guestEmail
@@ -588,6 +589,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                             }`}
                           >
                             <Mail className="w-4 h-4 shrink-0" />
+                            <span>E-mail</span>
                           </button>
 
                           {/* 3. Ver Página Pública do Convite */}
@@ -616,13 +618,14 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                             title={isCancelled ? 'Convite cancelado (ações bloqueadas)' : 'Baixar Convite em PDF'}
                             disabled={isCancelled}
                             onClick={() => !isCancelled && handleDownloadPdf(inv.id, inv.guestName)}
-                            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                            className={`gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 inline-flex items-center justify-center rounded-lg transition-colors ${
                               isCancelled
                                 ? 'text-slate-300 cursor-not-allowed'
                                 : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
                             }`}
                           >
                             <FileDown className="w-4 h-4 shrink-0" />
+                            <span>Baixar PDF</span>
                           </button>
 
                           {/* 5. Reemitir Convite */}
@@ -631,13 +634,14 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                             title={isCancelled ? 'Convite cancelado (ações bloqueadas)' : 'Reemitir Convite (Novo QR Code)'}
                             disabled={isCancelled}
                             onClick={() => !isCancelled && handleReissue(inv.id)}
-                            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                            className={`gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 inline-flex items-center justify-center rounded-lg transition-colors ${
                               isCancelled
                                 ? 'text-slate-300 cursor-not-allowed'
                                 : 'text-amber-600 hover:text-amber-800 hover:bg-amber-50'
                             }`}
                           >
                             <RotateCcw className="w-4 h-4 shrink-0" />
+                            <span>Reemitir</span>
                           </button>
 
                           {/* 6. Cancelar Convite */}
@@ -653,9 +657,10 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                               type="button"
                               title="Cancelar Convite"
                               onClick={() => handleRevoke(inv.id)}
-                              className="inline-flex items-center justify-center w-8 h-8 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors"
+                              className="gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 inline-flex items-center justify-center text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors"
                             >
                               <Ban className="w-4 h-4 shrink-0" />
+                              <span>Cancelar</span>
                             </button>
                           )}
                         </div>
@@ -757,8 +762,8 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                         }
                       }}
                       className="flex-1 flex items-center justify-center gap-2"
+                      leftIcon={<MessageSquare className="w-4 h-4 text-white" />}
                     >
-                      <MessageSquare className="w-4 h-4 text-white" />
                       <span>Abrir no WhatsApp e Avançar</span>
                     </Button>
 

@@ -210,8 +210,8 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
             size="sm"
             onClick={() => setShowImportModal(true)}
             className="flex items-center gap-1.5"
+            leftIcon={<FileSpreadsheet className="w-4 h-4 text-emerald-600" />}
           >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
             Importar Planilha
           </Button>
 
@@ -220,8 +220,8 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
             size="sm"
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-1.5"
+            leftIcon={<UserPlus className="w-4 h-4" />}
           >
-            <UserPlus className="w-4 h-4" />
             Adicionar Convidado
           </Button>
         </div>
@@ -283,16 +283,18 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
                       <button
                         title="Gerar / Ver Convite QR Code"
                         onClick={() => handleGenerateInvite(guest.id)}
-                        className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
                       >
                         <QrCode className="w-4 h-4" />
+                        <span>Convite</span>
                       </button>
                       <button
                         title="Remover Convidado"
                         onClick={() => handleDelete(guest.id, guest.name)}
-                        className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
+                        <span>Remover</span>
                       </button>
                     </td>
                   </tr>

@@ -82,8 +82,7 @@ export const EventDashboardHub: React.FC<EventDashboardHubProps> = ({ eventId })
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button size="sm" variant="ghost" onClick={fetchMetrics} className="flex items-center gap-1 text-slate-600">
-            <RefreshCw className="w-3.5 h-3.5" />
+          <Button size="sm" variant="ghost" onClick={fetchMetrics} className="flex items-center gap-1 text-slate-600" leftIcon={<RefreshCw className="w-3.5 h-3.5" />}>
             Atualizar
           </Button>
 
@@ -93,8 +92,8 @@ export const EventDashboardHub: React.FC<EventDashboardHubProps> = ({ eventId })
             disabled={exporting}
             onClick={() => handleExport('guests', 'xlsx')}
             className="flex items-center gap-1.5"
+            leftIcon={<FileSpreadsheet className="w-4 h-4 text-emerald-600" />}
           >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
             Exportar Convidados (XLSX)
           </Button>
 
@@ -104,8 +103,8 @@ export const EventDashboardHub: React.FC<EventDashboardHubProps> = ({ eventId })
             disabled={exporting}
             onClick={() => handleExport('checkins', 'xlsx')}
             className="flex items-center gap-1.5"
+            leftIcon={<Download className="w-4 h-4 text-indigo-600" />}
           >
-            <Download className="w-4 h-4 text-indigo-600" />
             Exportar Entradas (XLSX)
           </Button>
         </div>

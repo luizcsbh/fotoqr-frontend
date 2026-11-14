@@ -23,6 +23,7 @@ import { QRScannerPage } from './pages/QRScannerPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { DJConsolePage } from './pages/DJConsolePage';
+import { StaffAccessPage } from './pages/StaffAccessPage';
 
 // Standard App Layout with Header and Footer
 const MainLayout: React.FC = () => {
@@ -156,11 +157,13 @@ export const App: React.FC = () => {
 
       {/* Invitation & QR Scanner standalone routes */}
       <Route path="/convite/:token" element={<PublicInvitationPage />} />
+      {/* DJ / reader exclusive link: opens a session restricted to that console */}
+      <Route path="/acesso/:token" element={<StaffAccessPage />} />
       {/* The scanner calls an authenticated API: send logged-out staff to login and back */}
       <Route
         path="/leitor/:eventId"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowStaff="reader">
             <QRScannerPage />
           </ProtectedRoute>
         }
@@ -168,7 +171,7 @@ export const App: React.FC = () => {
       <Route
         path="/portaria/:eventId"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowStaff="reader">
             <QRScannerPage />
           </ProtectedRoute>
         }
@@ -177,7 +180,7 @@ export const App: React.FC = () => {
       <Route
         path="/dj/:uuid"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowStaff="dj">
             <DJConsolePage />
           </ProtectedRoute>
         }
@@ -185,7 +188,7 @@ export const App: React.FC = () => {
       <Route
         path="/dj/:uuid/playlist"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowStaff="dj">
             <DJConsolePage />
           </ProtectedRoute>
         }

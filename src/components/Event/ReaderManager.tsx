@@ -3,11 +3,22 @@ import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
 import { Badge } from '../UI/Badge';
 import { EmptyState } from '../UI/EmptyState';
-import { ScanLine, UserPlus, Trash2, Smartphone, CheckCircle } from 'lucide-react';
+import { ScanLine, UserPlus, Smartphone, Link2, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAlert } from '../../hooks/useAlert';
 import { invitationService } from '../../services/invitation.service';
 import { ReaderUser } from '../../types';
+import { StaffLinkActions } from './StaffLinkActions';
+
+/** Toast after authorizing a reader: tells whether their exclusive link went out by e-mail. */
+function announceStaffAdded(role: string, result: { emailSent?: boolean; emailError?: string; accessLink?: string }) {
+  if (result.emailSent) {
+    toast.success(`${role} autorizado! O link exclusivo foi enviado por e-mail.`);
+  } else {
+    toast.success(`${role} autorizado! Use "Copiar link" para enviar o acesso.`);
+    if (result.emailError) toast.error(result.emailError, { duration: 6000 });
+  }
+}
 
 interface ReaderManagerProps {
   eventId: string | number;
@@ -39,14 +50,13 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!readerEmail.trim()) {
-      toast.error('Informe o e-mail do operador cadastrado no FotoQR.');
+      toast.error('Informe o e-mail do leitor.');
       return;
     }
 
     try {
       setSubmitting(true);
-      await invitationService.addReader(eventId, readerEmail.trim());
-      toast.success('Leitor autorizado com sucesso!');
+      announceStaffAdded('Leitor', await invitationService.addReader(eventId, readerEmail.trim()));
       setReaderEmail('');
       fetchReaders();
     } catch (err: any) {
@@ -91,29 +101,30 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
           <input
             type="email"
             required
-            placeholder="E-mail da conta do operador..."
+            placeholder="E-mail do leitor da portaria..."
             value={readerEmail}
             onChange={(e) => setReaderEmail(e.target.value)}
             className="h-11 flex-1 text-sm rounded-lg border border-slate-300 px-3 focus:ring-2 focus:ring-indigo-500"
           />
-          <Button type="submit" disabled={submitting} className="flex items-center gap-1.5">
-            <UserPlus className="w-4 h-4" />
+          <Button type="submit" isLoading={submitting} leftIcon={<UserPlus className="w-4 h-4" />}>
             {submitting ? 'Autorizando...' : 'Autorizar Leitor'}
           </Button>
         </form>
 
-        <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-xs text-slate-500">
-            Link direto para os leitores na portaria:
+        {/* Exclusive links */}
+        <div className="mt-5 pt-5 border-t border-slate-100 space-y-3">
+          <p className="text-xs text-slate-600 flex items-start gap-2">
+            <Link2 className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+            <span>
+              Cada leitor recebe por e-mail um <strong>link exclusivo</strong> que abre direto o leitor de QR Code da
+              portaria, sem senha. Esse acesso não abre o dashboard nem as configurações do evento. Use as ações da lista
+              para copiar, reenviar ou gerar um novo link (o anterior deixa de funcionar).
+            </span>
           </p>
-          <a
-            href={`/leitor/${eventId}`}
-            target="_blank"
-            rel="noreferrer"
-            className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
-          >
-            <Smartphone className="w-3.5 h-3.5" />
-            Abrir App Leitor Mobile
+          <a href={`/leitor/${eventId}`} target="_blank" rel="noreferrer" className="inline-flex">
+            <Button variant="outline" size="sm" leftIcon={<ExternalLink className="w-3.5 h-3.5" />}>
+              Abrir leitor da portaria
+            </Button>
           </a>
         </div>
       </Card>
@@ -136,7 +147,7 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
                   <th className="py-3 px-4">Nome</th>
                   <th className="py-3 px-4">E-mail</th>
                   <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Ação</th>
+                  <th className="py-3 px-4 text-right">Link exclusivo e ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -150,13 +161,15 @@ export const ReaderManager: React.FC<ReaderManagerProps> = ({ eventId }) => {
                       </Badge>
                     </td>
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        title="Revogar Permissão"
-                        onClick={() => handleRemove(r.userId, r.name)}
-                        className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <StaffLinkActions
+                        eventId={eventId}
+                        kind="reader"
+                        userId={r.userId}
+                        name={r.name}
+                        accessLink={r.accessLink}
+                        onLinkChanged={fetchReaders}
+                        onRemove={() => handleRemove(r.userId, r.name)}
+                      />
                     </td>
                   </tr>
                 ))}

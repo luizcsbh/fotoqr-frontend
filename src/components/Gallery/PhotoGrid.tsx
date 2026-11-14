@@ -219,7 +219,7 @@ export const PhotoGrid: React.FC<PhotoGridProps> = ({
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}
-              rightIcon={<ChevronRight className="w-4 h-4" />}
+              leftIcon={<ChevronRight className="w-4 h-4" />}
             >
               Próxima
             </Button>
@@ -263,10 +263,11 @@ export const PhotoGrid: React.FC<PhotoGridProps> = ({
                     setSelectedPhotoIndex(null);
                     onDeletePhoto(idToDelete);
                   }}
-                  className="p-2 rounded-full bg-red-600/80 hover:bg-red-600 text-white transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-full bg-red-600/80 hover:bg-red-600 text-white transition-colors"
                   title="Excluir foto"
                 >
                   <Trash2 className="w-5 h-5" />
+                  <span>Excluir</span>
                 </button>
               )}
 
@@ -285,10 +286,11 @@ export const PhotoGrid: React.FC<PhotoGridProps> = ({
           {selectedPhotoIndex > 0 && (
             <button
               onClick={() => setSelectedPhotoIndex(selectedPhotoIndex - 1)}
-              className="absolute left-4 sm:left-6 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md transition-colors z-10"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute left-4 sm:left-6 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md transition-colors z-10"
               title="Foto anterior"
             >
               <ChevronLeft className="w-6 h-6" />
+              <span>Anterior</span>
             </button>
           )}
 
@@ -305,10 +307,11 @@ export const PhotoGrid: React.FC<PhotoGridProps> = ({
           {selectedPhotoIndex < photos.length - 1 && (
             <button
               onClick={() => setSelectedPhotoIndex(selectedPhotoIndex + 1)}
-              className="absolute right-4 sm:right-6 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md transition-colors z-10"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-4 sm:right-6 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md transition-colors z-10"
               title="Próxima foto"
             >
               <ChevronRight className="w-6 h-6" />
+              <span>Próxima</span>
             </button>
           )}
         </div>

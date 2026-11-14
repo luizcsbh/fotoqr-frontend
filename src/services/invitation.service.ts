@@ -175,7 +175,11 @@ export const invitationService = {
     return response.data.data;
   },
 
-  async addReader(eventId: string | number, userEmailOrId: string | number): Promise<ReaderUser> {
+  /** Authorize a reader by e-mail; the server e-mails them their exclusive link */
+  async addReader(
+    eventId: string | number,
+    userEmailOrId: string | number
+  ): Promise<ReaderUser & { accessLink?: string; emailSent?: boolean; emailError?: string }> {
     const response = await api.post(`/api/events/${eventId}/readers`, { userEmail: userEmailOrId });
     return response.data.data;
   },

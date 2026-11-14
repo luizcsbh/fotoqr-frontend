@@ -43,6 +43,8 @@ export const authService = {
       email: raw.email || '',
       avatar_url: avatarUrl,
       created_at: raw.createdAt || raw.created_at || '',
+      role: raw.role,
+      ...(raw.scope && { scope: raw.scope }),
     };
   },
 

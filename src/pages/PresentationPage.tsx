@@ -360,10 +360,11 @@ export const PresentationPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => goBack()}
-            className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-colors"
             title="Sair da Apresentação (Esc)"
           >
             <ArrowLeft className="w-5 h-5" />
+            <span>Sair</span>
           </button>
           <div>
             <div className="flex items-center gap-2">
@@ -397,29 +398,32 @@ export const PresentationPage: React.FC = () => {
           <button
             onClick={handlePrev}
             disabled={photos.length <= 1}
-            className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-30"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-30"
             title="Foto anterior (←)"
           >
             <ChevronLeft className="w-5 h-5" />
+            <span>Anterior</span>
           </button>
 
           {/* Play / Pause */}
           <button
             onClick={() => setIsPlaying((p) => !p)}
-            className="p-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white shadow-md transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl bg-brand-600 hover:bg-brand-500 text-white shadow-md transition-colors"
             title={isPlaying ? 'Pausar (Espaço)' : 'Iniciar apresentação (Espaço)'}
           >
             {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-white" />}
+            <span>{isPlaying ? 'Pausar' : 'Reproduzir'}</span>
           </button>
 
           {/* Next Button */}
           <button
             onClick={handleNext}
             disabled={photos.length <= 1}
-            className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-30"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-30"
             title="Próxima foto (→)"
           >
             <ChevronRight className="w-5 h-5" />
+            <span>Próxima</span>
           </button>
 
           <div className="w-px h-6 bg-white/15 mx-1" />
@@ -448,21 +452,23 @@ export const PresentationPage: React.FC = () => {
           {/* QR Code Visibility Toggle */}
           <button
             onClick={() => setShowQR((s) => !s)}
-            className={`p-2 rounded-xl transition-colors ${
+            className={`inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl transition-colors ${
               showQR ? 'text-brand-400 bg-brand-950/60' : 'text-slate-400 hover:text-white hover:bg-white/10'
             }`}
             title={showQR ? 'Ocultar QR Code no telão (Q)' : 'Exibir QR Code no telão (Q)'}
           >
             <QrCode className="w-5 h-5" />
+            <span>{showQR ? 'Ocultar QR' : 'Mostrar QR'}</span>
           </button>
 
           {/* Fullscreen Button */}
           <button
             onClick={toggleFullscreen}
-            className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors"
             title={isFullscreen ? 'Sair da tela cheia (F)' : 'Tela cheia para retroprojetor (F)'}
           >
             {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+            <span>{isFullscreen ? 'Sair da tela cheia' : 'Tela cheia'}</span>
           </button>
         </div>
       </div>

@@ -196,16 +196,17 @@ export const LoginPage: React.FC = () => {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Pelo menos 8 caracteres"
-                  className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-28 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
                 <button
                   type="button"
                   onClick={() => setIsPasswordVisible((visible) => !visible)}
                   aria-label={isPasswordVisible ? 'Ocultar senha' : 'Mostrar senha'}
                   aria-pressed={isPasswordVisible}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-3 top-1/2 -translate-y-1/2 rounded-md text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 >
                   {isPasswordVisible ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  <span>{isPasswordVisible ? 'Ocultar' : 'Mostrar'}</span>
                 </button>
               </div>
             </div>
@@ -239,16 +240,17 @@ export const LoginPage: React.FC = () => {
                     value={passwordConfirmation}
                     onChange={(event) => setPasswordConfirmation(event.target.value)}
                     placeholder="Digite a senha novamente"
-                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-28 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                   <button
                     type="button"
                     onClick={() => setIsPasswordConfirmationVisible((visible) => !visible)}
                     aria-label={isPasswordConfirmationVisible ? 'Ocultar confirmação da senha' : 'Mostrar confirmação da senha'}
                     aria-pressed={isPasswordConfirmationVisible}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 absolute right-3 top-1/2 -translate-y-1/2 rounded-md text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   >
                     {isPasswordConfirmationVisible ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    <span>{isPasswordConfirmationVisible ? 'Ocultar' : 'Mostrar'}</span>
                   </button>
                 </div>
               </div>
