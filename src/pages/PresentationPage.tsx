@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -66,64 +66,115 @@ export const PresentationPage: React.FC = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const isPlayingRef = useRef(true);
+  isPlayingRef.current = isPlaying;
+  const [slideTick, setSlideTick] = useState(0);
   const [intervalSeconds, setIntervalSeconds] = useState(5);
   const [showControls, setShowControls] = useState(true);
   const [showQR, setShowQR] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [newPhotoAlert, setNewPhotoAlert] = useState(false);
+  // Number of photos that just arrived (0 = no banner)
+  const [newPhotoAlert, setNewPhotoAlert] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const hideControlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastPhotosCountRef = useRef<number>(0);
+  // Ids already known, the photo on screen and the new photos still waiting to be shown first
+  const seenIdsRef = useRef<Set<string> | null>(null);
+  const currentIdRef = useRef<string | null>(null);
+  const pendingNewIdsRef = useRef<string[]>([]);
 
-  // Poll for photos every 10 seconds to detect newly uploaded guest photos live
+  // Poll often so a photo sent by a guest reaches the projector within seconds, with nobody touching it
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['presentation', uuid],
     queryFn: () => fetchAllPhotosForPresentation(uuid!),
     enabled: !!uuid,
     // Keep polling during the whole event: after a failed refresh, retry a bit slower instead of
     // stopping for good (a projector left running must recover on its own)
-    refetchInterval: (query) => (query.state.status === 'error' ? 30_000 : 10_000),
+    refetchInterval: (query) => (query.state.status === 'error' ? 30_000 : 5_000),
     refetchIntervalInBackground: true,
     retry: false,
   });
 
-  const photos = data?.photos ?? [];
+  const photos = useMemo(() => data?.photos ?? [], [data]);
   const event = data?.event;
   const qrUrl = uuid ? getShareableEventUrl(uuid) : '';
 
-  // Detect newly added photos and notify
-  useEffect(() => {
-    if (photos.length > 0) {
-      const previousCount = lastPhotosCountRef.current;
-      lastPhotosCountRef.current = photos.length;
-      if (previousCount > 0 && photos.length > previousCount) {
-        setNewPhotoAlert(true);
-        const t = setTimeout(() => setNewPhotoAlert(false), 4000);
-        return () => clearTimeout(t);
+  const showPhotoById = useCallback(
+    (id: string) => {
+      const index = photos.findIndex((p) => String(p.id) === id);
+      if (index >= 0) {
+        currentIdRef.current = id;
+        setCurrentIndex(index);
       }
-    }
-  }, [photos.length]);
+    },
+    [photos]
+  );
 
-  // Photos can be deleted or moderated while the slideshow runs: keep the index in range
+  // Every refresh: keep the same photo on screen (new ones are added at the top of the list),
+  // then put the photos that just arrived at the front of the slideshow
   useEffect(() => {
-    if (photos.length > 0 && currentIndex >= photos.length) {
+    // Nothing loaded yet: the photos already in the event must not count as "new"
+    if (!data) return;
+    const ids = photos.map((p) => String(p.id));
+    const firstLoad = seenIdsRef.current === null;
+    const seen = seenIdsRef.current ?? new Set<string>();
+    const arrived = firstLoad ? [] : ids.filter((id) => !seen.has(id));
+    seenIdsRef.current = new Set(ids);
+
+    // Drop queued photos that were removed (deleted / rejected) meanwhile
+    pendingNewIdsRef.current = pendingNewIdsRef.current.filter((id) => ids.includes(id));
+
+    const current = currentIdRef.current;
+    const stillThere = current ? ids.indexOf(current) : -1;
+    if (stillThere >= 0) setCurrentIndex(stillThere);
+    else if (ids.length > 0) {
+      currentIdRef.current = ids[0];
       setCurrentIndex(0);
     }
-  }, [photos.length, currentIndex]);
 
-  // Slideshow advance handler
+    if (arrived.length === 0) return;
+    // The list is newest first: show the new ones in the order they were sent
+    pendingNewIdsRef.current.push(...arrived.reverse());
+    setNewPhotoAlert(arrived.length);
+    // A paused slideshow is being driven by hand: only announce, don't jump
+    if (isPlayingRef.current) {
+      const next = pendingNewIdsRef.current.shift()!;
+      const index = ids.indexOf(next);
+      currentIdRef.current = next;
+      setCurrentIndex(index);
+      setSlideTick((t) => t + 1);
+    }
+  }, [data, photos]);
+
+  useEffect(() => {
+    if (!newPhotoAlert) return;
+    const t = setTimeout(() => setNewPhotoAlert(0), 5000);
+    return () => clearTimeout(t);
+  }, [newPhotoAlert]);
+
+  // Slideshow advance: photos that just arrived go first, then the normal order
   const handleNext = useCallback(() => {
     if (photos.length === 0) return;
-    setCurrentIndex((prev) => (prev + 1) % photos.length);
-  }, [photos.length]);
+    const queued = pendingNewIdsRef.current.shift();
+    if (queued && photos.some((p) => String(p.id) === queued)) {
+      showPhotoById(queued);
+      return;
+    }
+    const nextIndex = (Math.max(0, photos.findIndex((p) => String(p.id) === currentIdRef.current)) + 1) % photos.length;
+    currentIdRef.current = String(photos[nextIndex].id);
+    setCurrentIndex(nextIndex);
+  }, [photos, showPhotoById]);
 
   const handlePrev = useCallback(() => {
     if (photos.length === 0) return;
-    setCurrentIndex((prev) => (prev - 1 + photos.length) % photos.length);
-  }, [photos.length]);
+    const index = Math.max(0, photos.findIndex((p) => String(p.id) === currentIdRef.current));
+    const prevIndex = (index - 1 + photos.length) % photos.length;
+    currentIdRef.current = String(photos[prevIndex].id);
+    setCurrentIndex(prevIndex);
+  }, [photos]);
 
   // Auto-play timer
+  // (slideTick restarts the countdown, so a photo that just arrived stays the full interval on screen)
   useEffect(() => {
     if (!isPlaying || photos.length <= 1) return;
 
@@ -132,7 +183,7 @@ export const PresentationPage: React.FC = () => {
     }, intervalSeconds * 1000);
 
     return () => clearInterval(timer);
-  }, [isPlaying, intervalSeconds, photos.length, handleNext]);
+  }, [isPlaying, intervalSeconds, photos.length, handleNext, slideTick]);
 
   // Autohide controls on mouse idle
   const resetControlsTimer = useCallback(() => {
@@ -262,7 +313,7 @@ export const PresentationPage: React.FC = () => {
       {isPlaying && photos.length > 1 && (
         <div className="absolute top-0 inset-x-0 z-30 h-1 bg-white/10">
           <div
-            key={currentIndex}
+            key={`${currentPhoto?.id}-${slideTick}`}
             className="h-full bg-brand-500 transition-all ease-linear"
             style={{
               animation: `slideProgress ${intervalSeconds}s linear infinite`,
@@ -318,10 +369,15 @@ export const PresentationPage: React.FC = () => {
       )}
 
       {/* ─── Live Photo Notification Banner ───────────────────────────────── */}
-      {newPhotoAlert && (
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-40 bg-brand-500 text-white px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 text-sm font-bold animate-in fade-in slide-in-from-top-4 duration-300">
+      {newPhotoAlert > 0 && (
+        <div
+          role="status"
+          className="absolute top-6 left-1/2 -translate-x-1/2 z-40 bg-brand-500 text-white px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 text-sm font-bold animate-in fade-in slide-in-from-top-4 duration-300"
+        >
           <Sparkles className="w-4 h-4 animate-spin" />
-          <span>Nova foto enviada ao vivo!</span>
+          <span>
+            {newPhotoAlert === 1 ? 'Nova foto enviada ao vivo!' : `${newPhotoAlert} novas fotos enviadas ao vivo!`}
+          </span>
         </div>
       )}
 
