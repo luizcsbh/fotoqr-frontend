@@ -27,6 +27,8 @@ export interface Event {
   capacity?: number;
   cover_image?: string;
   background_image?: string;
+  /** Ready-made invitation design id (see utils/invitationTemplates). */
+  invitation_template?: string;
   status?: string;
   max_entries_per_invitation?: number;
   event_date?: string;
@@ -233,6 +235,7 @@ export interface PublicInvitation {
     location: string | null;
     coverImage: string | null;
     backgroundImage: string | null;
+    invitationTemplate?: string | null;
   };
 }
 

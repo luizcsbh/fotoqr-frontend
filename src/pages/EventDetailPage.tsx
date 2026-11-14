@@ -679,10 +679,12 @@ export const EventDetailPage: React.FC = () => {
         <CoverEditor
           eventId={event.id}
           eventTitle={event.title}
+          eventDescription={event.description}
           eventLocation={event.location}
           eventDate={event.start_at || event.start_date || event.event_date}
           initialCoverImage={event.cover_image}
           initialBgImage={event.background_image}
+          initialTemplate={event.invitation_template}
           // Refresh the event so reopening the tab shows what was just saved
           onSave={() => queryClient.invalidateQueries({ queryKey: ['event', id] })}
         />

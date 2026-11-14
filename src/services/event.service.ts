@@ -25,6 +25,7 @@ export const normalizeEvent = (ev: any): Event => {
     end_at: ev.end_at || ev.endAt || undefined,
     cover_image: ev.cover_image || ev.coverImage || undefined,
     background_image: ev.background_image || ev.backgroundImage || undefined,
+    invitation_template: ev.invitation_template || ev.invitationTemplate || undefined,
     capacity: ev.capacity ?? undefined,
     max_entries_per_invitation: ev.max_entries_per_invitation ?? ev.maxEntriesPerInvitation ?? undefined,
     qr_code_url: ev.qr_code_url || ev.qrCodeUrl,

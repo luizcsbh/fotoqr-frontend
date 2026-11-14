@@ -18,7 +18,7 @@ import {
 import toast from 'react-hot-toast';
 import { invitationService } from '../services/invitation.service';
 import { PublicInvitation } from '../types';
-import { isImageUrl, toCssBackgroundLayer } from '../utils/cssImage';
+import { resolveInvitationLook } from '../utils/invitationTemplates';
 
 export const PublicInvitationPage: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -130,9 +130,14 @@ export const PublicInvitationPage: React.FC = () => {
   }
 
   const { invitation, guest, event } = data;
-  // The editor stores either an image or a template color/gradient for the background
-  const backgroundLayer = toCssBackgroundLayer(event.backgroundImage);
-  const coverImage = isImageUrl(event.coverImage) ? event.coverImage : null;
+  // Ready-made template (logo, background, colors) unless the owner uploaded their own images
+  const look = resolveInvitationLook({
+    templateId: event.invitationTemplate,
+    coverImage: event.coverImage,
+    backgroundImage: event.backgroundImage,
+  });
+  const backgroundLayer = look.backgroundCss;
+  const coverImage = look.logoSrc;
   const isUsed = invitation.usedEntries >= invitation.maxEntries;
   const isCancelled = invitation.status === 'cancelled';
 
@@ -156,22 +161,25 @@ export const PublicInvitationPage: React.FC = () => {
     <div
       className="min-h-screen flex items-center justify-center p-4 sm:p-6 py-12 relative"
       style={{
+        // A template background is designed to be seen; an uploaded photo is softened behind the card
         background: backgroundLayer
-          ? `linear-gradient(rgba(241, 245, 249, 0.92), rgba(241, 245, 249, 0.96)), ${backgroundLayer}`
+          ? look.isTemplateBackground
+            ? backgroundLayer
+            : `linear-gradient(rgba(241, 245, 249, 0.92), rgba(241, 245, 249, 0.96)), ${backgroundLayer}`
           : '#eef2f6',
         backgroundAttachment: backgroundLayer ? 'fixed' : undefined,
       }}
     >
       <div className="w-full max-w-lg space-y-6 relative z-10">
         {/* Main Card with Official Layout (Inspired by AssessoriaVIP/Chromos example) */}
-        <div className="bg-white rounded-[32px] shadow-2xl p-8 sm:p-12 text-center border border-slate-100 space-y-6">
+        <div className={`bg-white rounded-[32px] shadow-2xl p-8 sm:p-12 text-center border border-slate-100 space-y-6 ${look.fontClass}`}>
           {/* Top Logo / Circular Emblem if provided */}
           {coverImage ? (
-            <div className="max-w-[130px] mx-auto rounded-full overflow-hidden shadow-xs mb-2">
+            <div className="max-w-[130px] mx-auto rounded-full overflow-hidden mb-2">
               <img
                 src={coverImage}
                 alt={event.title}
-                className="w-full h-auto object-contain mx-auto max-h-28"
+                className="w-full h-auto object-contain mx-auto max-h-32"
               />
             </div>
           ) : (
@@ -183,7 +191,13 @@ export const PublicInvitationPage: React.FC = () => {
 
           {/* Event Title in distinctive Cyan / Blue */}
           <div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-cyan-500 tracking-tight leading-tight">
+            {look.tagline && (
+              <p className="text-sm font-semibold text-slate-500 mb-1">{look.tagline}</p>
+            )}
+            <h1
+              className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight"
+              style={{ color: look.titleColor }}
+            >
               {event.title}
             </h1>
             {event.category && (
@@ -197,7 +211,7 @@ export const PublicInvitationPage: React.FC = () => {
           <div className="space-y-2 text-sm sm:text-base text-slate-700 font-medium inline-block text-left pt-1">
             {formattedEventDate && (
               <p className="flex items-center gap-2.5">
-                <Calendar className="w-5 h-5 text-slate-700 shrink-0" />
+                <Calendar className="w-5 h-5 shrink-0" style={{ color: look.accentColor }} />
                 <span>{formattedEventDate}</span>
               </p>
             )}
@@ -205,13 +219,13 @@ export const PublicInvitationPage: React.FC = () => {
             {locationLines.length > 0 ? (
               locationLines.map((line, idx) => (
                 <p key={idx} className="flex items-center gap-2.5">
-                  <MapPin className="w-5 h-5 text-slate-700 shrink-0" />
+                  <MapPin className="w-5 h-5 shrink-0" style={{ color: look.accentColor }} />
                   <span>{line}</span>
                 </p>
               ))
             ) : event.location ? (
               <p className="flex items-center gap-2.5">
-                <MapPin className="w-5 h-5 text-slate-700 shrink-0" />
+                <MapPin className="w-5 h-5 shrink-0" style={{ color: look.accentColor }} />
                 <span>{event.location}</span>
               </p>
             ) : null}
@@ -221,7 +235,7 @@ export const PublicInvitationPage: React.FC = () => {
           <div className="border-t border-slate-100 pt-5">
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Aqui está o QR Code do convite{' '}
-              <strong className="text-rose-500 font-bold">{guest.name}</strong>,
+              <strong className="font-bold" style={{ color: look.accentColor }}>{guest.name}</strong>,
               <br className="hidden sm:inline" /> que deve ser apresentado na recepção do evento.
             </p>
             {guest.category && guest.category !== 'Geral' && (
@@ -291,7 +305,8 @@ export const PublicInvitationPage: React.FC = () => {
               variant="primary"
               size="lg"
               onClick={handleDownloadQrCode}
-              className="w-full flex items-center justify-center gap-2 shadow-md font-bold bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl"
+              className="w-full flex items-center justify-center gap-2 shadow-md font-bold text-white rounded-xl hover:brightness-110"
+              style={{ backgroundColor: look.buttonColor }}
               leftIcon={<Download className="w-5 h-5" />}
             >
               Baixar Imagem do QR Code
@@ -303,7 +318,7 @@ export const PublicInvitationPage: React.FC = () => {
                 size="md"
                 onClick={handleShare}
                 className="flex items-center justify-center gap-1.5 rounded-xl border-slate-200"
-                leftIcon={<Share2 className="w-4 h-4 text-cyan-600" />}
+                leftIcon={<Share2 className="w-4 h-4" style={{ color: look.buttonColor }} />}
               >
                 Compartilhar
               </Button>

@@ -35,6 +35,7 @@ export const invitationService = {
     coverData: {
       coverImage?: string;
       backgroundImage?: string;
+      invitationTemplate?: string;
       location?: string;
       startAt?: string;
       coverFile?: File;
@@ -47,6 +48,7 @@ export const invitationService = {
       if (coverData.bgFile) formData.append('bgFile', coverData.bgFile);
       if (coverData.coverImage !== undefined) formData.append('coverImage', coverData.coverImage);
       if (coverData.backgroundImage !== undefined) formData.append('backgroundImage', coverData.backgroundImage);
+      if (coverData.invitationTemplate !== undefined) formData.append('invitationTemplate', coverData.invitationTemplate);
       if (coverData.location !== undefined) formData.append('location', coverData.location);
       if (coverData.startAt !== undefined) formData.append('startAt', coverData.startAt);
 
