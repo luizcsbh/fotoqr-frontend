@@ -294,7 +294,7 @@ export const EventDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+    <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
       {/* Back button & quick bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <Link
@@ -387,8 +387,8 @@ export const EventDetailPage: React.FC = () => {
       </div>
 
       {/* Main Header Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-3 max-w-2xl">
+      <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="space-y-3 min-w-0 max-w-3xl">
           <div className="flex items-center gap-2 flex-wrap">
             <Badge variant={event.is_active ? 'success' : 'neutral'} dot={event.is_active}>
               {event.is_active ? 'Recebendo Fotos em Tempo Real' : 'Envios Pausados'}
@@ -435,14 +435,14 @@ export const EventDetailPage: React.FC = () => {
         </div>
 
         {/* Download All CTA */}
-        <div className="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0">
+        <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-3 lg:w-[36rem] lg:shrink-0">
           <Button
             variant="primary"
             size="md"
             onClick={handleDownloadAllZip}
             isLoading={isDownloadingZip}
             leftIcon={<Download className="w-4 h-4" />}
-            className="shadow-md shadow-brand-600/20"
+            className="w-full sm:col-span-2 shadow-md shadow-brand-600/20"
           >
             Baixar Todas em ZIP
           </Button>

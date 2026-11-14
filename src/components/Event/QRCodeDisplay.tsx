@@ -112,7 +112,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
   };
 
   return (
-    <div className="flex flex-col items-center bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm text-center">
+    <div className="flex flex-col items-center bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-center">
       <div className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full flex items-center gap-1.5">
         <Wifi className="w-3.5 h-3.5" />
         QR Code do Evento
@@ -125,7 +125,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
       </p>
 
       {/* Button to open QR Customizer Studio */}
-      <Link to={`/dashboard/evento/${uuid}/qrcode`} className="w-full mb-5">
+      <Link to={`/dashboard/evento/${uuid}/qrcode`} className="w-full mb-4">
         <Button
           variant="secondary"
           size="sm"
@@ -139,7 +139,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
       {/* Large QR Code Box with custom colors */}
       <div
         ref={qrRef}
-        className="p-6 rounded-3xl border-4 shadow-xl flex items-center justify-center relative group"
+        className="p-4 rounded-3xl border-4 shadow-xl flex items-center justify-center relative group"
         style={{
           backgroundColor: customConfig.bgColor || '#ffffff',
           borderColor: customConfig.fgColor ? `${customConfig.fgColor}25` : '#f1f5f9',
@@ -147,7 +147,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
       >
         <QRCodeCanvas
           value={publicUrl}
-          size={260}
+          size={200}
           fgColor={customConfig.fgColor || '#000000'}
           bgColor={customConfig.bgColor || '#ffffff'}
           level="H"
@@ -157,7 +157,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
       </div>
 
       {/* URL preview box */}
-      <div className="mt-6 flex flex-col gap-2 max-w-md w-full bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-left">
+      <div className="mt-4 flex flex-col gap-2 max-w-md w-full bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-left">
         <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
           <span>URL para celular:</span>
           <span className="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]">
@@ -188,11 +188,12 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3 w-full">
+      <div className="mt-4 grid w-full grid-cols-1 sm:grid-cols-2 gap-3">
         <Button
           variant="primary"
           size="md"
           onClick={handleDownloadQR}
+          className="w-full"
           leftIcon={<Download className="w-4 h-4" />}
         >
           Baixar Imagem PNG
@@ -202,6 +203,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
           variant="outline"
           size="md"
           onClick={handleShare}
+          className="w-full"
           leftIcon={copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
         >
           Compartilhar Link
@@ -211,11 +213,12 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
           href={publicUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex"
+          className="inline-flex w-full"
         >
           <Button
-            variant="ghost"
+            variant="outline"
             size="md"
+            className="w-full"
             leftIcon={<ExternalLink className="w-4 h-4" />}
           >
             Abrir Página Pública
@@ -242,7 +245,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
           href={getPresentationUrl(uuid)}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex w-full"
+          className="inline-flex w-full sm:col-span-2"
         >
           <Button
             variant="primary"
