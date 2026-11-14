@@ -45,6 +45,25 @@ const STATUS_ICONS: Record<MusicRequest['status'], React.ReactNode> = {
 
 type FilterTab = 'all' | MusicRequest['status'];
 
+/**
+ * Where a request's full track lives. Songs picked from the Deezer fallback search
+ * are stored as "deezer:<id>" in spotifyTrackId; typed-in songs have no id at all.
+ */
+function getExternalTrack(song: MusicRequest): { source: 'spotify' | 'deezer' | null; url: string; label: string } {
+  const id = song.spotifyTrackId;
+  if (id?.startsWith('deezer:')) {
+    return { source: 'deezer', url: `https://www.deezer.com/track/${id.slice('deezer:'.length)}`, label: 'Abrir no Deezer' };
+  }
+  if (id) {
+    return { source: 'spotify', url: `https://open.spotify.com/track/${id}`, label: 'Abrir no Spotify' };
+  }
+  return {
+    source: null,
+    url: `https://www.youtube.com/results?search_query=${encodeURIComponent(`${song.title} ${song.artist}`)}`,
+    label: 'Buscar no YouTube',
+  };
+}
+
 export const DJConsolePage: React.FC = () => {
   const { uuid } = useParams<{ uuid: string }>();
   const queryClient = useQueryClient();
@@ -77,25 +96,25 @@ export const DJConsolePage: React.FC = () => {
 
     stopPreview();
 
-    // 30s Spotify preview, played right here
+    // 30s preview (Spotify or Deezer), played right here
     if (song.spotifyPreviewUrl) {
       const audio = new Audio(song.spotifyPreviewUrl);
       audio.onended = () => setPlayingId((cur) => (cur === song.id ? null : cur));
+      audioRef.current = audio;
       audio
         .play()
-        .then(() => setPlayingId(song.id))
-        .catch(() => toast.error('Não foi possível tocar a prévia desta música.'));
-      audioRef.current = audio;
+        // Ignore if another song was started (or this one stopped) before playback began
+        .then(() => {
+          if (audioRef.current === audio) setPlayingId(song.id);
+        })
+        .catch(() => {
+          if (audioRef.current === audio) toast.error('Não foi possível tocar a prévia desta música.');
+        });
       return;
     }
 
-    // No preview: open the full track on Spotify, or search it on YouTube
-    const url = song.spotifyTrackId
-      ? `https://open.spotify.com/track/${song.spotifyTrackId}`
-      : `https://www.youtube.com/results?search_query=${encodeURIComponent(
-          `${song.title} ${song.artist}`
-        )}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    // No preview: open the full track where it came from, or search it on YouTube
+    window.open(getExternalTrack(song).url, '_blank', 'noopener,noreferrer');
   };
 
   const { data: musicData, isLoading, refetch } = useQuery({
@@ -311,9 +330,14 @@ export const DJConsolePage: React.FC = () => {
                         >
                           {song.title}
                         </span>
-                        {song.spotifyTrackId && (
+                        {getExternalTrack(song).source === 'spotify' && (
                           <span className="text-[9px] font-bold px-1.5 py-0.5 bg-green-900/60 text-green-400 rounded-full border border-green-700/40 shrink-0">
                             SPOTIFY
+                          </span>
+                        )}
+                        {getExternalTrack(song).source === 'deezer' && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 bg-purple-900/60 text-purple-300 rounded-full border border-purple-700/40 shrink-0">
+                            DEEZER
                           </span>
                         )}
                       </div>
@@ -352,9 +376,7 @@ export const DJConsolePage: React.FC = () => {
                                 ? 'Pausar'
                                 : song.spotifyPreviewUrl
                                   ? 'Tocar prévia'
-                                  : song.spotifyTrackId
-                                    ? 'Abrir no Spotify'
-                                    : 'Buscar no YouTube'
+                                  : getExternalTrack(song).label
                             }
                             onClick={() => handlePlay(song)}
                             className={`p-2 rounded-xl transition-colors ${
