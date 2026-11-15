@@ -7,7 +7,7 @@ interface LoadingScreenProps {
 }
 
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({
-  message = 'Carregando FotoQR...',
+  message = 'Carregando FotoQREventos...',
   subMessage = 'Preparando seu ambiente...',
 }) => {
   return (

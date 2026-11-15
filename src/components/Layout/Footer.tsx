@@ -12,7 +12,7 @@ export const Footer: React.FC = () => {
               <Camera className="w-4 h-4" />
             </div>
             <span className="font-bold text-lg text-slate-800">
-              Foto<span className="text-brand-600">QR</span>
+              Foto<span className="text-brand-600">QR</span>Eventos
             </span>
           </div>
 
@@ -30,7 +30,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <p className="text-xs text-slate-400">
-            &copy; {new Date().getFullYear()} FotoQR. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} FotoQREventos. Todos os direitos reservados.
           </p>
         </div>
       </div>

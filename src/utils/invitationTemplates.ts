@@ -437,7 +437,7 @@ const SPECS: TemplateSpec[] = [
   },
   // Outros
   {
-    id: 'geral-classico', category: 'geral', name: 'Clássico FotoQR', tagline: 'Você está convidado!',
+    id: 'geral-classico', category: 'geral', name: 'Clássico FotoQREventos', tagline: 'Você está convidado!',
     titleColor: '#0891b2', accentColor: '#e11d48', buttonColor: '#0e7490', font: 'sans',
     emblem: { icon: 'camera', bg: '#ecfeff', ring: '#22d3ee', iconColor: '#0891b2', iconColor2: '#cffafe', caption: 'Vamos celebrar!', captionColor: '#0e7490' },
     bg: { from: '#f8fafc', to: '#e0f2fe', decor: 'dots', colors: ['#22d3ee', '#94a3b8'], seed: 191 },

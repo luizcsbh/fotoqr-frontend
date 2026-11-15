@@ -61,7 +61,7 @@ export const ResetPasswordPage: React.FC = () => {
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Criar nova senha</h1>
             <p className="mt-2 text-sm text-slate-500 leading-relaxed">
-              Escolha uma nova senha segura para sua conta FotoQR.
+              Escolha uma nova senha segura para sua conta FotoQREventos.
             </p>
           </div>
 

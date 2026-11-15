@@ -62,7 +62,7 @@ export const TableCardPage: React.FC = () => {
         eventLocation: data.event.location ?? undefined,
         qrCodeUrl: data.invitation.qrCodeUrl,
         accentColor: look.accentColor,
-        watermarkText: `${data.event.title} • FotoQR`,
+        watermarkText: `${data.event.title} • FotoQREventos`,
       });
 
       const link = document.createElement('a');
@@ -193,7 +193,7 @@ export const TableCardPage: React.FC = () => {
                 letterSpacing: '0.03em',
               }}
             >
-              {event.title} • FotoQR
+              {event.title} • FotoQREventos
             </span>
           ))}
         </div>

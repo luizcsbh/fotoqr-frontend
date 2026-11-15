@@ -36,7 +36,7 @@ export const SuccessPage: React.FC = () => {
             <Camera className="w-4 h-4" />
           </div>
           <span className="font-extrabold text-lg text-slate-900">
-            Foto<span className="text-brand-600">QR</span>
+            Foto<span className="text-brand-600">QR</span>Eventos
           </span>
         </div>
       </header>
@@ -100,7 +100,7 @@ export const SuccessPage: React.FC = () => {
 
             <Link to="/" className="w-full inline-block">
               <Button variant="ghost" size="md" className="w-full text-slate-500">
-                Conheça o FotoQR
+                Conheça o FotoQREventos
               </Button>
             </Link>
           </div>

@@ -432,7 +432,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
         // Footer Branding
         ctx.fillStyle = '#94A3B8';
         ctx.font = '500 20px system-ui, -apple-system, sans-serif';
-        ctx.fillText('FotoQR • Compartilhe suas melhores memórias', width / 2, 1860);
+        ctx.fillText('FotoQREventos • Compartilhe suas melhores memórias', width / 2, 1860);
       }
 
       // Download file
@@ -678,7 +678,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
 
     ${wifiSection}
 
-    <div class="footer-brand">FotoQR &bull; Compartilhe suas melhores memórias</div>
+    <div class="footer-brand">FotoQREventos &bull; Compartilhe suas melhores memórias</div>
   </div>
   <script>
     window.onload = function() {
@@ -1132,7 +1132,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                   <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center mx-auto mb-1.5 text-emerald-700 text-xs font-black">
                     FQ
                   </div>
-                  <span className="text-xs block">Logo FotoQR</span>
+                  <span className="text-xs block">Logo FotoQREventos</span>
                   <span className="text-[10px] text-slate-400 font-normal">Câmera oficial</span>
                 </button>
 

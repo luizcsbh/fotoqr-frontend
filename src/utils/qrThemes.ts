@@ -1,5 +1,5 @@
 /**
- * QR Code Themes and Customization Utilities for FotoQR
+ * QR Code Themes and Customization Utilities for FotoQREventos
  * Supports Weddings, Birthdays, Parties, Corporate Events and Custom Styles.
  */
 
@@ -302,7 +302,7 @@ export const EVENT_THEMES: Record<EventTypeCategory, EventThemeConfig> = {
     presets: [
       {
         id: 'fotoqr-brand',
-        name: 'FotoQR Emerald',
+        name: 'FotoQREventos Emerald',
         fgColor: '#059669',
         bgColor: '#FFFFFF',
         cardBg: '#ECFDF5',

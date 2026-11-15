@@ -1,9 +1,123 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { QrCode, Download, Smartphone, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import {
+  QrCode,
+  Download,
+  Smartphone,
+  ArrowRight,
+  Sparkles,
+  CheckCircle2,
+  ShieldCheck,
+  MonitorPlay,
+  MessageSquareHeart,
+  Mail,
+  Users,
+  ScanLine,
+  Music,
+  Palette,
+  BarChart3,
+  KeyRound,
+  Heart,
+  Cake,
+  Briefcase,
+  GraduationCap,
+  PartyPopper,
+  Baby,
+} from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { useAuth } from '../hooks/useAuth';
 import { AdSenseAd, adSlots } from '../components/AdSenseAd';
+
+const features = [
+  {
+    icon: QrCode,
+    title: 'Álbum colaborativo por QR Code',
+    description: 'Convidados enviam fotos pelo navegador do celular, sem baixar app e sem criar conta. Tudo em qualidade original.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Moderação de conteúdo',
+    description: 'Revisão automática das imagens enviadas e painel de fotos pendentes para você aprovar antes de publicar.',
+  },
+  {
+    icon: MonitorPlay,
+    title: 'Telão ao vivo',
+    description: 'Modo apresentação com slideshow das fotos em tempo real e QR Code na tela para novos envios durante a festa.',
+  },
+  {
+    icon: MessageSquareHeart,
+    title: 'Mural de mensagens',
+    description: 'Os convidados deixam recados carinhosos que podem ser exibidos no telão junto com as fotos.',
+  },
+  {
+    icon: Mail,
+    title: 'Convites digitais',
+    description: 'Modelos prontos por tipo de evento, convite individual com QR Code único, PDF para download e envio por e-mail ou WhatsApp.',
+  },
+  {
+    icon: Users,
+    title: 'Gestão de convidados',
+    description: 'Cadastre convidados manualmente ou importe planilhas CSV/XLSX, com detecção de duplicados e busca rápida.',
+  },
+  {
+    icon: ScanLine,
+    title: 'Portaria com check-in',
+    description: 'Leitor de QR Code pelo celular valida cada convite na entrada e impede o uso duplicado.',
+  },
+  {
+    icon: Music,
+    title: 'DJ e pedidos de música',
+    description: 'Convidados sugerem músicas e o DJ acompanha a playlist em um console próprio, integrado ao Spotify.',
+  },
+  {
+    icon: Palette,
+    title: 'QR Code personalizado',
+    description: 'Escolha temas, cores e ícones para o QR Code e gere placas de mesa prontas para imprimir.',
+  },
+  {
+    icon: KeyRound,
+    title: 'Acesso para a equipe',
+    description: 'Gere links de acesso para recepcionistas, fotógrafos e DJ, sem compartilhar a sua senha.',
+  },
+  {
+    icon: BarChart3,
+    title: 'Métricas e relatórios',
+    description: 'Painel com confirmações, presenças e últimos check-ins em tempo real, com exportação em XLSX ou CSV.',
+  },
+  {
+    icon: Download,
+    title: 'Download completo em ZIP',
+    description: 'Ao final do evento, baixe todas as fotos reunidas em um único arquivo com apenas um clique.',
+  },
+];
+
+const eventTypes = [
+  { icon: Heart, label: 'Casamentos' },
+  { icon: Cake, label: 'Aniversários' },
+  { icon: Baby, label: 'Chás e batizados' },
+  { icon: GraduationCap, label: 'Formaturas' },
+  { icon: Briefcase, label: 'Eventos corporativos' },
+  { icon: PartyPopper, label: 'Festas e confraternizações' },
+];
+
+const faqs = [
+  {
+    question: 'Os convidados precisam instalar algum aplicativo?',
+    answer: 'Não. Basta apontar a câmera do celular para o QR Code: o álbum abre direto no navegador e o envio de fotos é feito na hora.',
+  },
+  {
+    question: 'As fotos perdem qualidade?',
+    answer: 'Não. Diferente de aplicativos de mensagem, o FotoQREventos guarda os arquivos na resolução original enviada pelo convidado.',
+  },
+  {
+    question: 'Posso controlar o que aparece no álbum e no telão?',
+    answer: 'Sim. As fotos passam por moderação automática e você pode revisar, aprovar ou remover qualquer imagem pelo painel do evento.',
+  },
+  {
+    question: 'Consigo usar só os convites e a portaria, sem o álbum?',
+    answer: 'Sim. Cada recurso funciona de forma independente: você ativa o que fizer sentido para o seu evento.',
+  },
+];
 
 export const LandingPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -124,7 +238,7 @@ export const LandingPage: React.FC = () => {
               Passo a Passo
             </h2>
             <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">
-              Como o FotoQR transforma o seu evento
+              Como o FotoQREventos transforma o seu evento
             </h3>
             <p className="mt-4 text-base text-slate-500">
               Chega de pedir para os convidados mandarem fotos por WhatsApp com qualidade reduzida.
@@ -141,7 +255,7 @@ export const LandingPage: React.FC = () => {
                 Crie seu evento
               </h4>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Faça login com sua conta Google em segundos, defina o nome do casamento, aniversário ou confraternização e escolha onde guardar os arquivos.
+                Crie sua conta em segundos, defina o nome do casamento, aniversário ou confraternização e configure local, data, capacidade e capa do evento.
               </p>
             </div>
 
@@ -170,6 +284,91 @@ export const LandingPage: React.FC = () => {
                 Acompanhe o feed em tempo real no seu painel e, ao final da festa, baixe todo o arquivo em formato ZIP com apenas um clique.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section id="recursos" className="py-16 sm:py-20 bg-slate-50 border-t border-slate-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-brand-600 mb-2">
+              Recursos
+            </h2>
+            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">
+              Tudo o que o seu evento precisa em um só lugar
+            </h3>
+            <p className="mt-4 text-base text-slate-500">
+              Do convite à última foto da festa: o FotoQREventos cuida da recepção, da interação com os convidados e das memórias.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {features.map(({ icon: Icon, title, description }) => (
+              <div
+                key={title}
+                className="flex gap-4 p-6 rounded-2xl bg-white border border-slate-200/80 hover:border-brand-300 hover:shadow-md transition-all duration-300"
+              >
+                <div className="w-11 h-11 shrink-0 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 mb-1">{title}</h4>
+                  <p className="text-sm text-slate-600 leading-relaxed">{description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Event Types */}
+      <section className="py-16 bg-white border-t border-slate-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-brand-600 mb-2">
+            Para todo tipo de celebração
+          </h2>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-10">
+            Feito para o seu evento, seja ele qual for
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {eventTypes.map(({ icon: Icon, label }) => (
+              <div
+                key={label}
+                className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-slate-50 border border-slate-200/80"
+              >
+                <Icon className="w-6 h-6 text-brand-600" />
+                <span className="text-sm font-semibold text-slate-700">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="duvidas" className="py-16 bg-slate-50 border-t border-slate-100">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-brand-600 mb-2">
+              Dúvidas frequentes
+            </h2>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Perguntas e respostas
+            </h3>
+          </div>
+          <div className="space-y-3">
+            {faqs.map(({ question, answer }) => (
+              <details
+                key={question}
+                className="group rounded-2xl bg-white border border-slate-200/80 p-5 open:shadow-sm"
+              >
+                <summary className="flex items-center justify-between gap-4 cursor-pointer list-none font-semibold text-slate-900">
+                  {question}
+                  <ArrowRight className="w-4 h-4 shrink-0 text-brand-600 transition-transform group-open:rotate-90" />
+                </summary>
+                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{answer}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>

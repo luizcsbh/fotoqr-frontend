@@ -95,7 +95,7 @@ export const PublicUploadPage: React.FC = () => {
           </p>
           <a href="/" className="inline-block">
             <Button variant="secondary" size="md">
-              Conhecer o FotoQR
+              Conhecer o FotoQREventos
             </Button>
           </a>
         </div>
@@ -112,14 +112,14 @@ export const PublicUploadPage: React.FC = () => {
 
       {/* Main Container */}
       <main className="max-w-xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10 space-y-6">
-        {/* FotoQR Branding Header */}
+        {/* FotoQREventos Branding Header */}
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-sm">
               <Camera className="w-4 h-4" />
             </div>
             <span className="font-extrabold text-base tracking-tight text-slate-900">
-              Foto<span className="text-brand-600">QR</span>
+              Foto<span className="text-brand-600">QR</span>Eventos
             </span>
           </div>
 
@@ -274,7 +274,7 @@ export const PublicUploadPage: React.FC = () => {
 
       {/* Public Footer */}
       <footer className="py-6 text-center text-xs text-slate-400">
-        Criado com FotoQR &bull; Momentos reais compartilhados na hora
+        Criado com FotoQREventos &bull; Momentos reais compartilhados na hora
       </footer>
     </div>
   );

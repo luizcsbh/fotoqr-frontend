@@ -47,7 +47,7 @@ export const ColdStartBanner: React.FC = () => {
           </div>
           <div className="text-sm">
             <span className="font-bold block sm:inline">
-              Aguarde, o FotoQR está preparando o servidor...
+              Aguarde, o FotoQREventos está preparando o servidor...
             </span>{' '}
             <span className="text-amber-700 text-xs sm:text-sm">
               Servidores em nuvem podem levar alguns segundos para inicializar. Suas fotos não serão perdidas!

@@ -1,5 +1,5 @@
 /**
- * Utilitário de Marca D'água para Convites e Placas de Mesa — FotoQR
+ * Utilitário de Marca D'água para Convites e Placas de Mesa — FotoQREventos
  *
  * Aplica texto diagonal semitransparente em cima de um canvas já configurado.
  * Não depende de bibliotecas externas; usa apenas Canvas 2D API.
@@ -268,7 +268,7 @@ export async function renderTableCardToDataUrl(opts: {
   ctx.stroke();
 
   // ── Marca d'água diagonal ─────────────────────────────────────────────────
-  const wmText = watermarkText ?? `${eventTitle} • FotoQR`;
+  const wmText = watermarkText ?? `${eventTitle} • FotoQREventos`;
   applyWatermark(ctx, wmText, width, height, {
     color: 'rgba(0,0,0,0.07)',
     fontSize: 16,

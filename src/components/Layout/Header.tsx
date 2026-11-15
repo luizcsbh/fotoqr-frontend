@@ -41,7 +41,7 @@ export const Header: React.FC = () => {
             </div>
             <div className="flex flex-col">
               <span className="font-extrabold text-xl tracking-tight text-slate-900 group-hover:text-brand-600 transition-colors">
-                Foto<span className="text-brand-600">QR</span>
+                Foto<span className="text-brand-600">QR</span>Eventos
               </span>
               <span className="text-[10px] text-slate-400 font-medium -mt-1 hidden sm:block">
                 Compartilhamento via QR Code

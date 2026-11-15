@@ -313,7 +313,7 @@ export const EventGalleryPage: React.FC = () => {
               <Camera className="w-4 h-4" />
             </div>
             <span className="font-extrabold text-base tracking-tight text-white">
-              Foto<span className="text-brand-400">QR</span>
+              Foto<span className="text-brand-400">QR</span>Eventos
             </span>
           </div>
 
@@ -560,7 +560,7 @@ export const EventGalleryPage: React.FC = () => {
 
       {/* Footer */}
       <footer className="py-8 text-center text-xs text-slate-500 border-t border-white/5">
-        Criado com FotoQR &bull; Momentos reais compartilhados na hora
+        Criado com FotoQREventos &bull; Momentos reais compartilhados na hora
       </footer>
     </div>
   );
