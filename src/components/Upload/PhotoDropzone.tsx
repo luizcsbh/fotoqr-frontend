@@ -146,7 +146,7 @@ export const PhotoDropzone: React.FC<PhotoDropzoneProps> = ({
           ${
             isDragOver
               ? 'border-brand-500 bg-brand-50/70 scale-[1.01]'
-              : 'border-slate-300 hover:border-brand-400 bg-white/70 hover:bg-slate-50/80 shadow-sm'
+              : 'border-slate-300 hover:border-brand-400 bg-white/70 hover:bg-slate-50/80 shadow-xs'
           }
           ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
         `}

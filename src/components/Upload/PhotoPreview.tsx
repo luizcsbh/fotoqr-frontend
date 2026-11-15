@@ -38,7 +38,7 @@ export const PhotoPreview: React.FC<PhotoPreviewProps> = ({
         {items.map((item) => (
           <div
             key={item.id}
-            className="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm transition-all hover:shadow-md"
+            className="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-xs transition-all hover:shadow-md"
           >
             {/* Thumbnail Image */}
             <img
@@ -68,8 +68,8 @@ export const PhotoPreview: React.FC<PhotoPreviewProps> = ({
 
             {/* Info footer */}
             <div className="absolute bottom-1.5 inset-x-2 text-white text-[11px] leading-tight truncate">
-              <p className="font-medium truncate drop-shadow-sm">{item.file.name}</p>
-              <p className="text-slate-300 text-[10px] drop-shadow-sm">
+              <p className="font-medium truncate drop-shadow-xs">{item.file.name}</p>
+              <p className="text-slate-300 text-[10px] drop-shadow-xs">
                 {formatFileSize(item.file.size)}
               </p>
             </div>

@@ -32,7 +32,7 @@ export const SuccessPage: React.FC = () => {
       {/* Top Branding */}
       <header className="max-w-md mx-auto w-full pt-4 flex items-center justify-center">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-sm">
+          <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-xs">
             <Camera className="w-4 h-4" />
           </div>
           <span className="font-extrabold text-lg text-slate-900">
@@ -82,7 +82,7 @@ export const SuccessPage: React.FC = () => {
               size="lg"
               onClick={() => navigate(`/evento/${uuid}`)}
               leftIcon={<PlusCircle className="w-5 h-5" />}
-              className="w-full text-base font-bold shadow-lg shadow-brand-600/25"
+              className="w-full text-base shadow-brand-600/25"
             >
               Enviar Mais Fotos
             </Button>

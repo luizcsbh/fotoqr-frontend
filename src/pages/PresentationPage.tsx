@@ -462,7 +462,7 @@ export const PresentationPage: React.FC = () => {
               <Camera className="w-3.5 h-3.5" />
               <span>Envie sua foto</span>
             </div>
-            <p className="font-extrabold text-sm sm:text-base leading-tight truncate text-white">
+            <p className="font-extrabold text-sm sm:text-base sm:leading-6 leading-tight truncate text-white">
               {event.title}
             </p>
             <p className="text-[11px] text-slate-400 mt-1 leading-snug">
@@ -487,7 +487,7 @@ export const PresentationPage: React.FC = () => {
               <span className="rounded-full bg-rose-500 px-2.5 py-0.5 text-[11px] font-bold">Novo recado!</span>
             )}
           </div>
-          <p className="text-base sm:text-lg font-semibold leading-snug whitespace-pre-line break-words line-clamp-6">
+          <p className="text-base sm:text-lg sm:leading-7 font-semibold leading-snug whitespace-pre-line break-words line-clamp-6">
             “{currentMessage.message}”
           </p>
           <p className="mt-3 text-sm font-bold text-rose-200 truncate">— {currentMessage.name}</p>
@@ -521,7 +521,7 @@ export const PresentationPage: React.FC = () => {
                 Telão ao Vivo
               </span>
             </div>
-            <h1 className="text-lg sm:text-xl font-black text-white leading-tight">
+            <h1 className="text-lg sm:text-xl sm:leading-7 font-black text-white leading-tight">
               {event.title}
             </h1>
           </div>

@@ -104,7 +104,7 @@ export const PhotoGrid: React.FC<PhotoGridProps> = ({
               type="checkbox"
               checked={allCurrentSelected}
               onChange={handleToggleSelectAll}
-              className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+              className="w-4 h-4 rounded-sm text-brand-600 focus:ring-brand-500 border-slate-300"
             />
             <span>Selecionar Todas ({photos.length})</span>
           </label>
@@ -203,7 +203,7 @@ export const PhotoGrid: React.FC<PhotoGridProps> = ({
                         onClick={() => onPageChange(page)}
                         className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors ${
                           currentPage === page
-                            ? 'bg-brand-600 text-white shadow-sm'
+                            ? 'bg-brand-600 text-white shadow-xs'
                             : 'text-slate-600 hover:bg-slate-100'
                         }`}
                       >

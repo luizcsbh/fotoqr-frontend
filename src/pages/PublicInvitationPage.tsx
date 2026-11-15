@@ -176,7 +176,7 @@ export const PublicInvitationPage: React.FC = () => {
         <div className={`bg-white rounded-[32px] shadow-2xl p-8 sm:p-12 text-center border border-slate-100 space-y-6 ${look.fontClass}`}>
           {/* Top Logo / Circular Emblem if provided */}
           {coverImage ? (
-            <div className="max-w-[130px] mx-auto rounded-full overflow-hidden mb-2">
+            <div className="max-w-[130px] mx-auto rounded-full overflow-hidden">
               <img
                 src={coverImage}
                 alt={event.title}
@@ -184,7 +184,7 @@ export const PublicInvitationPage: React.FC = () => {
               />
             </div>
           ) : (
-            <div className="w-20 h-20 mx-auto rounded-full bg-amber-50/80 border border-amber-200/90 flex flex-col items-center justify-center text-[10px] text-amber-800 font-serif shadow-2xs p-1 mb-2">
+            <div className="w-20 h-20 mx-auto rounded-full bg-amber-50/80 border border-amber-200/90 flex flex-col items-center justify-center text-[10px] text-amber-800 font-serif p-1">
               <span className="italic text-[11px] font-medium">Vamos celebrar!</span>
               <span className="font-bold uppercase tracking-wider text-[8px] mt-0.5 opacity-80">CONVITE OFICIAL</span>
             </div>
@@ -196,7 +196,7 @@ export const PublicInvitationPage: React.FC = () => {
               <p className="text-sm font-semibold text-slate-500 mb-1">{look.tagline}</p>
             )}
             <h1
-              className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight"
+              className="text-3xl sm:text-4xl sm:leading-10 font-extrabold tracking-tight leading-tight"
               style={{ color: look.titleColor }}
             >
               {event.title}
@@ -234,7 +234,7 @@ export const PublicInvitationPage: React.FC = () => {
 
           {/* Personalized Invitation Message with Guest Name highlighted */}
           <div className="border-t border-slate-100 pt-5">
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+            <p className="text-sm sm:text-base sm:leading-6 text-slate-600 leading-relaxed">
               Aqui está o QR Code do convite{' '}
               <strong className="font-bold" style={{ color: look.accentColor }}>{guest.name}</strong>,
               <br className="hidden sm:inline" /> que deve ser apresentado na recepção do evento.
@@ -283,7 +283,7 @@ export const PublicInvitationPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleCopyToken}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 shrink-0 text-slate-400 hover:text-slate-700 rounded transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 shrink-0 text-slate-400 hover:text-slate-700 rounded-sm transition-colors"
                         title="Copiar código"
                         aria-label="Copiar código do convite"
                       >
@@ -306,7 +306,7 @@ export const PublicInvitationPage: React.FC = () => {
               variant="primary"
               size="lg"
               onClick={handleDownloadQrCode}
-              className="w-full flex items-center justify-center gap-2 shadow-md font-bold text-white rounded-xl hover:brightness-110"
+              className="w-full flex items-center justify-center gap-2 shadow-md text-white rounded-xl hover:brightness-110"
               style={{ backgroundColor: look.buttonColor }}
               leftIcon={<Download className="w-5 h-5" />}
             >

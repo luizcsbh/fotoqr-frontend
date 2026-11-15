@@ -176,7 +176,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
   return (
     <div className="space-y-6">
       {/* Action Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl shadow-xs border border-slate-100">
         <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full sm:w-auto flex-1 max-w-md">
           <div className="relative flex-1">
             <input
@@ -184,7 +184,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
               placeholder="Buscar por nome, email ou telefone..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-11 w-full text-sm rounded-lg border border-slate-300 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="h-11 w-full text-sm rounded-lg border border-slate-300 pl-9 pr-3 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
             />
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
           </div>
@@ -197,7 +197,7 @@ export const GuestManager: React.FC<GuestManagerProps> = ({ eventId, onInvitatio
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="h-11 text-sm rounded-lg border border-slate-300 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="h-11 text-sm rounded-lg border border-slate-300 px-3 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">Todas as Categorias</option>
             {CATEGORIES.map((c) => (

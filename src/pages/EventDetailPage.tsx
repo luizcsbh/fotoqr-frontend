@@ -363,7 +363,7 @@ export const EventDetailPage: React.FC = () => {
                 ? 'Clique para desativar a playlist do DJ'
                 : 'Clique para permitir que os convidados peçam músicas'
             }
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-xs ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
               event.enable_dj_playlist
                 ? 'bg-violet-50 text-violet-700 border-violet-200 hover:bg-violet-100'
                 : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
@@ -388,7 +388,7 @@ export const EventDetailPage: React.FC = () => {
                 ? 'Clique para desativar o mural de recados'
                 : 'Clique para os convidados deixarem recados que aparecem no telão'
             }
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-xs ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
               event.enable_message_wall
                 ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
                 : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
@@ -413,7 +413,7 @@ export const EventDetailPage: React.FC = () => {
                 ? 'Clique para publicar as fotos na hora, sem moderação'
                 : 'Clique para revisar as fotos dos convidados antes de aparecerem na galeria'
             }
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-xs ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
               event.require_photo_approval
                 ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
                 : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
@@ -442,7 +442,7 @@ export const EventDetailPage: React.FC = () => {
       </div>
 
       {/* Main Header Card */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-3 min-w-0 max-w-3xl">
           <div className="flex items-center gap-2 flex-wrap">
             <Badge variant={event.is_active ? 'success' : 'neutral'} dot={event.is_active}>
@@ -476,7 +476,7 @@ export const EventDetailPage: React.FC = () => {
           </h1>
 
           {event.description && (
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            <p className="text-slate-600 text-sm sm:text-base sm:leading-6 leading-relaxed">
               {event.description}
             </p>
           )}
@@ -503,7 +503,7 @@ export const EventDetailPage: React.FC = () => {
             onClick={handleDownloadAllZip}
             isLoading={isDownloadingZip}
             leftIcon={<Download className="w-4 h-4" />}
-            className="w-full sm:col-span-2 shadow-md shadow-brand-600/20"
+            className="w-full sm:col-span-2 shadow-brand-600/20"
           >
             Baixar Todas em ZIP
           </Button>
@@ -514,7 +514,7 @@ export const EventDetailPage: React.FC = () => {
             <Button
               variant="secondary"
               size="md"
-              className="w-full bg-linear-to-r from-brand-50 to-emerald-50 border-brand-200 text-brand-900 hover:border-brand-300 font-bold shadow-xs"
+              className="w-full from-brand-50 to-emerald-50 border-brand-200 text-brand-900 hover:border-brand-300"
               leftIcon={<Sparkles className="w-4 h-4 text-brand-600" />}
             >
               Personalizar QR Code & Placas de Mesa
@@ -559,7 +559,7 @@ export const EventDetailPage: React.FC = () => {
             <Button
               variant="primary"
               size="md"
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white shadow-md border border-slate-700"
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-700"
               leftIcon={<Tv className="w-4 h-4 text-brand-400" />}
             >
               Modo Apresentação (Telão)
@@ -571,7 +571,7 @@ export const EventDetailPage: React.FC = () => {
       {/* Module Tabs Navigation: wraps into rows and stretches to fill the width, never scrolls sideways */}
       <nav
         aria-label="Seções do evento"
-        className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs"
+        className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap bg-white p-2 rounded-2xl border border-slate-200/80"
       >
         {EVENT_TABS.map(({ id, label, Icon }) => {
           const isActive = activeTab === id;
@@ -584,7 +584,7 @@ export const EventDetailPage: React.FC = () => {
               aria-current={isActive ? 'page' : undefined}
               className={`flex sm:flex-auto items-center justify-center gap-2 min-h-11 py-2 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm text-left leading-tight sm:whitespace-nowrap last:col-span-2 transition-all ${
                 isActive
-                  ? `${activeColor} text-white shadow-sm`
+                  ? `${activeColor} text-white shadow-xs`
                   : 'bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
               }`}
             >
@@ -612,7 +612,7 @@ export const EventDetailPage: React.FC = () => {
             <div className="lg:col-span-2 space-y-6">
               {/* Stats Bar */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <div className="bg-white rounded-2xl p-5 border border-slate-200/80">
                   <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
                     <ImageIcon className="w-4 h-4 text-brand-600" />
                     <span>Total de Fotos</span>
@@ -622,7 +622,7 @@ export const EventDetailPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <div className="bg-white rounded-2xl p-5 border border-slate-200/80">
                   <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
                     <HardDrive className="w-4 h-4 text-brand-600" />
                     <span>Espaço Ocupado</span>
@@ -632,7 +632,7 @@ export const EventDetailPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs col-span-2 sm:col-span-1">
+                <div className="bg-white rounded-2xl p-5 border border-slate-200/80 col-span-2 sm:col-span-1">
                   <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
                     <Clock className="w-4 h-4 text-brand-600" />
                     <span>Status de Upload</span>
@@ -644,7 +644,7 @@ export const EventDetailPage: React.FC = () => {
               </div>
 
               {/* Gallery Section */}
-              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                   <div>
                     <h3 className="text-lg font-bold text-slate-900">

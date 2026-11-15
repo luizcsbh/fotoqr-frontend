@@ -84,7 +84,7 @@ export const DJPlaylistPanel: React.FC<DJPlaylistPanelProps> = ({ eventUuid }) =
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 flex items-center gap-3 text-slate-400">
+      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 flex items-center gap-3 text-slate-400">
         <Loader2 className="w-5 h-5 animate-spin text-violet-500" />
         <span className="text-sm">Carregando lista de músicas...</span>
       </div>
@@ -92,11 +92,11 @@ export const DJPlaylistPanel: React.FC<DJPlaylistPanelProps> = ({ eventUuid }) =
   }
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
       {/* Panel Header */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-sm">
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-xs">
             <Music2 className="w-4 h-4 text-white" />
           </div>
           <div>
@@ -152,7 +152,7 @@ export const DJPlaylistPanel: React.FC<DJPlaylistPanelProps> = ({ eventUuid }) =
                   <img
                     src={song.albumArtUrl}
                     alt={song.albumName || song.title}
-                    className="w-10 h-10 rounded-xl object-cover shadow-sm shrink-0"
+                    className="w-10 h-10 rounded-xl object-cover shadow-xs shrink-0"
                   />
                 ) : (
                   <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">

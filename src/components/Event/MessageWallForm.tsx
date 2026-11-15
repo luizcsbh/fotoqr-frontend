@@ -98,7 +98,7 @@ export const MessageWallForm: React.FC<MessageWallFormProps> = ({ eventUuid }) =
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Como você quer aparecer no telão"
-                className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-400"
+                className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-rose-400"
               />
             </div>
           </div>
@@ -118,7 +118,7 @@ export const MessageWallForm: React.FC<MessageWallFormProps> = ({ eventUuid }) =
                 value={phone}
                 onChange={(e) => setPhone(maskWhatsApp(e.target.value))}
                 placeholder="(31) 99999-8888"
-                className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-400"
+                className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-rose-400"
               />
             </div>
             <p className="mt-1 text-xs text-slate-500">Visível só para os anfitriões, nunca no telão.</p>
@@ -136,7 +136,7 @@ export const MessageWallForm: React.FC<MessageWallFormProps> = ({ eventUuid }) =
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Escreva seu recado..."
-              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-400"
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-rose-400"
             />
             <p className="mt-1 text-right text-xs text-slate-400">
               {message.length}/{MESSAGE_MAX_LENGTH}
@@ -149,7 +149,7 @@ export const MessageWallForm: React.FC<MessageWallFormProps> = ({ eventUuid }) =
             isLoading={sending}
             disabled={!canSend}
             leftIcon={<Send className="w-4 h-4" />}
-            className="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold"
+            className="w-full bg-rose-500 hover:bg-rose-600 text-white"
           >
             Enviar recado
           </Button>

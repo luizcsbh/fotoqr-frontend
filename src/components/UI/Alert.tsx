@@ -101,7 +101,7 @@ export const Alert: React.FC<AlertProps> = ({
           </h4>
         )}
         {children && (
-          <div className={`text-xs sm:text-sm leading-relaxed ${cfg.text}`}>
+          <div className={`text-xs sm:text-sm sm:leading-5 leading-relaxed ${cfg.text}`}>
             {children}
           </div>
         )}
@@ -114,7 +114,7 @@ export const Alert: React.FC<AlertProps> = ({
           onClick={onDismiss}
           className={`
             shrink-0 -mr-1 -mt-1 p-1.5 rounded-lg text-slate-400 hover:text-slate-600
-            hover:bg-black/5 transition-colors focus:outline-none
+            hover:bg-black/5 transition-colors focus:outline-hidden
           `}
           aria-label="Fechar alerta"
         >

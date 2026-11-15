@@ -25,7 +25,7 @@ export const UploadProgress: React.FC<UploadProgressProps> = ({
   if (items.length === 0) return null;
 
   return (
-    <div className="w-full bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
+    <div className="w-full bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-xs space-y-5">
       {/* Overall Progress Header */}
       <div>
         <div className="flex items-center justify-between mb-2">

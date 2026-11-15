@@ -1,5 +1,6 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import { mergeClasses } from '../../utils/mergeClasses';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'outline' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -24,7 +25,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'inline-flex max-w-full items-center justify-center text-center leading-tight font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-[0.98] select-none';
+    'inline-flex max-w-full items-center justify-center text-center leading-tight font-medium rounded-xl transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2 active:scale-[0.98] select-none';
 
   // Standard control heights shared with form fields (inputs/selects are h-11 = 44px):
   // md and lg are both 44px so a submit button always lines up with the fields next to it;
@@ -32,7 +33,7 @@ export const Button: React.FC<ButtonProps> = ({
   // min-h keeps the standard height while still letting long labels wrap on small screens.
   const sizeStyles: Record<ButtonSize, string> = {
     sm: 'min-h-9 px-3 py-1 text-xs gap-1.5',
-    md: 'min-h-11 px-4 py-1.5 text-sm gap-2 shadow-sm',
+    md: 'min-h-11 px-4 py-1.5 text-sm gap-2 shadow-xs',
     lg: 'min-h-11 px-6 py-1.5 text-base gap-2.5 shadow-md',
   };
 
@@ -56,13 +57,12 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       disabled={isDisabled}
-      className={`
-        ${baseStyles}
-        ${sizeStyles[size]}
-        ${variantStyles[variant]}
-        ${isDisabled ? 'opacity-50 cursor-not-allowed hover:bg-opacity-50 pointer-events-none' : ''}
-        ${className}
-      `}
+      className={mergeClasses(
+        `${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${
+          isDisabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''
+        }`,
+        className,
+      )}
       {...props}
     >
       {isLoading ? (

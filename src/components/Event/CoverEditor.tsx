@@ -211,17 +211,17 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                   type="button"
                   onClick={() => setTemplateId(t.id)}
                   aria-pressed={selected}
-                  className={`group relative overflow-hidden rounded-2xl border text-left transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  className={`group relative overflow-hidden rounded-2xl border text-left transition-all focus:outline-hidden focus:ring-2 focus:ring-indigo-500 ${
                     selected
                       ? 'border-indigo-600 ring-2 ring-indigo-500/30 shadow-md'
-                      : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
+                      : 'border-slate-200 hover:border-slate-300 hover:shadow-xs'
                   }`}
                 >
                   <div
                     className="flex h-28 items-center justify-center"
                     style={{ background: `url("${t.background}") center/cover no-repeat` }}
                   >
-                    <div className="flex w-[70%] flex-col items-center gap-1 rounded-xl bg-white/95 px-2 py-2 shadow-sm">
+                    <div className="flex w-[70%] flex-col items-center gap-1 rounded-xl bg-white/95 px-2 py-2 shadow-xs">
                       <img src={t.logo} alt="" className="h-11 w-11" />
                       <span
                         className="w-full truncate text-center text-[11px] font-extrabold leading-tight"
@@ -257,7 +257,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                 type="datetime-local"
                 value={startAt}
                 onChange={(e) => setStartAt(e.target.value)}
-                className="h-11 w-full text-sm rounded-xl border border-slate-200 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="h-11 w-full text-sm rounded-xl border border-slate-200 px-3 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div>
@@ -270,7 +270,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                 placeholder={'Cerimônia: Igreja Matriz\nRecepção: Salão Nobre, Rua das Flores, 120'}
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full text-sm rounded-xl border border-slate-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full text-sm rounded-xl border border-slate-200 py-2.5 px-3 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           </div>
@@ -339,7 +339,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                     <button
                       type="button"
                       onClick={f.clear}
-                      className="ml-auto inline-flex shrink-0 items-center gap-1 rounded px-1.5 py-0.5 font-semibold text-slate-500 hover:text-rose-600"
+                      className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-sm px-1.5 py-0.5 font-semibold text-slate-500 hover:text-rose-600"
                     >
                       <X className="w-3.5 h-3.5" />
                       <span>Usar do modelo</span>
@@ -360,7 +360,7 @@ export const CoverEditor: React.FC<CoverEditorProps> = ({
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
                       }}
-                      className="h-11 w-full text-sm rounded-xl border border-slate-200 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="h-11 w-full text-sm rounded-xl border border-slate-200 pl-9 pr-3 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
                     />
                     <f.Icon className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
                   </div>

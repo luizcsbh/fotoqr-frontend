@@ -212,9 +212,9 @@ export const TableCardPage: React.FC = () => {
               <div className="mt-0.5 h-px bg-slate-100 w-full" />
             </div>
             {/* QR Code */}
-            <div className="shrink-0 p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm">
+            <div className="shrink-0 p-1.5 bg-white border border-slate-200 rounded-lg shadow-xs">
               {isCancelled ? (
-                <div className="w-20 h-20 flex items-center justify-center bg-rose-50 rounded">
+                <div className="w-20 h-20 flex items-center justify-center bg-rose-50 rounded-sm">
                   <AlertCircle className="w-8 h-8 text-rose-400" />
                 </div>
               ) : (
@@ -230,7 +230,7 @@ export const TableCardPage: React.FC = () => {
           {/* Centro: Nome e Categoria */}
           <div className="text-center py-4 space-y-2">
             {isCancelled && (
-              <div className="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3 py-1 inline-block mb-2">
+              <div className="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3 py-1 inline-block mb-4">
                 CONVITE CANCELADO
               </div>
             )}

@@ -39,7 +39,7 @@ export const ForgotPasswordPage: React.FC = () => {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white mx-auto mb-4 shadow-lg shadow-brand-500/25">
               <div className="relative">
                 <Camera className="w-7 h-7" />
-                <QrCode className="w-3.5 h-3.5 absolute -bottom-1 -right-1 bg-brand-700 rounded p-0.5" />
+                <QrCode className="w-3.5 h-3.5 absolute -bottom-1 -right-1 bg-brand-700 rounded-sm p-0.5" />
               </div>
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Esqueceu a senha?</h1>
@@ -74,7 +74,7 @@ export const ForgotPasswordPage: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="voce@exemplo.com"
-                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
               </div>

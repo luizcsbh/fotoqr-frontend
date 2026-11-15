@@ -405,12 +405,12 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
           dismissible
         >
           Para realizar disparos automáticos em lote pelo servidor, adicione as credenciais SMTP no arquivo{' '}
-          <code className="bg-amber-100/70 px-1 py-0.5 rounded font-mono text-xs">.env</code> do backend (Brevo, Gmail ou provedor SMTP). O envio manual direto via cliente de e-mail e o envio por WhatsApp continuam disponíveis normalmente.
+          <code className="bg-amber-100/70 px-1 py-0.5 rounded-sm font-mono text-xs">.env</code> do backend (Brevo, Gmail ou provedor SMTP). O envio manual direto via cliente de e-mail e o envio por WhatsApp continuam disponíveis normalmente.
         </Alert>
       )}
 
       {/* Top Action Panel */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-5 rounded-2xl shadow-xs border border-slate-100">
         <div className="flex flex-wrap items-center gap-3">
           <Button
             size="sm"
@@ -441,7 +441,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
             disabled={dispatching || invitations.length === 0}
             isLoading={dispatching && dispatchChannel === 'email'}
             onClick={() => handleDispatchEmail(selectedIds.length > 0 ? selectedIds : undefined)}
-            className="flex items-center gap-2 font-semibold shadow-xs"
+            className="flex items-center gap-2 font-semibold"
             leftIcon={<Mail className="w-4 h-4 text-indigo-600 shrink-0" />}
           >
             <span>
@@ -458,7 +458,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
             disabled={dispatching || invitations.length === 0}
             isLoading={dispatching && dispatchChannel === 'whatsapp'}
             onClick={() => handleDispatchWhatsApp(selectedIds.length > 0 ? selectedIds : undefined)}
-            className="flex items-center gap-2 font-semibold shadow-xs"
+            className="flex items-center gap-2 font-semibold"
             leftIcon={<MessageSquare className="w-4 h-4 text-white shrink-0" />}
           >
             <span>
@@ -493,7 +493,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                       checked={activeInvitations.length > 0 && selectedIds.length === activeInvitations.length}
                       disabled={activeInvitations.length === 0}
                       onChange={toggleSelectAll}
-                      className="rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="rounded-sm text-indigo-600 focus:ring-indigo-500 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                       title={activeInvitations.length === 0 ? 'Nenhum convite ativo para selecionar' : 'Selecionar todos os convites ativos'}
                     />
                   </th>
@@ -521,7 +521,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                           checked={selectedIds.includes(inv.id)}
                           disabled={isCancelled}
                           onChange={() => !isCancelled && toggleSelect(inv.id)}
-                          className={`rounded text-indigo-600 focus:ring-indigo-500 ${
+                          className={`rounded-sm text-indigo-600 focus:ring-indigo-500 ${
                             isCancelled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer'
                           }`}
                           title={isCancelled ? 'Convite cancelado' : undefined}
@@ -696,7 +696,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
             {/* Cabeçalho */}
             <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-emerald-50/50">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-xs">
                   <MessageSquare className="w-5 h-5" />
                 </div>
                 <div>
@@ -743,7 +743,7 @@ export const InvitationManager: React.FC<InvitationManagerProps> = ({ eventId, e
                   <div className="p-4 rounded-xl border border-emerald-100 bg-emerald-50/30 space-y-3">
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-sm">
                           Destinatário Atual
                         </span>
                         <h4 className="text-lg font-bold text-slate-800 mt-1">{currentWaGuest.guestName}</h4>

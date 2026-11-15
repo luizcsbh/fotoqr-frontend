@@ -103,7 +103,7 @@ export const DashboardPage: React.FC = () => {
 
       {/* Filter and Search Bar */}
       {events.length > 0 && (
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6 bg-white p-3 rounded-2xl border border-slate-200/80">
           {/* Search Input */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -123,7 +123,7 @@ export const DashboardPage: React.FC = () => {
             <button
               onClick={() => setFilterActive('all')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filterActive === 'all'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-white text-slate-900'
                   : 'text-slate-600 hover:text-slate-900'
                 }`}
             >
@@ -132,7 +132,7 @@ export const DashboardPage: React.FC = () => {
             <button
               onClick={() => setFilterActive('active')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filterActive === 'active'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-white text-slate-900'
                   : 'text-slate-600 hover:text-slate-900'
                 }`}
             >
@@ -141,7 +141,7 @@ export const DashboardPage: React.FC = () => {
             <button
               onClick={() => setFilterActive('paused')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filterActive === 'paused'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-white text-slate-900'
                   : 'text-slate-600 hover:text-slate-900'
                 }`}
             >
@@ -162,7 +162,7 @@ export const DashboardPage: React.FC = () => {
               <div className="h-5 bg-slate-200 rounded-md w-1/3" />
               <div className="h-6 bg-slate-200 rounded-md w-3/4" />
               <div className="h-4 bg-slate-200 rounded-md w-full" />
-              <div className="h-10 bg-slate-100 rounded-xl w-full mt-6" />
+              <div className="h-10 bg-slate-100 rounded-xl w-full" />
             </div>
           ))}
         </div>

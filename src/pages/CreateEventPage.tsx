@@ -257,9 +257,9 @@ export const CreateEventPage: React.FC = () => {
           {/* LEFT COLUMN: Configuration Steps (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             {/* ETAPA 1: Tipo de Evento */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-sm">
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs">
               <div className="flex items-center gap-2 mb-2">
-                <span className="w-6 h-6 rounded-full bg-brand-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+                <span className="w-6 h-6 rounded-full bg-brand-600 text-white font-black text-xs flex items-center justify-center">
                   1
                 </span>
                 <h2 className="font-bold text-slate-900 text-base sm:text-lg">
@@ -320,7 +320,7 @@ export const CreateEventPage: React.FC = () => {
                     >
                       <div className="flex items-center justify-between mb-3">
                         <span
-                          className={`p-2.5 rounded-xl border shadow-xs transition-colors ${
+                          className={`p-2.5 rounded-xl border transition-colors ${
                             isSelected
                               ? 'bg-brand-600 text-white border-brand-500'
                               : 'bg-slate-50 text-slate-600 border-slate-200'
@@ -346,7 +346,7 @@ export const CreateEventPage: React.FC = () => {
                         <span
                           className={`inline-block text-[11px] font-semibold px-2 py-0.5 rounded-md ${
                             isSelected
-                              ? 'bg-white text-brand-700 shadow-2xs'
+                              ? 'bg-white text-brand-700'
                               : 'bg-slate-100 text-slate-600'
                           }`}
                         >
@@ -360,10 +360,10 @@ export const CreateEventPage: React.FC = () => {
             </div>
 
             {/* ETAPA 2: Cor do QR Code e Ícone Temático */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-sm">
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-brand-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+                  <span className="w-6 h-6 rounded-full bg-brand-600 text-white font-black text-xs flex items-center justify-center">
                     2
                   </span>
                   <h2 className="font-bold text-slate-900 text-base sm:text-lg">
@@ -394,17 +394,17 @@ export const CreateEventPage: React.FC = () => {
                         onClick={() => handleSelectPreset(preset)}
                         className={`p-3 rounded-2xl border flex items-center gap-3 transition-all text-left ${
                           isSelected
-                            ? 'border-brand-600 bg-brand-50/60 shadow-xs ring-2 ring-brand-500/20'
+                            ? 'border-brand-600 bg-brand-50/60 ring-2 ring-brand-500/20'
                             : 'border-slate-200 hover:border-slate-300 bg-white'
                         }`}
                       >
                         <div className="flex items-center -space-x-2 shrink-0">
                           <span
-                            className="w-7 h-7 rounded-full border-2 border-white shadow-xs"
+                            className="w-7 h-7 rounded-full border-2 border-white"
                             style={{ backgroundColor: preset.fgColor }}
                           />
                           <span
-                            className="w-7 h-7 rounded-full border-2 border-slate-200 shadow-xs"
+                            className="w-7 h-7 rounded-full border-2 border-slate-200"
                             style={{ backgroundColor: preset.cardBg }}
                           />
                         </div>
@@ -448,7 +448,7 @@ export const CreateEventPage: React.FC = () => {
                           setSelectedPresetId('custom');
                         }
                       }}
-                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-900 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500 font-semibold"
+                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-900 uppercase focus:outline-hidden focus:ring-2 focus:ring-brand-500 font-semibold"
                     />
                   </div>
                 </div>
@@ -477,7 +477,7 @@ export const CreateEventPage: React.FC = () => {
                           setSelectedPresetId('custom');
                         }
                       }}
-                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-900 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500 font-semibold"
+                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-900 uppercase focus:outline-hidden focus:ring-2 focus:ring-brand-500 font-semibold"
                     />
                   </div>
                 </div>
@@ -504,9 +504,9 @@ export const CreateEventPage: React.FC = () => {
             </div>
 
             {/* ETAPA 3: Detalhes do Evento */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-sm space-y-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-6 h-6 rounded-full bg-brand-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-brand-600 text-white font-black text-xs flex items-center justify-center">
                   3
                 </span>
                 <h2 className="font-bold text-slate-900 text-base sm:text-lg">
@@ -528,7 +528,7 @@ export const CreateEventPage: React.FC = () => {
                     if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
                   }}
                   placeholder={`Ex: ${activeTheme.defaultTitlePlaceholder}`}
-                  className={`h-11 w-full px-4 rounded-xl border bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
+                  className={`h-11 w-full px-4 rounded-xl border bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500 transition-colors ${
                     errors.title ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'
                   }`}
                 />
@@ -546,7 +546,7 @@ export const CreateEventPage: React.FC = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Ex: Tirem fotos e compartilhem aqui nossos momentos inesquecíveis!"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500 transition-colors resize-none"
                 />
               </div>
 
@@ -570,7 +570,7 @@ export const CreateEventPage: React.FC = () => {
                         setEndDateTime(formatToDateTimeLocal(newEnd));
                       }
                     }}
-                    className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
+                    className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500 transition-colors ${
                       errors.startDateTime ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'
                     }`}
                   />
@@ -591,7 +591,7 @@ export const CreateEventPage: React.FC = () => {
                       setEndDateTime(e.target.value);
                       if (errors.endDateTime) setErrors((prev) => ({ ...prev, endDateTime: undefined }));
                     }}
-                    className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
+                    className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500 transition-colors ${
                       errors.endDateTime ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'
                     }`}
                   />
@@ -616,7 +616,7 @@ export const CreateEventPage: React.FC = () => {
                       value={wifiName}
                       onChange={(e) => setWifiName(e.target.value)}
                       placeholder="Ex: Espaço Festa Wi-Fi"
-                      className="h-11 w-full px-3 rounded-xl border border-slate-200 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="h-11 w-full px-3 rounded-xl border border-slate-200 text-sm bg-white text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
                   <div>
@@ -629,7 +629,7 @@ export const CreateEventPage: React.FC = () => {
                       value={wifiPassword}
                       onChange={(e) => setWifiPassword(e.target.value)}
                       placeholder="Ex: festa2026"
-                      className="h-11 w-full px-3 rounded-xl border border-slate-200 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="h-11 w-full px-3 rounded-xl border border-slate-200 text-sm bg-white text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
                 </div>
@@ -649,7 +649,7 @@ export const CreateEventPage: React.FC = () => {
                 size="lg"
                 isLoading={createMutation.isPending}
                 leftIcon={<Sparkles className="w-4 h-4" />}
-                className="shadow-lg shadow-brand-600/20"
+                className="shadow-brand-600/20"
               >
                 Criar Álbum & Gerar QR Code
               </Button>
@@ -679,7 +679,7 @@ export const CreateEventPage: React.FC = () => {
                 {/* Occasion Badge with emoji */}
                 <div className="flex justify-center mb-3">
                   <span
-                    className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase inline-flex items-center gap-1.5 shadow-2xs"
+                    className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase inline-flex items-center gap-1.5"
                     style={{
                       backgroundColor: badgeBg,
                       color: badgeTextColor,
@@ -705,7 +705,7 @@ export const CreateEventPage: React.FC = () => {
 
                 {/* QR Code Container with Center Excavated Icon */}
                 <div
-                  className="p-4 rounded-2xl inline-block shadow-md border mb-4 transition-transform hover:scale-102"
+                  className="p-4 rounded-2xl inline-block shadow-md border mb-4 transition-transform"
                   style={{
                     backgroundColor: bgColor,
                     borderColor: borderColor,
@@ -737,7 +737,7 @@ export const CreateEventPage: React.FC = () => {
 
                 {/* Wi-Fi callout if provided */}
                 {wifiName && (
-                  <div className="bg-white/90 border border-slate-200/80 rounded-xl p-2 text-[11px] text-slate-700 shadow-2xs max-w-xs mx-auto mb-1">
+                  <div className="bg-white/90 border border-slate-200/80 rounded-xl p-2 text-[11px] text-slate-700 max-w-xs mx-auto mb-1">
                     <span className="font-bold">📶 Wi-Fi:</span> {wifiName}
                     {wifiPassword && <span className="ml-1 opacity-80">| Senha: {wifiPassword}</span>}
                   </div>
@@ -746,7 +746,7 @@ export const CreateEventPage: React.FC = () => {
             </div>
 
             {/* Feature Highlights Card */}
-            <div className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-2.5 text-xs text-slate-600">
+            <div className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-xs space-y-2.5 text-xs text-slate-600">
               <div className="font-bold text-slate-900 flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-brand-600" />
                 <span>O que acontece após criar o evento?</span>

@@ -19,7 +19,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
           <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-xl shadow-brand-500/30 animate-pulse">
             <div className="relative">
               <Camera className="w-10 h-10 text-white" />
-              <QrCode className="w-5 h-5 text-white absolute -bottom-1 -right-1 bg-brand-700 rounded p-0.5" />
+              <QrCode className="w-5 h-5 text-white absolute -bottom-1 -right-1 bg-brand-700 rounded-sm p-0.5" />
             </div>
           </div>
         </div>

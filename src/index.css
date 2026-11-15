@@ -1,6 +1,31 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+/*
+  Compatibilidade com o Tailwind 3 (padrões que mudaram no Tailwind 4):
+  - borda sem cor explícita era gray-200 (no v4 é currentColor);
+  - botões tinham cursor pointer (no v4 é o cursor padrão);
+  - placeholder era gray-400.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-gray-400);
+  }
+}
 
 @layer base {
   html {

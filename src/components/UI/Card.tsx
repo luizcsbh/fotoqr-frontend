@@ -1,4 +1,5 @@
 import React from 'react';
+import { mergeClasses } from '../../utils/mergeClasses';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   hoverable?: boolean;
@@ -21,12 +22,12 @@ export const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={`
-        bg-white rounded-2xl border border-slate-200/80 shadow-sm
-        ${hoverable ? 'transition-all duration-300 hover:shadow-md hover:border-brand-200 hover:-translate-y-0.5' : ''}
-        ${paddingStyles[padding]}
-        ${className}
-      `}
+      className={mergeClasses(
+        `bg-white rounded-2xl border border-slate-200/80 shadow-xs ${
+          hoverable ? 'transition-all duration-300 hover:shadow-md hover:border-brand-200 hover:-translate-y-0.5' : ''
+        } ${paddingStyles[padding]}`,
+        className,
+      )}
       {...props}
     >
       {children}

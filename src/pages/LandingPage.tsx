@@ -131,13 +131,13 @@ export const LandingPage: React.FC = () => {
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {/* Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-200/80 text-brand-700 text-xs sm:text-sm font-semibold mb-8 shadow-xs">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-200/80 text-brand-700 text-xs sm:text-sm font-semibold mb-8">
             <Sparkles className="w-4 h-4 text-brand-600 animate-spin" style={{ animationDuration: '6s' }} />
             <span>Compartilhamento simples e instantâneo</span>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-[1.15] mb-6">
+          <h1 className="text-4xl sm:text-6xl sm:leading-none font-black text-slate-900 tracking-tight leading-[1.15] mb-6">
             Compartilhe fotos do seu evento com um{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-emerald-500">
               QR Code
@@ -145,7 +145,7 @@ export const LandingPage: React.FC = () => {
           </h1>
 
           {/* Subheadline */}
-          <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+          <p className="text-lg sm:text-xl sm:leading-7 text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
             Crie seu álbum, exiba o QR Code nas mesas ou telões e receba todas as fotos tiradas pelos seus convidados em alta resolução —{' '}
             <strong className="text-slate-800 font-semibold">sem que ninguém precise baixar aplicativo ou criar conta.</strong>
           </p>
@@ -156,7 +156,7 @@ export const LandingPage: React.FC = () => {
               <Button
                 variant="primary"
                 size="lg"
-                className="w-full sm:w-auto shadow-lg shadow-brand-600/30 text-base"
+                className="w-full sm:w-auto shadow-brand-600/30 text-base"
                 rightIcon={<ArrowRight className="w-5 h-5" />}
               >
                 {isAuthenticated ? 'Ir para Meus Eventos' : 'Começar Gratuitamente'}
@@ -360,7 +360,7 @@ export const LandingPage: React.FC = () => {
             {faqs.map(({ question, answer }) => (
               <details
                 key={question}
-                className="group rounded-2xl bg-white border border-slate-200/80 p-5 open:shadow-sm"
+                className="group rounded-2xl bg-white border border-slate-200/80 p-5 open:shadow-xs"
               >
                 <summary className="flex items-center justify-between gap-4 cursor-pointer list-none font-semibold text-slate-900">
                   {question}

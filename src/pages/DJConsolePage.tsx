@@ -266,7 +266,7 @@ export const DJConsolePage: React.FC = () => {
           ].map((s) => (
             <div
               key={s.label}
-              className="bg-white/5 backdrop-blur rounded-2xl p-3 text-center border border-white/10"
+              className="bg-white/5 backdrop-blur-sm rounded-2xl p-3 text-center border border-white/10"
             >
               <p className={`text-2xl font-black ${s.color}`}>{s.count}</p>
               <p className="text-[11px] text-white/50 font-medium mt-0.5">{s.label}</p>
@@ -282,7 +282,7 @@ export const DJConsolePage: React.FC = () => {
               onClick={() => setFilter(tab.key)}
               className={`flex flex-auto items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 filter === tab.key
-                  ? 'bg-white text-slate-900 shadow-sm'
+                  ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-white/50 hover:text-white/80'
               }`}
             >
@@ -301,7 +301,7 @@ export const DJConsolePage: React.FC = () => {
         </div>
 
         {/* Song List */}
-        <div className="bg-white/5 backdrop-blur rounded-3xl border border-white/10 overflow-hidden">
+        <div className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 overflow-hidden">
           {isLoading ? (
             <div className="flex items-center justify-center gap-3 py-16 text-white/40">
               <Loader2 className="w-5 h-5 animate-spin text-violet-400" />

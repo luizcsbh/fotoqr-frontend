@@ -10,7 +10,7 @@ export const NotFoundPage: React.FC = () => {
         <div className="w-20 h-20 rounded-3xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-6">
           <div className="relative">
             <Camera className="w-10 h-10 text-slate-400" />
-            <QrCode className="w-5 h-5 text-slate-400 absolute -bottom-1 -right-1 bg-slate-200 rounded p-0.5" />
+            <QrCode className="w-5 h-5 text-slate-400 absolute -bottom-1 -right-1 bg-slate-200 rounded-sm p-0.5" />
           </div>
         </div>
 

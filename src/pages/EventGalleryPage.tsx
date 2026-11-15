@@ -309,7 +309,7 @@ export const EventGalleryPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           {/* Brand */}
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-xs">
               <Camera className="w-4 h-4" />
             </div>
             <span className="font-extrabold text-base tracking-tight text-white">
@@ -346,14 +346,14 @@ export const EventGalleryPage: React.FC = () => {
       {/* Event Info */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="mb-8 text-center space-y-2">
-          <div className="inline-block text-[11px] font-bold uppercase tracking-wider text-brand-400 bg-brand-900/30 px-3 py-1 rounded-full mb-2">
+          <div className="inline-block text-[11px] font-bold uppercase tracking-wider text-brand-400 bg-brand-900/30 px-3 py-1 rounded-full mb-4">
             Álbum do Evento
           </div>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
             {event.title}
           </h1>
           {event.description && (
-            <p className="text-slate-400 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
+            <p className="text-slate-400 text-sm sm:text-base sm:leading-6 max-w-lg mx-auto leading-relaxed">
               {event.description}
             </p>
           )}
@@ -411,7 +411,7 @@ export const EventGalleryPage: React.FC = () => {
                     type="checkbox"
                     checked={allCurrentSelected}
                     onChange={handleToggleSelectAll}
-                    className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-white/20 bg-slate-800"
+                    className="w-4 h-4 rounded-sm text-brand-600 focus:ring-brand-500 border-white/20 bg-slate-800"
                   />
                   <span>Selecionar Todas ({photos.length})</span>
                 </label>
@@ -465,7 +465,7 @@ export const EventGalleryPage: React.FC = () => {
                   key={photo.id}
                   type="button"
                   onClick={() => setLightboxIndex(idx)}
-                  className={`group relative aspect-square rounded-xl overflow-hidden bg-slate-700/50 hover:ring-2 hover:ring-brand-500 transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+                  className={`group relative aspect-square rounded-xl overflow-hidden bg-slate-700/50 hover:ring-2 hover:ring-brand-500 transition-all focus:outline-hidden focus:ring-2 focus:ring-brand-500 ${
                     selectedIds.has(photo.id) ? 'ring-2 ring-brand-500' : ''
                   }`}
                 >
@@ -485,7 +485,7 @@ export const EventGalleryPage: React.FC = () => {
                     {selectedIds.has(photo.id) ? (
                       <Check className="w-4 h-4 stroke-[3]" />
                     ) : (
-                      <div className="w-3.5 h-3.5 rounded border border-white/80" />
+                      <div className="w-3.5 h-3.5 rounded-sm border border-white/80" />
                     )}
                   </span>
 
@@ -503,7 +503,7 @@ export const EventGalleryPage: React.FC = () => {
                   />
                   {/* Overlay on hover */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                    <Download className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+                    <Download className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity [filter:drop-shadow(0_10px_8px_rgb(0_0_0/0.04))_drop-shadow(0_4px_3px_rgb(0_0_0/0.1))]" />
                   </div>
                 </button>
               ))}
@@ -550,7 +550,7 @@ export const EventGalleryPage: React.FC = () => {
               variant="primary"
               size="lg"
               leftIcon={<Upload className="w-5 h-5" />}
-              className="shadow-2xl shadow-brand-600/40 rounded-2xl"
+              className="shadow-brand-600/40"
             >
               Enviar Fotos
             </Button>

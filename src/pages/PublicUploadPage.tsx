@@ -115,7 +115,7 @@ export const PublicUploadPage: React.FC = () => {
         {/* FotoQREventos Branding Header */}
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-xs">
               <Camera className="w-4 h-4" />
             </div>
             <span className="font-extrabold text-base tracking-tight text-slate-900">
@@ -130,7 +130,7 @@ export const PublicUploadPage: React.FC = () => {
         </header>
 
         {/* Event Info Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm text-center">
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs text-center">
           <div className="inline-block text-[11px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full mb-3">
             Álbum de Fotos
           </div>
@@ -248,7 +248,7 @@ export const PublicUploadPage: React.FC = () => {
                   onClick={uploadAll}
                   isLoading={isUploading}
                   leftIcon={<Upload className="w-5 h-5" />}
-                  className="w-full text-base font-bold shadow-xl shadow-brand-600/30 rounded-2xl"
+                  className="w-full text-base shadow-xl shadow-brand-600/30"
                 >
                   Enviar {items.length} {items.length === 1 ? 'Foto' : 'Fotos'} para o Álbum
                 </Button>

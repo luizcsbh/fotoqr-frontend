@@ -129,7 +129,7 @@ export const AlertDialog: React.FC<AlertDialogProps> = ({
             {/* Icon Avatar */}
             <div
               className={`
-                w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-xs
+                w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
                 ${cfg.iconBg}
               `}
             >

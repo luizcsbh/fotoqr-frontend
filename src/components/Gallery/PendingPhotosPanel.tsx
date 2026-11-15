@@ -119,7 +119,7 @@ export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-amber-200/80 shadow-sm space-y-5">
+    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-amber-200/80 shadow-xs space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
@@ -214,7 +214,7 @@ export const PendingPhotosPanel: React.FC<PendingPhotosPanelProps> = ({
                     <button
                       type="button"
                       onClick={() => reveal(photo.id)}
-                      className="absolute inset-0 m-auto h-8 w-24 inline-flex items-center justify-center gap-1 rounded-xl bg-white/90 hover:bg-white text-slate-800 text-xs font-bold shadow"
+                      className="absolute inset-0 m-auto h-8 w-24 inline-flex items-center justify-center gap-1 rounded-xl bg-white/90 hover:bg-white text-slate-800 text-xs font-bold shadow-sm"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       Mostrar

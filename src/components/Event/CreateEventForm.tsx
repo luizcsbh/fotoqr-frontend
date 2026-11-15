@@ -120,7 +120,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
               if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
             }}
             placeholder="Ex: Casamento de Ana e Lucas, Aniversário de 30 anos..."
-            className={`h-11 w-full px-4 rounded-xl border bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
+            className={`h-11 w-full px-4 rounded-xl border bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500 transition-colors ${
               errors.title ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'
             }`}
           />
@@ -139,7 +139,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             id="category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="h-11 w-full px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="h-11 w-full px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -158,7 +158,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             placeholder="Ex: Espaço Villa Real, Salão de Festas..."
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="h-11 w-full px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="h-11 w-full px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500"
           />
         </div>
       </div>
@@ -177,7 +177,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             placeholder="Ex: 250"
             value={capacity}
             onChange={(e) => setCapacity(e.target.value ? Number(e.target.value) : '')}
-            className="h-11 w-full px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="h-11 w-full px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500"
           />
         </div>
 
@@ -192,7 +192,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             max="10"
             value={maxEntries}
             onChange={(e) => setMaxEntries(Math.max(1, Number(e.target.value)))}
-            className="h-11 w-full px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="h-11 w-full px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500"
           />
         </div>
       </div>
@@ -209,7 +209,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Ex: Sejam bem-vindos! Apresentem o QR Code individual na entrada."
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors resize-none"
+          className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder-slate-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500 transition-colors resize-none"
         />
       </div>
 
@@ -234,7 +234,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
                 setEndDateTime(formatToDateTimeLocal(newEnd));
               }
             }}
-            className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
+            className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500 transition-colors ${
               errors.startDateTime ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'
             }`}
           />
@@ -256,7 +256,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
               setEndDateTime(e.target.value);
               if (errors.endDateTime) setErrors((prev) => ({ ...prev, endDateTime: undefined }));
             }}
-            className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
+            className={`h-11 w-full px-3.5 rounded-xl border bg-white text-slate-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-brand-500 transition-colors ${
               errors.endDateTime ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'
             }`}
           />
@@ -293,7 +293,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
                   checked={enableDjPlaylist}
                   onChange={(e) => setEnableDjPlaylist(e.target.checked)}
                   onClick={(e) => e.stopPropagation()}
-                  className="rounded text-violet-600 focus:ring-violet-500"
+                  className="rounded-sm text-violet-600 focus:ring-violet-500"
                 />
               </div>
               <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
@@ -324,7 +324,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
                   checked={requirePhotoApproval}
                   onChange={(e) => setRequirePhotoApproval(e.target.checked)}
                   onClick={(e) => e.stopPropagation()}
-                  className="rounded text-amber-600 focus:ring-amber-500"
+                  className="rounded-sm text-amber-600 focus:ring-amber-500"
                 />
               </div>
               <p className="text-[11px] text-slate-500 leading-tight mt-0.5">

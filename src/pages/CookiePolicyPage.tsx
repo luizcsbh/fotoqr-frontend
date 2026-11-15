@@ -170,7 +170,7 @@ export const CookiePolicyPage: React.FC = () => {
           <button
             type="button"
             onClick={openCookiePreferences}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-sm font-semibold text-white hover:bg-brand-700 shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-sm font-semibold text-white hover:bg-brand-700 shadow-xs"
           >
             <Settings2 className="w-4 h-4" />
             Preferências de cookies

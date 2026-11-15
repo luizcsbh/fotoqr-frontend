@@ -14,7 +14,7 @@ import toast from 'react-hot-toast';
 
 /** Shared look of the four card actions: same height, full cell width, icon left + label. */
 const FOOTER_ACTION =
-  'inline-flex h-10 w-full min-w-0 items-center justify-center gap-1.5 rounded-xl border px-3 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-60';
+  'inline-flex h-10 w-full min-w-0 items-center justify-center gap-1.5 rounded-xl border px-3 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-brand-500 disabled:opacity-60';
 
 interface EventCardProps {
   event: Event;
@@ -141,7 +141,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             <button
               type="button"
               onClick={() => setIsQRModalOpen(true)}
-              className="relative inline-flex shrink-0 flex-col items-center gap-1 rounded-xl border border-slate-200/80 bg-white p-1.5 text-[11px] font-semibold text-slate-600 shadow-xs transition-all hover:border-brand-500 hover:shadow-md group/qr focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="relative inline-flex shrink-0 flex-col items-center gap-1 rounded-xl border border-slate-200/80 bg-white p-1.5 text-[11px] font-semibold text-slate-600 transition-all hover:border-brand-500 hover:shadow-md group/qr focus:outline-hidden focus:ring-2 focus:ring-brand-500"
               title="Clique para ampliar o QR Code"
             >
               <QRCodeCanvas
@@ -279,7 +279,7 @@ export const EventCard: React.FC<EventCardProps> = ({
                 type="text"
                 readOnly
                 value={publicUrl}
-                className="h-11 w-full bg-white border border-slate-200 rounded-lg px-2.5 text-sm text-slate-800 font-mono select-all focus:outline-none"
+                className="h-11 w-full bg-white border border-slate-200 rounded-lg px-2.5 text-sm text-slate-800 font-mono select-all focus:outline-hidden"
               />
               <button
                 type="button"
@@ -301,7 +301,7 @@ export const EventCard: React.FC<EventCardProps> = ({
               <Button
                 variant="secondary"
                 size="sm"
-                className="bg-linear-to-r from-brand-50 to-emerald-50 border-brand-200 text-brand-900 font-bold"
+                className="from-brand-50 to-emerald-50 border-brand-200 text-brand-900"
                 leftIcon={<Sparkles className="w-4 h-4 text-brand-600" />}
               >
                 Personalizar Cores & Temas

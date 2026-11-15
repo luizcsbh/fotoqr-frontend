@@ -236,11 +236,11 @@ export const QRScannerPage: React.FC = () => {
           >
             <div className="py-2">
               {result.color === 'verde' ? (
-                <CheckCircle2 className="w-20 h-20 mx-auto text-white drop-shadow-md animate-bounce" />
+                <CheckCircle2 className="w-20 h-20 mx-auto text-white [filter:drop-shadow(0_4px_3px_rgb(0_0_0/0.07))_drop-shadow(0_2px_2px_rgb(0_0_0/0.06))] animate-bounce" />
               ) : result.color === 'laranja' ? (
-                <AlertTriangle className="w-20 h-20 mx-auto text-white drop-shadow-md" />
+                <AlertTriangle className="w-20 h-20 mx-auto text-white [filter:drop-shadow(0_4px_3px_rgb(0_0_0/0.07))_drop-shadow(0_2px_2px_rgb(0_0_0/0.06))]" />
               ) : (
-                <XCircle className="w-20 h-20 mx-auto text-white drop-shadow-md" />
+                <XCircle className="w-20 h-20 mx-auto text-white [filter:drop-shadow(0_4px_3px_rgb(0_0_0/0.07))_drop-shadow(0_2px_2px_rgb(0_0_0/0.06))]" />
               )}
             </div>
 
@@ -250,10 +250,10 @@ export const QRScannerPage: React.FC = () => {
             </div>
 
             {result.guest && (
-              <div className="bg-black/25 backdrop-blur-sm rounded-xl p-4 text-left space-y-1">
+              <div className="bg-black/25 backdrop-blur-xs rounded-xl p-4 text-left space-y-1">
                 <span className="text-xs uppercase tracking-wider opacity-75">Convidado</span>
                 <p className="text-lg font-bold">{result.guest.name}</p>
-                <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-white/20">
+                <span className="inline-block px-2 py-0.5 rounded-sm text-xs font-semibold bg-white/20">
                   {result.guest.category}
                 </span>
               </div>
@@ -269,7 +269,7 @@ export const QRScannerPage: React.FC = () => {
               variant="secondary"
               size="lg"
               onClick={handleNextScan}
-              className="w-full bg-white text-slate-900 hover:bg-slate-100 font-bold shadow-lg flex items-center justify-center gap-2"
+              className="w-full bg-white text-slate-900 hover:bg-slate-100 flex items-center justify-center gap-2"
               leftIcon={<RotateCcw className="w-5 h-5 text-indigo-600" />}
             >
               Próxima Leitura
@@ -319,7 +319,7 @@ export const QRScannerPage: React.FC = () => {
             value={manualCode}
             onChange={(e) => setManualCode(e.target.value)}
             disabled={validating}
-            className="h-11 flex-1 text-sm bg-slate-800 border border-slate-700 text-white rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="h-11 flex-1 text-sm bg-slate-800 border border-slate-700 text-white rounded-lg px-3 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
           />
           <Button type="submit" size="md" disabled={validating || !manualCode.trim()} leftIcon={<Search className="w-4 h-4" />}>
             Buscar

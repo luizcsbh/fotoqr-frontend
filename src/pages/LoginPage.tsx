@@ -86,7 +86,7 @@ export const LoginPage: React.FC = () => {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white mx-auto mb-4 shadow-lg shadow-brand-500/25">
               <div className="relative">
                 <Camera className="w-7 h-7" />
-                <QrCode className="w-3.5 h-3.5 absolute -bottom-1 -right-1 bg-brand-700 rounded p-0.5" />
+                <QrCode className="w-3.5 h-3.5 absolute -bottom-1 -right-1 bg-brand-700 rounded-sm p-0.5" />
               </div>
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">
@@ -109,7 +109,7 @@ export const LoginPage: React.FC = () => {
                 setError('');
               }}
               className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
-                isRegistering ? 'bg-white text-brand-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                isRegistering ? 'bg-white text-brand-700 shadow-xs' : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               Criar conta
@@ -123,7 +123,7 @@ export const LoginPage: React.FC = () => {
                 setError('');
               }}
               className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
-                !isRegistering ? 'bg-white text-brand-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                !isRegistering ? 'bg-white text-brand-700 shadow-xs' : 'text-slate-500 hover:text-slate-800'
               }`}
             >
               Entrar
@@ -149,7 +149,7 @@ export const LoginPage: React.FC = () => {
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                     placeholder="Seu nome"
-                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
               </div>
@@ -171,7 +171,7 @@ export const LoginPage: React.FC = () => {
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="voce@exemplo.com"
-                  className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                 />
               </div>
             </div>
@@ -202,7 +202,7 @@ export const LoginPage: React.FC = () => {
             </div>
 
             {!isRegistering && (
-              <div className="text-right -mt-1">
+              <div className="text-right">
                 <Link
                   to="/esqueci-a-senha"
                   className="text-xs font-semibold text-brand-600 hover:text-brand-800 transition-colors"

@@ -209,7 +209,7 @@ export const ProfilePage: React.FC = () => {
                   required
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>

@@ -786,7 +786,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
               size="sm"
               onClick={handleSave}
               isLoading={isSaving}
-              className="relative font-bold"
+              className="relative"
               leftIcon={hasUnsavedChanges ? <Save className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
               title={hasUnsavedChanges ? 'Salvar alterações (Ctrl+S)' : 'Tudo salvo (Ctrl+S salva de novo)'}
             >
@@ -805,7 +805,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
           {/* LEFT COLUMN: Controls & Customizers (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             {/* Step 1: Ocasião / Tipo de Evento */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs">
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center">
                   1
@@ -835,12 +835,12 @@ export const QRCodeCustomizerPage: React.FC = () => {
                       onClick={() => handleSelectEventType(opt.id)}
                       className={`p-3.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
                         isSelected
-                          ? 'border-brand-600 bg-brand-50/70 ring-2 ring-brand-500/20 shadow-sm'
+                          ? 'border-brand-600 bg-brand-50/70 ring-2 ring-brand-500/20 shadow-xs'
                           : 'border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50/50'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="p-2 rounded-xl bg-white border border-slate-200/80 shadow-xs">
+                        <span className="p-2 rounded-xl bg-white border border-slate-200/80">
                           <Icon className={`w-4 h-4 ${isSelected ? 'text-brand-600' : 'text-slate-600'}`} />
                         </span>
                         {isSelected && (
@@ -860,7 +860,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
             </div>
 
             {/* Step 2: Cores e Paletas */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center">
@@ -892,18 +892,18 @@ export const QRCodeCustomizerPage: React.FC = () => {
                         onClick={() => handleSelectPreset(preset)}
                         className={`p-2.5 rounded-xl border flex items-center gap-3 transition-all text-left ${
                           isSelected
-                            ? 'border-brand-600 bg-brand-50/50 shadow-xs ring-1 ring-brand-500'
+                            ? 'border-brand-600 bg-brand-50/50 ring-1 ring-brand-500'
                             : 'border-slate-200 hover:border-slate-300 bg-white'
                         }`}
                       >
                         {/* Color swatches */}
                         <div className="flex items-center -space-x-1.5 shrink-0">
                           <span
-                            className="w-6 h-6 rounded-full border border-white shadow-xs"
+                            className="w-6 h-6 rounded-full border border-white"
                             style={{ backgroundColor: preset.fgColor }}
                           />
                           <span
-                            className="w-6 h-6 rounded-full border border-slate-200 shadow-xs"
+                            className="w-6 h-6 rounded-full border border-slate-200"
                             style={{ backgroundColor: preset.cardBg }}
                           />
                         </div>
@@ -943,7 +943,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                           setSelectedPresetId('custom');
                         }
                       }}
-                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-800 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-800 uppercase focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
                 </div>
@@ -972,7 +972,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                           setSelectedPresetId('custom');
                         }
                       }}
-                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-800 uppercase focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="h-11 w-full px-3 border border-slate-200 rounded-xl text-sm font-mono text-slate-800 uppercase focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
                 </div>
@@ -999,7 +999,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
             </div>
 
             {/* Step 3: Textos Personalizados da Placa de Mesa */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs">
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center">
                   3
@@ -1021,7 +1021,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Ex: Nosso Casamento, Aniversário da Sofia..."
-                    className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
 
@@ -1035,7 +1035,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
                     placeholder="Ex: Compartilhe suas fotos e eternize esse momento!"
-                    className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
 
@@ -1049,7 +1049,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                     value={instructions}
                     onChange={(e) => setInstructions(e.target.value)}
                     placeholder="Ex: Aponte a câmera do celular para o QR Code abaixo"
-                    className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
 
@@ -1070,7 +1070,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                         value={wifiName}
                         onChange={(e) => setWifiName(e.target.value)}
                         placeholder="Ex: Espaço Flores Wi-Fi"
-                        className="h-11 w-full px-3 rounded-lg border border-slate-200 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="h-11 w-full px-3 rounded-lg border border-slate-200 text-sm bg-white text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                       />
                     </div>
                     <div>
@@ -1083,7 +1083,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                         value={wifiPassword}
                         onChange={(e) => setWifiPassword(e.target.value)}
                         placeholder="Ex: festa2026"
-                        className="h-11 w-full px-3 rounded-lg border border-slate-200 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="h-11 w-full px-3 rounded-lg border border-slate-200 text-sm bg-white text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-500"
                       />
                     </div>
                   </div>
@@ -1092,7 +1092,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
             </div>
 
             {/* Step 4: Ícone Central e Moldura */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs">
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center">
                   4
@@ -1158,13 +1158,13 @@ export const QRCodeCustomizerPage: React.FC = () => {
           {/* RIGHT COLUMN: Live Interactive Preview (5 cols) */}
           <div className="lg:col-span-5 sticky top-24 space-y-4">
             {/* Format toggle: Placa de Mesa / QR Only */}
-            <div className="bg-white rounded-2xl p-1.5 border border-slate-200 flex items-center justify-between shadow-xs">
+            <div className="bg-white rounded-2xl p-1.5 border border-slate-200 flex items-center justify-between">
               <button
                 type="button"
                 onClick={() => setFrameStyle('table-card')}
                 className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all text-center ${
                   frameStyle === 'table-card'
-                    ? 'bg-brand-600 text-white shadow-xs'
+                    ? 'bg-brand-600 text-white'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -1175,7 +1175,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                 onClick={() => setFrameStyle('qr-only')}
                 className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all text-center ${
                   frameStyle === 'qr-only'
-                    ? 'bg-brand-600 text-white shadow-xs'
+                    ? 'bg-brand-600 text-white'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -1200,7 +1200,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
                     {/* Occasion Badge */}
                     <div className="flex justify-center mb-4">
                       <span
-                        className="px-3.5 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase inline-flex items-center gap-1.5 shadow-2xs"
+                        className="px-3.5 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase inline-flex items-center gap-1.5"
                         style={{
                           backgroundColor: badgeBg,
                           color: badgeTextColor,
@@ -1258,7 +1258,7 @@ export const QRCodeCustomizerPage: React.FC = () => {
 
                     {/* Wi-Fi callout if provided */}
                     {wifiName && (
-                      <div className="bg-white/90 border border-slate-200/80 rounded-xl p-2.5 text-[11px] text-slate-700 shadow-2xs max-w-xs mx-auto">
+                      <div className="bg-white/90 border border-slate-200/80 rounded-xl p-2.5 text-[11px] text-slate-700 max-w-xs mx-auto">
                         <span className="font-bold">📶 Wi-Fi:</span> {wifiName}
                         {wifiPassword && <span className="ml-1.5 opacity-80">| Senha: {wifiPassword}</span>}
                       </div>
@@ -1292,13 +1292,13 @@ export const QRCodeCustomizerPage: React.FC = () => {
             </div>
 
             {/* Quick Actions Panel */}
-            <div className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-3">
+            <div className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-xs space-y-3">
               <Button
                 variant="success"
                 size="lg"
                 onClick={handleSave}
                 isLoading={isSaving}
-                className={`w-full font-bold ${hasUnsavedChanges ? 'ring-2 ring-amber-300 ring-offset-2' : ''}`}
+                className={`w-full ${hasUnsavedChanges ? 'ring-2 ring-amber-300 ring-offset-2' : ''}`}
                 leftIcon={hasUnsavedChanges ? <Save className="w-5 h-5" /> : <Check className="w-5 h-5" />}
               >
                 {hasUnsavedChanges ? 'Salvar alterações do QR Code' : 'Alterações salvas ✓'}

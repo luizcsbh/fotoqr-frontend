@@ -31,12 +31,12 @@ export const Header: React.FC = () => {
           {/* Logo */}
           <Link
             to={isAuthenticated ? '/dashboard' : '/'}
-            className="flex items-center gap-2.5 group focus:outline-none"
+            className="flex items-center gap-2.5 group focus:outline-hidden"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
               <div className="relative">
                 <Camera className="w-5 h-5 text-white" />
-                <QrCode className="w-3 h-3 text-white absolute -bottom-1 -right-1 bg-brand-700 rounded-sm p-0.5" />
+                <QrCode className="w-3 h-3 text-white absolute -bottom-1 -right-1 bg-brand-700 rounded-xs p-0.5" />
               </div>
             </div>
             <div className="flex flex-col">
@@ -69,7 +69,7 @@ export const Header: React.FC = () => {
                   to="/dashboard/criar-evento"
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     isActive('/dashboard/criar-evento')
-                      ? 'bg-brand-600 text-white shadow-xs'
+                      ? 'bg-brand-600 text-white'
                       : 'bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-200/60'
                   }`}
                 >
@@ -143,7 +143,7 @@ export const Header: React.FC = () => {
           <div className="flex lg:hidden items-center">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold min-h-9 px-3 py-1 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-hidden"
               aria-label="Abrir menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -158,7 +158,7 @@ export const Header: React.FC = () => {
         <div className="lg:hidden border-t border-slate-100 bg-white/95 backdrop-blur-md px-4 pt-3 pb-5 space-y-3 animate-in slide-in-from-top-4 duration-200 shadow-xl">
           {isAuthenticated ? (
             <>
-              <div className="flex items-center gap-3 px-3 py-2 bg-slate-50 rounded-xl mb-2">
+              <div className="flex items-center gap-3 px-3 py-2 bg-slate-50 rounded-xl">
                 {avatarUrl ? (
                   <img
                     src={avatarUrl}

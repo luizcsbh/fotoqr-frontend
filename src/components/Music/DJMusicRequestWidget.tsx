@@ -185,7 +185,7 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
     <div className="flex flex-col gap-2 p-3 bg-violet-950 rounded-2xl border border-violet-800/60 shadow-lg shadow-violet-900/30">
       <div className="flex items-center gap-2.5">
         {track.albumArtUrl ? (
-          <img src={track.albumArtUrl} alt={track.albumName} className="w-9 h-9 rounded-lg object-cover shrink-0 shadow-sm" />
+          <img src={track.albumArtUrl} alt={track.albumName} className="w-9 h-9 rounded-lg object-cover shrink-0 shadow-xs" />
         ) : (
           <div className="w-9 h-9 rounded-lg bg-violet-800 flex items-center justify-center shrink-0">
             <Disc3 className="w-4 h-4 text-violet-400" />
@@ -218,7 +218,7 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
         <div ref={barRef} onClick={handleBarClick}
           className="flex-1 h-1.5 bg-violet-800 rounded-full cursor-pointer relative overflow-hidden group">
           <div className="absolute inset-y-0 left-0 bg-violet-400 rounded-full transition-none" style={{ width: `${progress * 100}%` }} />
-          <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity"
+          <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
             style={{ left: `calc(${progress * 100}% - 6px)` }} />
         </div>
         <span className="text-[10px] text-violet-400 w-8 shrink-0 tabular-nums">{formatSeconds(duration)}</span>
@@ -398,7 +398,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
   const canSubmit = selectedTrack || (manualMode && manualTitle.trim() && manualArtist.trim());
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
       {/* Header — click to expand/collapse */}
       <button
         type="button"
@@ -406,7 +406,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
         className="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50/60 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-xs">
             <Music2 className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -445,7 +445,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
               onChange={(e) => setGuestName(e.target.value)}
               placeholder="Ex: Maria"
               maxLength={50}
-              className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
+              className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
             />
           </div>
 
@@ -457,7 +457,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                 onClick={() => setManualMode(false)}
                 className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all border ${
                   !manualMode
-                    ? 'bg-violet-600 text-white border-violet-500 shadow-sm'
+                    ? 'bg-violet-600 text-white border-violet-500 shadow-xs'
                     : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                 }`}
               >
@@ -468,7 +468,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                 onClick={() => { setManualMode(true); setSearchResults([]); setSelectedTrack(null); }}
                 className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all border ${
                   manualMode
-                    ? 'bg-violet-600 text-white border-violet-500 shadow-sm'
+                    ? 'bg-violet-600 text-white border-violet-500 shadow-xs'
                     : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                 }`}
               >
@@ -491,7 +491,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                   value={query}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   placeholder="Nome da música ou artista..."
-                  className="h-11 w-full pl-9 pr-4 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
+                  className="h-11 w-full pl-9 pr-4 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
                 />
                 {isSearching && (
                   <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-500 animate-spin" />
@@ -524,7 +524,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                         {/* Album art with play overlay */}
                         <div className="relative shrink-0">
                           {track.albumArtUrl ? (
-                            <img src={track.albumArtUrl} alt={track.albumName} className="w-10 h-10 rounded-lg object-cover shadow-sm" />
+                            <img src={track.albumArtUrl} alt={track.albumName} className="w-10 h-10 rounded-lg object-cover shadow-xs" />
                           ) : (
                             <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">
                               <Disc3 className="w-5 h-5 text-slate-400" />
@@ -581,7 +581,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                   <div className="flex items-center gap-3 p-3 bg-violet-50 rounded-2xl border border-violet-200">
                     <div className="relative shrink-0">
                       {selectedTrack.albumArtUrl ? (
-                        <img src={selectedTrack.albumArtUrl} alt={selectedTrack.albumName} className="w-12 h-12 rounded-xl object-cover shadow-sm" />
+                        <img src={selectedTrack.albumArtUrl} alt={selectedTrack.albumName} className="w-12 h-12 rounded-xl object-cover shadow-xs" />
                       ) : (
                         <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center">
                           <Disc3 className="w-6 h-6 text-violet-500" />
@@ -640,7 +640,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                   onChange={(e) => setManualTitle(e.target.value)}
                   placeholder="Ex: Evidências"
                   maxLength={255}
-                  className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
+                  className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
                 />
               </div>
               <div>
@@ -651,7 +651,7 @@ export const DJMusicRequestWidget: React.FC<DJMusicRequestWidgetProps> = ({ even
                   onChange={(e) => setManualArtist(e.target.value)}
                   placeholder="Ex: Chitãozinho & Xororó"
                   maxLength={255}
-                  className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
+                  className="h-11 w-full px-3.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-violet-500 focus:border-violet-400 transition-colors"
                 />
               </div>
             </div>

@@ -56,7 +56,7 @@ export const ResetPasswordPage: React.FC = () => {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white mx-auto mb-4 shadow-lg shadow-brand-500/25">
               <div className="relative">
                 <Camera className="w-7 h-7" />
-                <QrCode className="w-3.5 h-3.5 absolute -bottom-1 -right-1 bg-brand-700 rounded p-0.5" />
+                <QrCode className="w-3.5 h-3.5 absolute -bottom-1 -right-1 bg-brand-700 rounded-sm p-0.5" />
               </div>
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Criar nova senha</h1>

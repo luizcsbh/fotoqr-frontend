@@ -72,7 +72,7 @@ export const EventDashboardHub: React.FC<EventDashboardHubProps> = ({ eventId })
   return (
     <div className="space-y-6">
       {/* Top Bar with Refresh & Export options */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl shadow-xs border border-slate-100">
         <div>
           <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-indigo-600" />

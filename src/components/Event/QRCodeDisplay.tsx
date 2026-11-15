@@ -112,7 +112,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
   };
 
   return (
-    <div className="flex flex-col items-center bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-center">
+    <div className="flex flex-col items-center bg-white rounded-3xl p-6 border border-slate-200 shadow-xs text-center">
       <div className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full flex items-center gap-1.5">
         <Wifi className="w-3.5 h-3.5" />
         QR Code do Evento
@@ -129,7 +129,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
         <Button
           variant="secondary"
           size="sm"
-          className="w-full bg-linear-to-r from-brand-50 to-emerald-50 border-brand-200 text-brand-900 hover:border-brand-300 font-bold shadow-xs"
+          className="w-full from-brand-50 to-emerald-50 border-brand-200 text-brand-900 hover:border-brand-300"
           leftIcon={<Sparkles className="w-4 h-4 text-brand-600" />}
         >
           Personalizar Cores & Placas de Mesa
@@ -171,7 +171,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
             type="text"
             readOnly
             value={publicUrl}
-            className="h-11 w-full bg-white border border-slate-200 rounded-xl px-3 text-sm text-slate-800 font-mono select-all focus:outline-none"
+            className="h-11 w-full bg-white border border-slate-200 rounded-xl px-3 text-sm text-slate-800 font-mono select-all focus:outline-hidden"
           />
           <button
             type="button"
@@ -250,7 +250,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uuid, eventTitle }
           <Button
             variant="primary"
             size="md"
-            className="w-full bg-slate-900 hover:bg-slate-800 text-white shadow-md border border-slate-700"
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-700"
             leftIcon={<Tv className="w-4 h-4 text-brand-400" />}
           >
             Modo Telão (Retroprojetor)

@@ -39,7 +39,7 @@ export const ColdStartBanner: React.FC = () => {
   if (!isColdStarting) return null;
 
   return (
-    <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 sm:px-6 shadow-sm transition-all duration-300">
+    <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 sm:px-6 shadow-xs transition-all duration-300">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-3 text-amber-900">
           <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">

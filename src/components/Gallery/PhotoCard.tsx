@@ -50,8 +50,8 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
-        isSelected ? 'ring-3 ring-brand-500 border-brand-500 shadow-md' : ''
+      className={`group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-xs cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
+        isSelected ? 'ring-brand-500 border-brand-500 shadow-md' : ''
       }`}
     >
       {/* Selection Checkbox */}
@@ -133,18 +133,18 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({
 
         {/* Center zoom icon */}
         <div className="self-center text-white/80 group-hover:scale-110 transition-transform">
-          <ZoomIn className="w-7 h-7 drop-shadow-md" />
+          <ZoomIn className="w-7 h-7 [filter:drop-shadow(0_4px_3px_rgb(0_0_0/0.07))_drop-shadow(0_2px_2px_rgb(0_0_0/0.06))]" />
         </div>
 
         {/* Bottom info */}
         <div className="text-white text-[11px]">
           {photo.original_name && (
-            <p className="font-semibold truncate drop-shadow-sm">
+            <p className="font-semibold truncate drop-shadow-xs">
               {photo.original_name}
             </p>
           )}
           {formattedDate && (
-            <p className="text-slate-300 text-[10px] drop-shadow-sm">
+            <p className="text-slate-300 text-[10px] drop-shadow-xs">
               Enviada em {formattedDate}
             </p>
           )}
