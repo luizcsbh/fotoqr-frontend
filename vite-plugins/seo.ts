@@ -95,7 +95,12 @@ export const seoPlugin = (options: SeoOptions): Plugin => {
     name: 'fotoqreventos-seo',
 
     transformIndexHtml() {
-      const tags: { tag: string; attrs: Record<string, string>; injectTo: 'head' }[] = [
+      const tags: {
+        tag: string;
+        attrs: Record<string, string | boolean>;
+        children?: string;
+        injectTo: 'head';
+      }[] = [
         { tag: 'meta', attrs: { name: 'robots', content: 'index, follow' }, injectTo: 'head' },
         { tag: 'meta', attrs: { property: 'og:type', content: 'website' }, injectTo: 'head' },
         { tag: 'meta', attrs: { property: 'og:site_name', content: 'FotoQREventos' }, injectTo: 'head' },
@@ -120,6 +125,25 @@ export const seoPlugin = (options: SeoOptions): Plugin => {
           attrs: { name: 'google-adsense-account', content: adsenseClientId },
           injectTo: 'head',
         });
+        // Código do AdSense no <head> (exigido na revisão do site). Os pedidos de anúncio ficam
+        // pausados até o visitante responder ao aviso de cookies (src/utils/adsenseConsent.ts).
+        tags.push(
+          {
+            tag: 'script',
+            attrs: {},
+            children: '(window.adsbygoogle = window.adsbygoogle || []).pauseAdRequests = 1;',
+            injectTo: 'head',
+          },
+          {
+            tag: 'script',
+            attrs: {
+              async: true,
+              src: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`,
+              crossorigin: 'anonymous',
+            },
+            injectTo: 'head',
+          },
+        );
       }
       return tags;
     },

@@ -8,6 +8,9 @@ import { AlertProvider } from './hooks/useAlert';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import App from './App';
 import './index.css';
+import { initAdsenseConsent } from './utils/adsenseConsent';
+
+initAdsenseConsent();
 
 const queryClient = new QueryClient({
   defaultOptions: {
