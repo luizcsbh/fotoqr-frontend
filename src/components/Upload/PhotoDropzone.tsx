@@ -1,5 +1,9 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { UploadCloud, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import { UploadCloud, Image as ImageIcon, AlertCircle, Camera, Images } from 'lucide-react';
+
+/** Celulares e tablets (tela de toque), onde faz sentido abrir a câmera direto. */
+const isTouchDevice = () =>
+  typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
 
 interface PhotoDropzoneProps {
   onFilesSelected: (files: FileList | File[]) => void;
@@ -16,6 +20,8 @@ export const PhotoDropzone: React.FC<PhotoDropzoneProps> = ({
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [showCameraButton] = useState(isTouchDevice);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -53,6 +59,19 @@ export const PhotoDropzone: React.FC<PhotoDropzoneProps> = ({
     }
   };
 
+  const handleCameraClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!disabled && cameraInputRef.current) {
+      cameraInputRef.current.value = '';
+      cameraInputRef.current.click();
+    }
+  };
+
+  const handleGalleryClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleClick();
+  };
+
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       onFilesSelected(e.target.files);
@@ -77,6 +96,45 @@ export const PhotoDropzone: React.FC<PhotoDropzoneProps> = ({
         disabled={disabled}
       />
 
+      {/*
+        Abre a câmera direto. No Android, o seletor de arquivos comum mostra só a galeria;
+        o atributo capture faz o Chrome/Samsung Internet abrirem a câmera, como no iPhone.
+      */}
+      <input
+        ref={cameraInputRef}
+        id="photo-camera-input"
+        name="photo_camera"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleFileInputChange}
+        disabled={disabled}
+      />
+
+      {showCameraButton && (
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <button
+            type="button"
+            onClick={handleCameraClick}
+            disabled={disabled}
+            className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-brand-600 px-4 py-5 text-white font-bold shadow-md shadow-brand-600/30 active:scale-[0.98] transition-transform disabled:opacity-50"
+          >
+            <Camera className="w-7 h-7" />
+            <span>Tirar foto</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleGalleryClick}
+            disabled={disabled}
+            className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-brand-200 bg-white px-4 py-5 text-brand-700 font-bold active:scale-[0.98] transition-transform disabled:opacity-50"
+          >
+            <Images className="w-7 h-7" />
+            <span>Galeria</span>
+          </button>
+        </div>
+      )}
+
       <div
         onClick={handleClick}
         onDragOver={handleDragOver}
@@ -99,7 +157,7 @@ export const PhotoDropzone: React.FC<PhotoDropzoneProps> = ({
         </div>
 
         <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-1.5 group-hover:text-brand-700 transition-colors">
-          Toque ou arraste fotos aqui
+          {showCameraButton ? 'Ou toque aqui para escolher fotos' : 'Toque ou arraste fotos aqui'}
         </h3>
 
         <p className="text-sm text-slate-500 max-w-sm mb-4 leading-relaxed">
