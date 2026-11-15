@@ -1,6 +1,7 @@
 import React from 'react';
 import { Camera, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { openCookiePreferences } from '../../utils/cookieConsent';
 
 export const Footer: React.FC = () => {
   return (
@@ -16,13 +17,19 @@ export const Footer: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-6 text-sm text-slate-500">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slate-500">
             <Link to="/" className="hover:text-brand-600 transition-colors">
               Início
             </Link>
             <Link to="/login?mode=login" className="hover:text-brand-600 transition-colors">
               Entrar
             </Link>
+            <Link to="/politica-de-cookies" className="hover:text-brand-600 transition-colors">
+              Política de Cookies
+            </Link>
+            <button type="button" onClick={openCookiePreferences} className="hover:text-brand-600 transition-colors">
+              Preferências de cookies
+            </button>
             <span className="text-slate-300">|</span>
             <span className="flex items-center gap-1 text-xs sm:text-sm">
               Feito com <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> para momentos inesquecíveis

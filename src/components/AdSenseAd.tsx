@@ -1,16 +1,32 @@
 import React, { useEffect, useRef } from 'react';
+import { useCookieConsent } from '../hooks/useCookieConsent';
+import { onCookieConsentChange } from '../utils/cookieConsent';
 
 declare global {
   interface Window {
-    adsbygoogle?: Array<Record<string, unknown>>;
+    adsbygoogle?: Array<Record<string, unknown>> & { requestNonPersonalizedAds?: 0 | 1 };
   }
 }
 
 const clientId = import.meta.env.VITE_ADSENSE_CLIENT_ID;
 let adsenseScript: Promise<void> | null = null;
+/** Preferência de publicidade com que o script do AdSense foi carregado nesta página. */
+let loadedWithPersonalizedAds: boolean | null = null;
 
-function loadAdSenseScript(): Promise<void> {
+// O AdSense só lê a preferência ao carregar; se o usuário mudar depois, recarrega a página.
+onCookieConsentChange((consent) => {
+  if (loadedWithPersonalizedAds !== null && loadedWithPersonalizedAds !== consent.ads) {
+    window.location.reload();
+  }
+});
+
+function loadAdSenseScript(personalizedAds: boolean): Promise<void> {
   if (adsenseScript) return adsenseScript;
+
+  // Sem consentimento para publicidade personalizada → anúncios não personalizados (LGPD).
+  window.adsbygoogle = window.adsbygoogle || [];
+  window.adsbygoogle.requestNonPersonalizedAds = personalizedAds ? 0 : 1;
+  loadedWithPersonalizedAds = personalizedAds;
 
   adsenseScript = new Promise((resolve, reject) => {
     const existingScript = document.querySelector<HTMLScriptElement>(
@@ -64,15 +80,19 @@ export const AdSenseAd: React.FC<AdSenseAdProps> = ({
 }) => {
   const adRef = useRef<HTMLModElement>(null);
   const adSlot = slot?.trim();
+  const consent = useCookieConsent();
+  // Nenhum anúncio é solicitado antes de o usuário responder ao aviso de cookies.
+  const hasDecided = consent !== null;
+  const personalizedAds = consent?.ads ?? false;
 
   useEffect(() => {
-    if (!clientId || !/^ca-pub-\d+$/.test(clientId) || !adSlot || !adRef.current) {
+    if (!hasDecided || !clientId || !/^ca-pub-\d+$/.test(clientId) || !adSlot || !adRef.current) {
       return;
     }
 
     let isMounted = true;
 
-    loadAdSenseScript()
+    loadAdSenseScript(personalizedAds)
       .then(() => {
         if (!isMounted || !adRef.current) return;
         window.adsbygoogle = window.adsbygoogle || [];
@@ -85,9 +105,9 @@ export const AdSenseAd: React.FC<AdSenseAdProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [adSlot, placement]);
+  }, [adSlot, placement, hasDecided, personalizedAds]);
 
-  if (!clientId || !/^ca-pub-\d+$/.test(clientId) || !adSlot) return null;
+  if (!hasDecided || !clientId || !/^ca-pub-\d+$/.test(clientId) || !adSlot) return null;
 
   return (
     <aside

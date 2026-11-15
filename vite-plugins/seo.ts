@@ -23,7 +23,10 @@ interface SeoOptions {
 }
 
 /** Páginas públicas que devem aparecer no Google. */
-const PUBLIC_PATHS = [{ path: '/', changefreq: 'weekly', priority: '1.0' }];
+const PUBLIC_PATHS = [
+  { path: '/', changefreq: 'weekly', priority: '1.0' },
+  { path: '/politica-de-cookies', changefreq: 'yearly', priority: '0.3' },
+];
 
 /** Áreas privadas ou de convidados que não devem ser rastreadas. */
 const DISALLOWED_PATHS = [

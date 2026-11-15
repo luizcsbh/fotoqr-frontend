@@ -4,6 +4,7 @@ import { Header } from './components/Layout/Header';
 import { Footer } from './components/Layout/Footer';
 import { ProtectedRoute } from './components/Layout/ProtectedRoute';
 import { ColdStartBanner } from './components/ColdStartBanner';
+import { CookieConsentBanner } from './components/CookieConsentBanner';
 
 // Pages
 import { LandingPage } from './pages/LandingPage';
@@ -25,6 +26,7 @@ import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { DJConsolePage } from './pages/DJConsolePage';
 import { StaffAccessPage } from './pages/StaffAccessPage';
 import { TableCardPage } from './pages/TableCardPage';
+import { CookiePolicyPage } from './pages/CookiePolicyPage';
 
 // Standard App Layout with Header and Footer
 const MainLayout: React.FC = () => {
@@ -42,6 +44,7 @@ const MainLayout: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
+    <>
     <Routes>
       {/* Routes wrapped in MainLayout */}
       <Route element={<MainLayout />}>
@@ -49,6 +52,7 @@ export const App: React.FC = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/esqueci-a-senha" element={<ForgotPasswordPage />} />
         <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
+        <Route path="/politica-de-cookies" element={<CookiePolicyPage />} />
 
         {/* Protected Dashboard Routes */}
         <Route
@@ -196,6 +200,8 @@ export const App: React.FC = () => {
         }
       />
     </Routes>
+    <CookieConsentBanner />
+    </>
   );
 };
 
