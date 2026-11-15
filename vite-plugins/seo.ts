@@ -8,8 +8,9 @@ import type { Plugin } from 'vite';
  *                  (painel, eventos, convites, fotos enviadas, API).
  *  - sitemap.xml → lista as páginas públicas (apenas quando VITE_SITE_URL existe).
  *
- * E injeta no index.html: canonical, Open Graph e a meta de verificação
- * do Google Search Console (VITE_GOOGLE_SITE_VERIFICATION).
+ * E injeta no index.html: canonical, Open Graph, a meta de verificação
+ * do Google Search Console (VITE_GOOGLE_SITE_VERIFICATION) e a meta
+ * google-adsense-account (VITE_ADSENSE_CLIENT_ID) usada na revisão do AdSense.
  */
 
 interface SeoOptions {
@@ -17,6 +18,8 @@ interface SeoOptions {
   siteUrl?: string;
   /** Código da meta "google-site-verification" do Search Console. */
   googleSiteVerification?: string;
+  /** ID do editor do AdSense, ex.: ca-pub-1234567890. */
+  adsenseClientId?: string;
 }
 
 /** Páginas públicas que devem aparecer no Google. */
@@ -45,8 +48,23 @@ const normalizeUrl = (url?: string) => (url ? url.trim().replace(/\/+$/, '') : '
 
 const escapeAttr = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
+/**
+ * O robô do AdSense (Mediapartners-Google) precisa ler as páginas onde há
+ * anúncios (ex.: galeria do evento) para exibir anúncios relevantes. Ele não
+ * indexa nada na Busca, então liberá-lo não expõe essas páginas no Google.
+ */
+const ADS_CRAWLER_DISALLOWED_PATHS = ['/api/', '/uploads/'];
+
 export const buildRobotsTxt = (siteUrl: string) => {
-  const lines = ['User-agent: *', 'Allow: /', ...DISALLOWED_PATHS.map((p) => `Disallow: ${p}`)];
+  const lines = [
+    'User-agent: Mediapartners-Google',
+    'Allow: /',
+    ...ADS_CRAWLER_DISALLOWED_PATHS.map((p) => `Disallow: ${p}`),
+    '',
+    'User-agent: *',
+    'Allow: /',
+    ...DISALLOWED_PATHS.map((p) => `Disallow: ${p}`),
+  ];
   if (siteUrl) lines.push('', `Sitemap: ${siteUrl}/sitemap.xml`);
   return `${lines.join('\n')}\n`;
 };
@@ -67,6 +85,7 @@ export const buildSitemapXml = (siteUrl: string, lastmod: string) => {
 export const seoPlugin = (options: SeoOptions): Plugin => {
   const siteUrl = normalizeUrl(options.siteUrl);
   const verification = options.googleSiteVerification?.trim() ?? '';
+  const adsenseClientId = options.adsenseClientId?.trim() ?? '';
   const lastmod = new Date().toISOString().slice(0, 10);
 
   return {
@@ -89,6 +108,13 @@ export const seoPlugin = (options: SeoOptions): Plugin => {
         tags.push({
           tag: 'meta',
           attrs: { name: 'google-site-verification', content: escapeAttr(verification) },
+          injectTo: 'head',
+        });
+      }
+      if (/^ca-pub-\d+$/.test(adsenseClientId)) {
+        tags.push({
+          tag: 'meta',
+          attrs: { name: 'google-adsense-account', content: adsenseClientId },
           injectTo: 'head',
         });
       }

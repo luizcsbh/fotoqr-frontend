@@ -4,7 +4,11 @@ import { seoPlugin } from './vite-plugins/seo';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const { VITE_API_URL, VITE_SITE_URL, VITE_GOOGLE_SITE_VERIFICATION } = loadEnv(mode, process.cwd(), 'VITE_');
+  const { VITE_API_URL, VITE_SITE_URL, VITE_GOOGLE_SITE_VERIFICATION, VITE_ADSENSE_CLIENT_ID } = loadEnv(
+    mode,
+    process.cwd(),
+    'VITE_',
+  );
 
   if (mode === 'development' && !VITE_API_URL) {
     throw new Error('Defina VITE_API_URL no arquivo .env do frontend.');
@@ -13,7 +17,11 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
-      seoPlugin({ siteUrl: VITE_SITE_URL, googleSiteVerification: VITE_GOOGLE_SITE_VERIFICATION }),
+      seoPlugin({
+        siteUrl: VITE_SITE_URL,
+        googleSiteVerification: VITE_GOOGLE_SITE_VERIFICATION,
+        adsenseClientId: VITE_ADSENSE_CLIENT_ID,
+      }),
     ],
     server: {
       port: 5173,
