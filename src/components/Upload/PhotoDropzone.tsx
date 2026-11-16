@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { UploadCloud, Image as ImageIcon, AlertCircle, Camera, Images } from 'lucide-react';
+import { UploadCloud, Image as ImageIcon, AlertCircle, Camera } from 'lucide-react';
 
 /** Celulares e tablets (tela de toque), onde faz sentido abrir a câmera direto. */
 const isTouchDevice = () =>
@@ -67,11 +67,6 @@ export const PhotoDropzone: React.FC<PhotoDropzoneProps> = ({
     }
   };
 
-  const handleGalleryClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    handleClick();
-  };
-
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       onFilesSelected(e.target.files);
@@ -112,27 +107,17 @@ export const PhotoDropzone: React.FC<PhotoDropzoneProps> = ({
         disabled={disabled}
       />
 
+      {/* A área de toque abaixo já abre o seletor do sistema, que permite escolher da galeria. */}
       {showCameraButton && (
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <button
-            type="button"
-            onClick={handleCameraClick}
-            disabled={disabled}
-            className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-brand-600 px-4 py-5 text-white font-bold shadow-md shadow-brand-600/30 active:scale-[0.98] transition-transform disabled:opacity-50"
-          >
-            <Camera className="w-7 h-7" />
-            <span>Tirar foto</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleGalleryClick}
-            disabled={disabled}
-            className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-brand-200 bg-white px-4 py-5 text-brand-700 font-bold active:scale-[0.98] transition-transform disabled:opacity-50"
-          >
-            <Images className="w-7 h-7" />
-            <span>Galeria</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleCameraClick}
+          disabled={disabled}
+          className="mb-4 flex w-full items-center justify-center gap-3 rounded-2xl bg-brand-600 px-4 py-5 text-white font-bold shadow-md shadow-brand-600/30 active:scale-[0.98] transition-transform disabled:opacity-50"
+        >
+          <Camera className="w-7 h-7" />
+          <span>Tirar foto</span>
+        </button>
       )}
 
       <div
