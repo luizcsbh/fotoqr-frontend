@@ -22,6 +22,7 @@ import { LoadingScreen } from '../components/Layout/LoadingScreen';
 import { ColdStartBanner } from '../components/ColdStartBanner';
 import toast from 'react-hot-toast';
 import { AdSenseAd, adSlots } from '../components/AdSenseAd';
+import { SharePhotoButton, prefetchShareFile } from '../components/Gallery/SharePhotoButton';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -72,13 +73,20 @@ async function fetchGallery(uuid: string, page: number, limit: number): Promise<
 interface LightboxProps {
   photos: Photo[];
   index: number;
+  eventTitle: string;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
 }
 
-const Lightbox: React.FC<LightboxProps> = ({ photos, index, onClose, onPrev, onNext }) => {
+const Lightbox: React.FC<LightboxProps> = ({ photos, index, eventTitle, onClose, onPrev, onNext }) => {
   const photo = photos[index];
+
+  // No celular, já baixa a foto aberta para o "Compartilhar" enviar a imagem sem demora.
+  React.useEffect(() => {
+    prefetchShareFile(photo);
+  }, [photo]);
+
   if (!photo) return null;
 
   return (
@@ -95,6 +103,7 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onClose, onPrev, onN
           {index + 1} / {photos.length}
         </span>
         <div className="flex items-center gap-2">
+          <SharePhotoButton photo={photo} eventTitle={eventTitle} />
           <a
             href={photo.url}
             download={photo.filename}
@@ -296,6 +305,7 @@ export const EventGalleryPage: React.FC = () => {
         <Lightbox
           photos={photos}
           index={lightboxIndex}
+          eventTitle={event.title}
           onClose={() => setLightboxIndex(null)}
           onPrev={() => setLightboxIndex((i) => (i !== null && i > 0 ? i - 1 : i))}
           onNext={() =>
@@ -488,6 +498,13 @@ export const EventGalleryPage: React.FC = () => {
                       <div className="w-3.5 h-3.5 rounded-sm border border-white/80" />
                     )}
                   </span>
+
+                  <SharePhotoButton
+                    photo={photo}
+                    eventTitle={event.title}
+                    variant="thumbnail"
+                    className="absolute top-2 right-2 z-10"
+                  />
 
                   <img
                     src={photo.thumbnail_url || photo.url}
