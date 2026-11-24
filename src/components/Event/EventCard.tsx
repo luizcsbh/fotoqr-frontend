@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Image as ImageIcon, ArrowRight, ToggleLeft, ToggleRight, QrCode, Maximize2, Download, Copy, Check, ExternalLink, Tv, Sparkles } from 'lucide-react';
+import { Calendar, Image as ImageIcon, ArrowRight, ToggleLeft, ToggleRight, QrCode, Maximize2, Download, Copy, Check, ExternalLink, Tv, Sparkles, Pencil } from 'lucide-react';
 import { Event } from '../../types';
 import { Card } from '../UI/Card';
 import { Badge } from '../UI/Badge';
 import { Button } from '../UI/Button';
 import { Modal } from '../UI/Modal';
+import { EditEventModal } from './EditEventModal';
 import { QRCodeCanvas } from 'qrcode.react';
 import { getShareableEventUrl, getPresentationUrl } from '../../utils/url';
 import { getFotoQrImageSettings } from '../../utils/qrLogo';
@@ -28,6 +29,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   isToggling = false,
 }) => {
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // Generates mobile-friendly URL using LAN IP when on localhost
@@ -127,14 +129,29 @@ export const EventCard: React.FC<EventCardProps> = ({
                 </span>
               </div>
 
-              <Link
-                to={manageUrl}
-                className="block group-hover:text-brand-600 transition-colors"
-              >
-                <h3 className="font-bold text-slate-900 text-lg leading-tight truncate">
-                  {event.title}
-                </h3>
-              </Link>
+              <div className="flex items-center gap-1.5">
+                <Link
+                  to={manageUrl}
+                  className="block group-hover:text-brand-600 transition-colors flex-1 min-w-0"
+                >
+                  <h3 className="font-bold text-slate-900 text-lg leading-tight truncate">
+                    {event.title}
+                  </h3>
+                </Link>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsEditModalOpen(true);
+                  }}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors shrink-0"
+                  title="Editar evento (mantendo o mesmo QR Code)"
+                  aria-label="Editar evento"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             {/* Clickable QR thumbnail with hover zoom overlay */}
@@ -332,6 +349,13 @@ export const EventCard: React.FC<EventCardProps> = ({
           </div>
         </div>
       </Modal>
+
+      {/* Edit Event Modal */}
+      <EditEventModal
+        event={event}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
     </>
   );
 };

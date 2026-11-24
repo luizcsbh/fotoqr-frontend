@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, FolderHeart, RefreshCw, AlertCircle } from 'lucide-react';
+import { Plus, Search, FolderHeart, RefreshCw, AlertCircle, ShieldCheck } from 'lucide-react';
 import { eventService } from '../services/event.service';
 import { EventCard } from '../components/Event/EventCard';
 import { CreateEventForm } from '../components/Event/CreateEventForm';
@@ -11,9 +11,12 @@ import { EmptyState } from '../components/UI/EmptyState';
 import { CreateEventData } from '../types';
 import toast from 'react-hot-toast';
 import { AdSenseAd, adSlots } from '../components/AdSenseAd';
+import { useAuth } from '../hooks/useAuth';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'super_admin' || user?.role === 'platform_admin';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'paused'>('all');
@@ -78,11 +81,21 @@ export const DashboardPage: React.FC = () => {
       {/* Top Header Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Meus Eventos
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              {isSuperAdmin ? 'Todos os Eventos' : 'Meus Eventos'}
+            </h1>
+            {isSuperAdmin && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500/10 to-brand-500/10 text-brand-700 border border-brand-200">
+                <ShieldCheck className="w-3.5 h-3.5 text-brand-600" />
+                Super Admin
+              </span>
+            )}
+          </div>
           <p className="text-sm text-slate-500 mt-1">
-            Gerencie seus álbuns de fotos, acesse QR Codes e baixe os envios em alta qualidade.
+            {isSuperAdmin
+              ? 'Acesso total de Super Administrador a todos os álbuns criados na plataforma.'
+              : 'Gerencie seus álbuns de fotos, acesse QR Codes e baixe os envios em alta qualidade.'}
           </p>
         </div>
 

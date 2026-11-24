@@ -26,6 +26,7 @@ import {
   Palette,
   BarChart3,
   Camera,
+  Pencil,
 } from 'lucide-react';
 import { eventService } from '../services/event.service';
 import { photoService } from '../services/photo.service';
@@ -45,6 +46,7 @@ import { ReaderManager } from '../components/Event/ReaderManager';
 import { CoverEditor } from '../components/Event/CoverEditor';
 import { EventDashboardHub } from '../components/Event/EventDashboardHub';
 import { MessageWallManager } from '../components/Event/MessageWallManager';
+import { EditEventModal } from '../components/Event/EditEventModal';
 import toast from 'react-hot-toast';
 
 export const EventDetailPage: React.FC = () => {
@@ -87,6 +89,9 @@ export const EventDetailPage: React.FC = () => {
     if (tabFromUrl && tabFromUrl !== activeTab) {
       setActiveTabState(tabFromUrl);
     }
+    if (searchParams.get('edit') === 'true' || routeTab === 'edit' || routeTab === 'editar') {
+      setIsEditModalOpen(true);
+    }
   }, [routeTab, searchParams]);
 
   const setActiveTab = (newTab: TabType) => {
@@ -95,6 +100,9 @@ export const EventDetailPage: React.FC = () => {
   };
 
   const [page, setPage] = useState(1);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(
+    searchParams.get('edit') === 'true' || routeTab === 'edit' || routeTab === 'editar'
+  );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDownloadingZip, setIsDownloadingZip] = useState(false);
   const [deletingPhotoId, setDeletingPhotoId] = useState<string | null>(null);
@@ -336,6 +344,16 @@ export const EventDetailPage: React.FC = () => {
         </Link>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* Edit event details button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsEditModalOpen(true)}
+            leftIcon={<Pencil className="w-4 h-4 text-brand-600" />}
+          >
+            Editar Evento
+          </Button>
+
           {/* Toggle status button */}
           <Button
             variant={event.is_active ? 'outline' : 'secondary'}
@@ -791,6 +809,13 @@ export const EventDetailPage: React.FC = () => {
           <strong className="text-slate-900 font-semibold">{event.title}</strong>?
         </p>
       </Modal>
+
+      {/* Edit Event Modal */}
+      <EditEventModal
+        event={event}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
     </div>
   );
 };

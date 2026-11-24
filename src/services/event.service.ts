@@ -52,6 +52,30 @@ export const eventService = {
     return normalizeEvent(raw);
   },
 
+  async updateEvent(id: string, data: Partial<CreateEventData> & { id?: string; [key: string]: any }): Promise<Event> {
+    const payload = {
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      location: data.location,
+      capacity: data.capacity,
+      maxEntriesPerInvitation: (data as any).maxEntriesPerInvitation ?? (data as any).max_entries_per_invitation,
+      startDate: data.start_date || data.startDate || data.event_date || data.eventDate,
+      endDate: data.end_date || data.endDate,
+      startAt: data.start_at || data.startAt || data.start_date || data.startDate,
+      endAt: data.end_at || data.endAt || data.end_date || data.endDate,
+      eventDate: data.event_date || data.eventDate || data.start_date || data.startDate,
+      enableDjPlaylist: data.enable_dj_playlist ?? (data as any).enableDjPlaylist,
+      requirePhotoApproval: data.require_photo_approval ?? (data as any).requirePhotoApproval,
+      enableMessageWall: data.enable_message_wall ?? (data as any).enableMessageWall,
+      isActive: data.is_active ?? (data as any).isActive,
+      status: (data as any).status,
+    };
+    const response = await api.put(`/api/events/${id}`, payload);
+    const raw = response.data?.data || response.data?.event || response.data;
+    return normalizeEvent(raw);
+  },
+
   async getUserEvents(): Promise<Event[]> {
     const response = await api.get('/api/events');
     const rawList = response.data?.data || response.data?.events || response.data;
