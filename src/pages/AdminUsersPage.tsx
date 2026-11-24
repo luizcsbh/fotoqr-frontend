@@ -175,7 +175,7 @@ export const AdminUsersPage: React.FC = () => {
             className={`${fieldClass} mt-1`}
           >
             <option value="">Todos os perfis</option>
-            {ASSIGNABLE_ROLES.map((r) => (
+            {[...ASSIGNABLE_ROLES, 'super_admin'].map((r) => (
               <option key={r} value={r}>
                 {ROLE_LABELS[r]}
               </option>
@@ -303,7 +303,8 @@ export const AdminUsersPage: React.FC = () => {
                       }
                       className="h-9 px-2.5 bg-white text-slate-800 rounded-lg text-sm border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:outline-hidden disabled:bg-slate-50 disabled:text-slate-500"
                     >
-                      {ASSIGNABLE_ROLES.map((r) => (
+                      {/* Super admin only shows for the configured accounts, whose row is locked */}
+                      {(u.role === 'super_admin' ? [...ASSIGNABLE_ROLES, 'super_admin'] : ASSIGNABLE_ROLES).map((r) => (
                         <option key={r} value={r}>
                           {ROLE_LABELS[r]}
                         </option>
@@ -411,7 +412,7 @@ export const AdminUsersPage: React.FC = () => {
             <strong className="text-slate-900">{pending.user.name}</strong> passará de{' '}
             <strong>{ROLE_LABELS[pending.user.role] ?? pending.user.role}</strong> para{' '}
             <strong>{ROLE_LABELS[pending.role]}</strong>.
-            {pending.role === 'super_admin' && ' Super admins veem e gerenciam todos os eventos, fotos e usuários.'}{' '}
+{' '}
             A pessoa precisará entrar de novo.
           </p>
         )}
