@@ -209,9 +209,9 @@ export const EventDetailPage: React.FC = () => {
   // Delete event mutation
   const deleteEventMutation = useMutation({
     mutationFn: () => eventService.deleteEvent(id!),
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
-      toast.success('Evento excluído com sucesso.');
+      toast.success(result.message || 'Evento excluído com sucesso.');
       navigate('/dashboard', { replace: true });
     },
     onError: () => {
@@ -781,7 +781,7 @@ export const EventDetailPage: React.FC = () => {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         title="Excluir este álbum?"
-        description="Esta ação é irreversível. Todas as fotos e o QR Code associado deixarão de funcionar."
+        description="Esta ação é irreversível. Todas as fotos do evento serão apagadas e o QR Code deixará de funcionar."
         maxWidth="sm"
         footer={
           <>
@@ -806,7 +806,10 @@ export const EventDetailPage: React.FC = () => {
       >
         <p className="text-xs text-slate-600">
           Você tem certeza de que deseja remover permanentemente o evento{' '}
-          <strong className="text-slate-900 font-semibold">{event.title}</strong>?
+          <strong className="text-slate-900 font-semibold">{event.title}</strong>
+{' '}e <strong className="text-slate-900 font-semibold">todas as suas fotos</strong>
+          {(event.photo_count ?? 0) > 0 && <> ({event.photo_count} publicadas, além das pendentes)</>}? Baixe as fotos
+          antes, se quiser guardá-las.
         </p>
       </Modal>
 
