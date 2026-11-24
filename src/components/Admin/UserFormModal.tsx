@@ -8,7 +8,8 @@ import { isPasswordValid } from '../../utils/passwordRules';
 import { ROLE_LABELS } from '../../utils/roles';
 import { ManagedUser, ManagedUserRole } from '../../types';
 
-export const ASSIGNABLE_ROLES: ManagedUserRole[] = ['user', 'dj', 'reader', 'super_admin'];
+/** Super admin is not assignable: only the e-mails in the server's SUPER_ADMIN_EMAIL are super admins. */
+export const ASSIGNABLE_ROLES: ManagedUserRole[] = ['user', 'dj', 'reader'];
 
 export interface UserFormValues {
   name: string;

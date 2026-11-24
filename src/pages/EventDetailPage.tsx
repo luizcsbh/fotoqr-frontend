@@ -48,10 +48,13 @@ import { EventDashboardHub } from '../components/Event/EventDashboardHub';
 import { MessageWallManager } from '../components/Event/MessageWallManager';
 import { EditEventModal } from '../components/Event/EditEventModal';
 import toast from 'react-hot-toast';
+import { useAuth } from '../hooks/useAuth';
+import { isSuperAdmin } from '../utils/roles';
 
 export const EventDetailPage: React.FC = () => {
   const { id, tab: routeTab } = useParams<{ id: string; tab?: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
@@ -275,7 +278,11 @@ export const EventDetailPage: React.FC = () => {
     return <LoadingScreen message="Carregando detalhes do álbum..." />;
   }
 
-  if (isEventError || !event) {
+  // The event page is the owner's (or a super admin's) panel. The public event data is reachable by
+  // UUID, so without this check anyone with an event's link could open its panel.
+  const canManage = Boolean(event) && (isSuperAdmin(user) || String(event?.user_id) === String(user?.id));
+
+  if (isEventError || !event || !canManage) {
     return (
       <div className="max-w-xl mx-auto my-16 p-8 text-center bg-white rounded-3xl border border-slate-200">
         <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
