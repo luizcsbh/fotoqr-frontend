@@ -135,8 +135,10 @@ export const eventService = {
     return response.data?.data;
   },
 
-  async deleteEvent(id: string): Promise<void> {
-    await api.delete(`/api/events/${id}`);
+  /** Deletes the event and every photo uploaded to it. */
+  async deleteEvent(id: string): Promise<{ photosDeleted: number; message?: string }> {
+    const response = await api.delete(`/api/events/${id}`);
+    return { photosDeleted: Number(response.data?.photosDeleted) || 0, message: response.data?.message };
   },
 
   async getEventStats(id: string): Promise<EventStats> {

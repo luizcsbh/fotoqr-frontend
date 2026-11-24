@@ -1,8 +1,9 @@
 import React from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { Header } from './components/Layout/Header';
 import { Footer } from './components/Layout/Footer';
 import { ProtectedRoute } from './components/Layout/ProtectedRoute';
+import { SuperAdminRoute } from './components/Layout/SuperAdminRoute';
 import { ColdStartBanner } from './components/ColdStartBanner';
 import { CookieConsentBanner } from './components/CookieConsentBanner';
 
@@ -27,6 +28,8 @@ import { DJConsolePage } from './pages/DJConsolePage';
 import { StaffAccessPage } from './pages/StaffAccessPage';
 import { TableCardPage } from './pages/TableCardPage';
 import { CookiePolicyPage } from './pages/CookiePolicyPage';
+import { AdminAuditPage } from './pages/AdminAuditPage';
+import { AdminUsersPage } from './pages/AdminUsersPage';
 
 // Standard App Layout with Header and Footer
 const MainLayout: React.FC = () => {
@@ -141,6 +144,25 @@ export const App: React.FC = () => {
             <ProtectedRoute>
               <QRCodeCustomizerPage />
             </ProtectedRoute>
+          }
+        />
+
+        {/* Super admin console */}
+        <Route path="/admin" element={<Navigate to="/admin/auditoria" replace />} />
+        <Route
+          path="/admin/auditoria"
+          element={
+            <SuperAdminRoute>
+              <AdminAuditPage />
+            </SuperAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/usuarios"
+          element={
+            <SuperAdminRoute>
+              <AdminUsersPage />
+            </SuperAdminRoute>
           }
         />
 

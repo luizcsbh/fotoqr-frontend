@@ -299,3 +299,52 @@ export interface DashboardMetrics {
   }>;
   categoryBreakdown: Array<{ category: string; total: number; present: number }>;
 }
+
+/** One entry of the platform audit trail (super admin screen). */
+export interface AuditLogEntry {
+  id: number;
+  action: string;
+  entityType: string;
+  entityId: number | null;
+  eventId: number | null;
+  eventTitle: string | null;
+  description: string | null;
+  metadata: Record<string, unknown> | null;
+  ipAddress: string | null;
+  createdAt: string;
+  actor: { id: number | null; name: string | null; email: string | null } | null;
+}
+
+export interface AuditLogPage {
+  items: AuditLogEntry[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  /** Every action present in the trail, for the filter */
+  actions: string[];
+}
+
+export type ManagedUserRole = 'user' | 'dj' | 'super_admin';
+
+/** A platform account as listed in the super admin user management screen. */
+export interface ManagedUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+  eventCount: number;
+  photoCount: number;
+  /** Super admin defined in the server configuration: cannot be changed from the screen */
+  isProtected: boolean;
+}
+
+export interface ManagedUserPage {
+  items: ManagedUser[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
