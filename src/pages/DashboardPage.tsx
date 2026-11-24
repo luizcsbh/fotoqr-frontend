@@ -66,9 +66,12 @@ export const DashboardPage: React.FC = () => {
 
   // Filtered events
   const filteredEvents = events.filter((ev) => {
+    const q = searchQuery.toLowerCase();
     const matchesSearch =
-      ev.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (ev.description && ev.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      ev.title.toLowerCase().includes(q) ||
+      (ev.description && ev.description.toLowerCase().includes(q)) ||
+      (ev.owner_name && ev.owner_name.toLowerCase().includes(q)) ||
+      (ev.owner_email && ev.owner_email.toLowerCase().includes(q));
 
     if (!matchesSearch) return false;
     if (filterActive === 'active') return ev.is_active;

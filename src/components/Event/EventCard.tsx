@@ -181,6 +181,16 @@ export const EventCard: React.FC<EventCardProps> = ({
             </p>
           )}
 
+          {/* Owner attribution (visible when viewing all events as Super Admin) */}
+          {(event.owner_name || event.owner_email) && (
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-3 truncate bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+              <span className="font-medium text-slate-600">Criado por:</span>
+              <span className="truncate font-semibold text-slate-800" title={event.owner_email || undefined}>
+                {event.owner_name || event.owner_email}
+              </span>
+            </div>
+          )}
+
           {/* Stats Row */}
           <div className="grid grid-cols-2 gap-2 py-3 border-y border-slate-100 text-xs text-slate-600 mb-4">
             <div className="flex items-center gap-1.5">

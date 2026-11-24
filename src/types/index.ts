@@ -18,6 +18,8 @@ export interface Event {
   id: string;
   uuid: string;
   user_id?: string;
+  owner_name?: string;
+  owner_email?: string;
   title: string;
   description?: string;
   category?: string;
