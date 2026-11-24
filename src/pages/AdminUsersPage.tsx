@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AlertCircle, Lock, RefreshCw, Search, Trash2, UserCheck, UserX, Users } from 'lucide-react';
+import { AlertCircle, Link2, Lock, Pencil, RefreshCw, Search, Trash2, UserCheck, UserPlus, UserX, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { adminService } from '../services/admin.service';
 import { AdminHeader } from '../components/Layout/AdminHeader';
@@ -12,8 +12,7 @@ import { Pagination } from '../components/UI/Pagination';
 import { useAuth } from '../hooks/useAuth';
 import { ROLE_LABELS } from '../utils/roles';
 import { ManagedUser, ManagedUserRole } from '../types';
-
-const ASSIGNABLE_ROLES: ManagedUserRole[] = ['user', 'dj', 'super_admin'];
+import { ASSIGNABLE_ROLES, UserFormModal, UserFormValues } from '../components/Admin/UserFormModal';
 const dateFormat = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' });
 
 /** Change waiting for the super admin's confirmation */
@@ -35,6 +34,8 @@ export const AdminUsersPage: React.FC = () => {
   const [status, setStatus] = useState<'' | 'active' | 'inactive'>('');
   const [pending, setPending] = useState<PendingAction | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  /** null = closed, 'new' = create form, a user = edit form */
+  const [formTarget, setFormTarget] = useState<ManagedUser | 'new' | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -83,6 +84,36 @@ export const AdminUsersPage: React.FC = () => {
     onError: (err) => toast.error(errorMessage(err, 'Não foi possível excluir o usuário.')),
   });
 
+  const createMutation = useMutation({
+    mutationFn: (values: UserFormValues) => adminService.createUser(values),
+    onSuccess: (created) => {
+      toast.success(`Conta de ${created.name} criada.`);
+      refresh();
+      setFormTarget(null);
+    },
+    onError: (err) => toast.error(errorMessage(err, 'Não foi possível criar o usuário.')),
+  });
+
+  const editMutation = useMutation({
+    mutationFn: ({ id, values }: { id: number; values: UserFormValues }) =>
+      adminService.updateUser(id, {
+        name: values.name,
+        email: values.email,
+        ...(values.password && { password: values.password }),
+      }),
+    onSuccess: (updated) => {
+      toast.success(`Conta de ${updated.name} atualizada.`);
+      refresh();
+      setFormTarget(null);
+    },
+    onError: (err) => toast.error(errorMessage(err, 'Não foi possível salvar as alterações.')),
+  });
+
+  const handleFormSubmit = (values: UserFormValues) => {
+    if (formTarget === 'new') createMutation.mutate(values);
+    else if (formTarget) editMutation.mutate({ id: formTarget.id, values });
+  };
+
   const confirmPending = () => {
     if (!pending) return;
     if (pending.kind === 'role') updateMutation.mutate({ id: pending.user.id, role: pending.role });
@@ -103,10 +134,20 @@ export const AdminUsersPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <AdminHeader
-        title="Usuários"
-        description="Gerencie as contas da plataforma: perfis de acesso, desativação e exclusão."
-      />
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <AdminHeader
+          title="Usuários"
+          description="Gerencie as contas da plataforma: criação, dados de acesso, perfis, desativação e exclusão."
+        />
+        <Button
+          variant="primary"
+          onClick={() => setFormTarget('new')}
+          leftIcon={<UserPlus className="w-5 h-5" />}
+          className="shrink-0 self-start"
+        >
+          Novo usuário
+        </Button>
+      </div>
 
       {/* Filters */}
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_180px_180px_auto] gap-3 items-end bg-white p-3 rounded-2xl border border-slate-200/80 mb-4">
@@ -225,6 +266,15 @@ export const AdminUsersPage: React.FC = () => {
                           {u.name}
                         </span>
                         {!u.isActive && <Badge variant="danger">Desativado</Badge>}
+                        {!u.hasPassword && (
+                          <span
+                            title="Sem senha: entra só pelo link exclusivo de DJ ou portaria"
+                            className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500"
+                          >
+                            <Link2 className="w-3.5 h-3.5" />
+                            Acesso por link
+                          </span>
+                        )}
                         {locked && (
                           <span title={locked} className="inline-flex items-center text-slate-400">
                             <Lock className="w-3.5 h-3.5" />
@@ -259,6 +309,16 @@ export const AdminUsersPage: React.FC = () => {
                         </option>
                       ))}
                     </select>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={Boolean(locked) || isBusy}
+                      title={locked ?? 'Editar nome, e-mail e senha'}
+                      onClick={() => setFormTarget(u)}
+                      leftIcon={<Pencil className="w-4 h-4" />}
+                    >
+                      Editar
+                    </Button>
                     {u.isActive ? (
                       <Button
                         variant="outline"
@@ -306,6 +366,14 @@ export const AdminUsersPage: React.FC = () => {
           />
         </>
       )}
+
+      <UserFormModal
+        isOpen={formTarget !== null}
+        user={formTarget && formTarget !== 'new' ? formTarget : undefined}
+        isSaving={createMutation.isPending || editMutation.isPending}
+        onClose={() => setFormTarget(null)}
+        onSubmit={handleFormSubmit}
+      />
 
       {/* Confirmation */}
       <Modal

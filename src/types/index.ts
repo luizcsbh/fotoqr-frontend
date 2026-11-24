@@ -325,7 +325,7 @@ export interface AuditLogPage {
   actions: string[];
 }
 
-export type ManagedUserRole = 'user' | 'dj' | 'super_admin';
+export type ManagedUserRole = 'user' | 'dj' | 'reader' | 'super_admin';
 
 /** A platform account as listed in the super admin user management screen. */
 export interface ManagedUser {
@@ -337,6 +337,8 @@ export interface ManagedUser {
   createdAt: string;
   eventCount: number;
   photoCount: number;
+  /** False for DJ/reader accounts that only enter through an exclusive link */
+  hasPassword: boolean;
   /** Super admin defined in the server configuration: cannot be changed from the screen */
   isProtected: boolean;
 }

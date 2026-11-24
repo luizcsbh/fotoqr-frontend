@@ -7,6 +7,7 @@ export const isSuperAdmin = (user?: Pick<User, 'role'> | null): boolean =>
 export const ROLE_LABELS: Record<string, string> = {
   user: 'Usuário',
   dj: 'DJ',
+  reader: 'Leitor (portaria)',
   super_admin: 'Super admin',
   platform_admin: 'Super admin',
 };

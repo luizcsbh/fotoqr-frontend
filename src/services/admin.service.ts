@@ -35,7 +35,15 @@ export const adminService = {
     return response.data.data;
   },
 
-  async updateUser(id: number, changes: { role?: ManagedUserRole; isActive?: boolean }): Promise<ManagedUser> {
+  async createUser(data: { name: string; email: string; password: string; role: ManagedUserRole }): Promise<ManagedUser> {
+    const response = await api.post('/api/admin/users', data);
+    return response.data.data;
+  },
+
+  async updateUser(
+    id: number,
+    changes: { name?: string; email?: string; password?: string; role?: ManagedUserRole; isActive?: boolean }
+  ): Promise<ManagedUser> {
     const response = await api.patch(`/api/admin/users/${id}`, changes);
     return response.data.data;
   },
